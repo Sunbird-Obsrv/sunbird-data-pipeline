@@ -111,7 +111,7 @@ default_druid_configs:
    druid_postgres_db: "druid"
    druid_postgres_host: "{{ postgres.db_url }}"
    druid_postgres_port: "{{ postgres.db_port }}"
-   druid_postgres_user: "{{ druid_postgres_user | default('druid@{{ postgres.db_url }}') }}"
+   druid_postgres_user: "{{ druid_postgres_user | default('druid@' + postgres.db_url) }}"
    #Druid Azure Details 
    druid_postgres_pass: "{{ dp_vault_druid_postgress_pass }}"
    azure_account_name: "{{ sunbird_druid_storage_account_name }}"
@@ -172,7 +172,7 @@ default_druid_configs:
    druid_postgres_db: "druid"
    druid_postgres_host: "{{ postgres.db_url }}"
    druid_postgres_port: "{{ postgres.db_port }}"
-   druid_postgres_user: "{{ druid_postgres_user | default('druid@{{ postgres.db_url }}') }}"
+   druid_postgres_user: "{{ druid_postgres_user | default('druid@' + postgres.db_url) }}"
    #Druid Azure Details
    druid_postgres_pass: "{{ dp_vault_druid_postgress_pass }}"
    azure_account_name: "{{ sunbird_druid_storage_account_name }}"

@@ -49,9 +49,9 @@ class DenormalizationConfig(override val config: Config, jobName: String) extend
   val deviceFields = List("country_code", "country", "state_code", "state", "city", "district_custom", "state_code_custom",
     "state_custom", "user_declared_state", "user_declared_district", "devicespec", "firstaccess")
   val contentFields = List("name", "objectType", "contentType", "mediaType", "language", "medium", "mimeType", "createdBy",
-    "createdFor", "framework", "board", "subject", "status", "pkgVersion", "lastSubmittedOn", "lastUpdatedOn", "lastPublishedOn", "channel", "gradeLevel")
+    "createdFor", "framework", "board", "subject", "status", "pkgVersion", "lastSubmittedOn", "lastUpdatedOn", "lastPublishedOn", "channel", "gradeLevel", "keywords")
   val l2DataFields = List("name", "contentType", "mimeType", "framework", "subject", "medium", "board", "channel", "createdFor", "gradeLevel")
-  val userFields = List("usertype", "grade", "language", "subject", "state", "district", "usersignintype", "userlogintype")
+  val userFields = List("usertype", "grade", "language", "subject", "state", "district", "usersignintype", "userlogintype", "block", "cluster", "schoolname")
   val dialcodeFields = List("identifier", "channel", "batchcode", "publisher", "generated_on", "published_on", "status")
   
   val ignorePeriodInMonths:Int = if(config.hasPath("telemetry.ignore.period.months")) config.getInt("telemetry.ignore.period.months") else 3
@@ -77,6 +77,7 @@ class DenormalizationConfig(override val config: Config, jobName: String) extend
   val denormEventsTag: OutputTag[Event] = OutputTag[Event](DENORM_EVENTS)
 
   val eventsToskip: List[String] = config.getStringList("skip.events").asScala.toList
+  val permitEid: List[String] = config.getStringList("permit.eid").asScala.toList
   val eventsSkipped = "events-skipped"
 
   // Device Denorm Metrics
