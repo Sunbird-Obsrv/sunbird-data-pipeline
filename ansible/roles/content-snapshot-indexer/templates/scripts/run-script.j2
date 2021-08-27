@@ -5,11 +5,11 @@
 #$3 date: YYYY-MM-DD- Especially for UserCache indexer script to cache all the user data from this specific updated date.
 #$4 populate_anonymous_user: true/false - Especially for UserCacheIndexer to read anonymous user's data
 
-echo "Executing the script $1 $2 $3 $4"
+echo "Executing the script $1 $2 $3 $4 $5"
 case "$1" in
    "USER_CACHE_INDEXER") 
       echo "Invoked RedisUserDataIndexer"
-      nohup {{ content_snapshot_path }}/scripts/RedisUserDataIndexer.sh $2 $3 $4 &
+      nohup {{ content_snapshot_path }}/scripts/RedisUserDataIndexer.sh $2 $3 $4 $5 &
    ;;
    "DRUID_CONTENT_INDEXER")
       echo "Invoked DruidContentIndexer"
