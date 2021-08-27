@@ -6,7 +6,6 @@ import java.sql.Timestamp
 import java.text.DecimalFormat
 import java.util
 import java.util.UUID
-
 import com.datastax.driver.core.querybuilder.QueryBuilder
 import com.datastax.driver.core.{Row, UDTValue, UserType}
 import com.google.gson.Gson
@@ -18,9 +17,10 @@ import org.joda.time.{DateTime, DateTimeZone}
 import org.slf4j.LoggerFactory
 import org.sunbird.dp.assessment.domain.Event
 import org.sunbird.dp.assessment.task.AssessmentAggregatorConfig
+import org.sunbird.dp.contentupdater.core.util.RestUtil
 import org.sunbird.dp.core.cache.{DataCache, RedisConnect}
 import org.sunbird.dp.core.job.{BaseProcessFunction, Metrics}
-import org.sunbird.dp.core.util.CassandraUtil
+import org.sunbird.dp.core.util.{CassandraUtil, JSONUtil}
 
 import scala.collection.JavaConverters._
 import scala.collection.mutable
@@ -34,7 +34,6 @@ case class AssessEvent(ets: Long, edata: QuestionData)
 
 case class Aggregate(totalScore: Double, totalMaxScore: Double, grandTotal: String, questionsList: List[UDTValue])
 
-
 class AssessmentAggregatorFunction(config: AssessmentAggregatorConfig,
                                    @transient var cassandraUtil: CassandraUtil = null
                                   )(implicit val mapTypeInfo: TypeInformation[Event])
@@ -43,20 +42,25 @@ class AssessmentAggregatorFunction(config: AssessmentAggregatorConfig,
   val mapType: Type = new TypeToken[util.Map[String, AnyRef]]() {}.getType
   private[this] val logger = LoggerFactory.getLogger(classOf[AssessmentAggregatorFunction])
   private var dataCache: DataCache = _
+  private var contentCache: DataCache = _
   var questionType: UserType = _
-  private val df = new DecimalFormat("0.0#")
+  private var restUtil: RestUtil = _
+
 
   override def metricsList() = List(config.dbUpdateCount, config.dbReadCount,
     config.failedEventCount, config.batchSuccessCount,
-    config.skippedEventCount, config.cacheHitCount, config.cacheHitMissCount, config.certIssueEventsCount)
+    config.skippedEventCount, config.cacheHitCount, config.cacheHitMissCount, config.certIssueEventsCount, config.apiHitFailedCount, config.apiHitSuccessCount, config.ignoredEventsCount)
 
 
   override def open(parameters: Configuration): Unit = {
     super.open(parameters)
     dataCache = new DataCache(config, new RedisConnect(config.metaRedisHost, config.metaRedisPort, config), config.relationCacheNode, List())
     dataCache.init()
+    contentCache = new DataCache(config, new RedisConnect(config.metaRedisHost, config.metaRedisPort, config), config.contentCacheNode, List())
+    contentCache.init()
     cassandraUtil = new CassandraUtil(config.dbHost, config.dbPort)
     questionType = cassandraUtil.getUDTType(config.dbKeyspace, config.dbudtType)
+    restUtil = new RestUtil()
   }
 
   override def close(): Unit = {
@@ -83,42 +87,33 @@ class AssessmentAggregatorFunction(config: AssessmentAggregatorConfig,
     try {
       // Validating the contentId
       if (isValidContent(event.courseId, event.contentId)(metrics)) {
-        var totalScore = 0.0
-        var totalMaxScore = 0.0
-        val assessment = getAssessment(event)
         val assessEvents = event.assessEvents.asScala
-        val sortAndFilteredEvents = assessEvents.map(event => {
-          AssessEvent(event.get("ets").asInstanceOf[Long], new Gson().fromJson(new Gson().toJson(event.get("edata")), classOf[QuestionData]))
-        }).sortWith(_.ets > _.ets).groupBy(_.edata.item.id).map(_._2.head)
-
-        val result = sortAndFilteredEvents.map(event => {
-          totalScore = totalScore + event.edata.score
-          totalMaxScore = totalMaxScore + event.edata.item.maxscore
-          getQuestion(event.edata, event.ets.longValue())
-        })
-
-        val grandTotal = String.format("%s/%s", df.format(totalScore), df.format(totalMaxScore))
-
-        if (null == assessment) {
-          saveAssessment(event, Aggregate(totalScore, totalMaxScore, grandTotal, result.toList), new DateTime().getMillis)
-          metrics.incCounter(config.dbUpdateCount)
-          metrics.incCounter(config.batchSuccessCount)
-          context.output(config.scoreAggregateTag, event)
-          createIssueCertEvent(event, context, metrics)
-        }
-        else {
-          metrics.incCounter(config.dbReadCount)
-          if (event.assessmentEts > assessment.getTimestamp("last_attempted_on").getTime) {
-            saveAssessment(event, Aggregate(totalScore, totalMaxScore, grandTotal, result.toList),
-              assessment.getTimestamp("created_on").getTime)
-            metrics.incCounter(config.dbUpdateCount)
-            metrics.incCounter(config.batchSuccessCount)
-            context.output(config.scoreAggregateTag, event)
-            createIssueCertEvent(event, context, metrics)
+        val sortAndFilteredEvents: List[AssessEvent] = getUniqueQuestions(assessEvents = assessEvents.toList)
+        if (config.skipMissingRecords) { // Skip configuration to enable the force filter of duplicate questions based on the question meta
+          val totalQuestions = getTotalQuestionsCount(event.contentId)(metrics)
+          logger.info(s"The total Question count value - ContentId:${event.contentId}, TotalQuestionCount:$totalQuestions")
+          if (totalQuestions == null) {
+            updateDB(scoreMetrics = computeScoreMetrics(sortAndFilteredEvents), event = event)(metrics, context)
+          } else {
+            /**
+             * If the totalQuestions from the content Meta and Events count are matching
+             * Then we are computing the score metrics and updating the table
+             */
+            if (sortAndFilteredEvents.size <= totalQuestions.asInstanceOf[Int]) {
+              updateDB(scoreMetrics = computeScoreMetrics(sortAndFilteredEvents), event = event)(metrics, context)
+            } else {
+              /**
+               * if the totalQuestions Count value is not matching with the event size then job should skip those events and increase the metrics value
+               */
+              context.output(config.failedEventsOutputTag, event)
+              metrics.incCounter(config.ignoredEventsCount)
+            }
           }
-          else {
-            metrics.incCounter(config.skippedEventCount)
-          }
+        } else {
+          /**
+           * If the config.skipMissingRecords = false then it will work as previous logic, no further validation
+           */
+          updateDB(scoreMetrics = computeScoreMetrics(sortAndFilteredEvents), event = event)(metrics, context)
         }
       } else {
         context.output(config.failedEventsOutputTag, event)
@@ -126,11 +121,56 @@ class AssessmentAggregatorFunction(config: AssessmentAggregatorConfig,
       }
     } catch {
       case ex: Exception =>
-        logger.info("Assessment Failed with exception :", ex)
+        ex.printStackTrace()
+        logger.info("Assessment Failed with exception :", ex.getMessage)
         event.markFailed(ex.getMessage)
         context.output(config.failedEventsOutputTag, event)
         metrics.incCounter(config.failedEventCount)
     }
+  }
+
+  def updateDB(scoreMetrics: Aggregate, event: Event)(metrics: Metrics, context: ProcessFunction[Event, Event]#Context): Unit = {
+    val assessmentDBResult = getAssessment(event)
+    if (null == assessmentDBResult) {
+      saveAssessment(event, Aggregate(scoreMetrics.totalScore, scoreMetrics.totalMaxScore, scoreMetrics.grandTotal, scoreMetrics.questionsList), new DateTime().getMillis)
+      metrics.incCounter(config.dbUpdateCount)
+      metrics.incCounter(config.batchSuccessCount)
+      context.output(config.scoreAggregateTag, event)
+      createIssueCertEvent(event, context, metrics)
+    }
+    else {
+      metrics.incCounter(config.dbReadCount)
+      if (event.assessmentEts > assessmentDBResult.getTimestamp("last_attempted_on").getTime) {
+        saveAssessment(event, Aggregate(scoreMetrics.totalScore, scoreMetrics.totalMaxScore, scoreMetrics.grandTotal, scoreMetrics.questionsList),
+          assessmentDBResult.getTimestamp("created_on").getTime)
+        metrics.incCounter(config.dbUpdateCount)
+        metrics.incCounter(config.batchSuccessCount)
+        context.output(config.scoreAggregateTag, event)
+        createIssueCertEvent(event, context, metrics)
+      }
+      else {
+        metrics.incCounter(config.skippedEventCount)
+      }
+    }
+  }
+
+  def getUniqueQuestions(assessEvents: List[util.Map[String, AnyRef]]): List[AssessEvent] = {
+    assessEvents.map(event => {
+      AssessEvent(event.get("ets").asInstanceOf[Long], new Gson().fromJson(new Gson().toJson(event.get("edata")), classOf[QuestionData]))
+    }).sortWith(_.ets > _.ets).groupBy(_.edata.item.id).map(_._2.head).toList
+  }
+
+  def computeScoreMetrics(events: List[AssessEvent]): Aggregate = {
+    var totalScore = 0.0
+    var totalMaxScore = 0.0
+    val df = new DecimalFormat("0.0#")
+    val questions = events.map(event => {
+      totalScore = totalScore + event.edata.score
+      totalMaxScore = totalMaxScore + event.edata.item.maxscore
+      getQuestion(event.edata, event.ets.longValue())
+    })
+    val grandTotal = String.format("%s/%s", df.format(totalScore), df.format(totalMaxScore))
+    Aggregate(totalScore = totalScore, totalMaxScore = totalMaxScore, grandTotal = grandTotal, questionsList = questions)
   }
 
   def getAssessment(event: Event): Row = {
@@ -146,7 +186,6 @@ class AssessmentAggregatorFunction(config: AssessmentAggregatorConfig,
     cassandraUtil.findOne(query)
 
   }
-
   def isValidContent(courseId: String, contentId: String)(metrics: Metrics): Boolean = {
     val leafNodes = dataCache.getKeyMembers(key = s"$courseId:$courseId:leafnodes")
     if (!leafNodes.isEmpty) {
@@ -157,7 +196,6 @@ class AssessmentAggregatorFunction(config: AssessmentAggregatorConfig,
       true
     }
   }
-
 
   def saveAssessment(batchEvent: Event, aggregate: Aggregate, createdOn: Long): Unit = {
     val query = QueryBuilder.insertInto(config.dbKeyspace, config.dbTable)
@@ -187,12 +225,13 @@ class AssessmentAggregatorFunction(config: AssessmentAggregatorConfig,
 
   /**
    * Generation of Certificate Issue event for the enrolment completed users to validate and generate certificate.
+   *
    * @param batchEvent
    * @param context
    * @param metrics
    */
   def createIssueCertEvent(batchEvent: Event, context: ProcessFunction[Event, Event]#Context,
-  metrics: Metrics): Unit = {
+                           metrics: Metrics): Unit = {
     val ets = System.currentTimeMillis
     val mid = s"""LP.${ets}.${UUID.randomUUID}"""
     val event =
@@ -207,5 +246,43 @@ class AssessmentAggregatorFunction(config: AssessmentAggregatorConfig,
     context.output(config.certIssueOutputTag, event)
     metrics.incCounter(config.certIssueEventsCount)
   }
+
+  def getQuestionCountFromCache(contentId: String)(metrics: Metrics) = {
+    val result = contentCache.getWithRetry(contentId)
+    metrics.incCounter(config.cacheHitCount)
+    result.getOrElse("totalQuestions", 0.0).asInstanceOf[Double].toInt
+  }
+
+  def getQuestionCountFromAPI(contentId: String)(metrics: Metrics) = {
+    val contentReadResp = JSONUtil.deserialize[util.HashMap[String, AnyRef]](restUtil.get(config.contentReadAPI.concat(contentId)))
+    if (contentReadResp.get("responseCode").asInstanceOf[String].toUpperCase.equalsIgnoreCase("OK")) {
+      metrics.incCounter(config.apiHitSuccessCount)
+      val result = contentReadResp.getOrDefault("result", new util.HashMap()).asInstanceOf[util.Map[String, AnyRef]]
+      val content = result.getOrDefault("content", new util.HashMap()).asInstanceOf[util.Map[String, Any]]
+      val totalQuestions = content.getOrDefault("totalQuestions", null)
+      logger.info(s"Fetched the totalQuestion Value from the Content Read API - ContentId:$contentId, TotalQuestionCount:$totalQuestions")
+      totalQuestions
+    } else {
+      metrics.incCounter(config.apiHitFailedCount)
+      logger.info(s"API Failed to Fetch the TotalQuestion Count - ContentId:$contentId, ResponseCode - ${contentReadResp.get("responseCode")} ")
+      throw new Exception(s"Failed to fetch the content meta for the content ID: $contentId") // Job should stop if the api has failed
+    }
+  }
+
+  def getTotalQuestionsCount(contentId: String)(metrics: Metrics) = {
+    val totalQuestionsCountFromCache = getQuestionCountFromCache(contentId)(metrics)
+    logger.info(s" Total Question Count Value From Redis - ContentId:$contentId, TotalQuestionCount - ${totalQuestionsCountFromCache} ")
+    if (isNegligibleValue(totalQuestionsCountFromCache)) {
+      metrics.incCounter(config.cacheHitMissCount)
+      getQuestionCountFromAPI(contentId)(metrics)
+    } else {
+      totalQuestionsCountFromCache
+    }
+  }
+
+  def isNegligibleValue(value: Int): Boolean = {
+    if (value == 0) true else false
+  }
+
 }
 

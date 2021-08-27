@@ -30,12 +30,15 @@ class AssessmentAggregatorConfig(override val config: Config) extends BaseJobCon
   val dbReadCount = "db-read-count"
   val batchSuccessCount = "batch-success-event-count"
   val failedEventCount = "failed-event-count"
+  val ignoredEventsCount = "ignored-event-count"
   val skippedEventCount = "skipped-event-count"
   val cacheHitCount = "cache-hit-count"
   val cacheHitMissCount = "cache-hit-miss-count"
   val certIssueEventsCount = "cert-issue-events-count"
   val dbScoreAggUpdateCount = "db-score-update-count"
   val dbScoreAggReadCount = "db-score-read-count"
+  val apiHitSuccessCount = "api-hit-success-count"
+  val apiHitFailedCount = "api-hit-failed-count"
 
 
   //Cassandra
@@ -66,7 +69,8 @@ class AssessmentAggregatorConfig(override val config: Config) extends BaseJobCon
   val userScoreAggregateFn = "user-score-aggregator"
 
   // Cache
-  val relationCacheNode = config.getInt("redis.database.relationCache.id")
+  val relationCacheNode:Int = config.getInt("redis.database.relationCache.id")
+  val contentCacheNode:Int = config.getInt("redis.database.contentCache.id")
   
   //UserActivityAgg
   val scoreAggregateTag: OutputTag[Event] = OutputTag[Event]("score-aggregate-events")
@@ -76,4 +80,8 @@ class AssessmentAggregatorConfig(override val config: Config) extends BaseJobCon
   val activityUser = "user_id"
   val aggLastUpdated = "agg_last_updated"
   val agg = "agg"
+
+  val skipMissingRecords: Boolean = config.getBoolean("assessment.skip.missingRecords")
+  val contentReadAPI: String = config.getString("content.read.api")
+
 }
