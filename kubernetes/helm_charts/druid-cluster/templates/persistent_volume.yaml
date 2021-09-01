@@ -1,0 +1,61 @@
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: historical-pv-volume
+  labels:
+    type: local
+spec:
+  storageClassName: default
+  capacity:
+    storage: 7Gi
+  #volumeMode: Filesystem
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: "/tmp/druid/historical"
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: historical-pv-claim
+spec:
+  storageClassName: default
+  # volumeMode: Filesystem
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 7Gi
+
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: middlemanager-pv-volume
+  labels:
+    type: local
+spec:
+  storageClassName: default
+  capacity:
+    storage: 7Gi
+  #volumeMode: Filesystem
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: "/tmp/druid/middlemanager"
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: middlemanager-pv-claim
+spec:
+  storageClassName: default
+  # volumeMode: Filesystem
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 7Gi

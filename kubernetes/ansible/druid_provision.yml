@@ -1,0 +1,11 @@
+---
+- hosts: localhost
+  gather_facts: no
+  vars:
+    - cluster_type: raw
+  vars_files:
+    - "{{inventory_dir}}/secrets.yml"
+  environment:
+    KUBECONFIG: "{{ kubeconfig_path }}"
+  roles:
+    - druid
