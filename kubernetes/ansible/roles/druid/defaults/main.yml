@@ -4,12 +4,6 @@ druid_namespace: "druid-{{ cluster_type }}"
 # Druid Template variables
 druid_monitoring: false
 
-dp_vault_pgdb_admin_password: postgres
-dp_vault_druid_postgress_pass: druid
-
-sunbird_druid_storage_account_name: "{{ sunbird_private_storage_account_name }}"
-sunbird_druid_storage_account_key: "{{ sunbird_private_storage_account_key }}"
-
 postgres:
   db_url: "{{ groups['postgres'][0] }}"
   db_port: 5432
@@ -122,8 +116,6 @@ druid_router_service: druid/router
 druid_router_plaintextPort: 8888
 
 enable_druid_sql: true
-
-druid_postgres_user: druid
 
 druid_configs:
   raw:
