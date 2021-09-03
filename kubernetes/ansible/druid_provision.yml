@@ -1,5 +1,5 @@
 ---
-- hosts: localhost
+- hosts: local
   gather_facts: no
   vars:
     - cluster_type: {{ druid_cluster_type }}
