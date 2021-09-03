@@ -24,11 +24,13 @@ node() {
             ansiblePlaybook = "$currentWs/kubernetes/ansible/druid_provision.yaml"
             ansibleExtraArgs = "--extra-vars \"chart_base_path=${currentWs}/kubernetes/helm_charts cluster_type=${params.druid_cluster_type}\" --vault-password-file /var/lib/jenkins/secrets/vault-pass -v"
             values.put('currentWs', currentWs)
+            values.put('jobName', jobName)
             values.put('ansiblePlaybook', ansiblePlaybook)
             values.put('ansibleExtraArgs', ansibleExtraArgs)
+            println values
             ansible_playbook_run(values)
-            archiveArtifacts 'metadata.json'
-            currentBuild.description = "Image: ${values.image_tag}, Private: ${params.private_branch}, Public: ${params.branch_or_tag}"
+            currentBuild.result = "SUCCESS"
+            currentBuild.description = "Private: ${params.private_branch}, Public: ${params.branch_or_tag}"
         }
 
         summary()
