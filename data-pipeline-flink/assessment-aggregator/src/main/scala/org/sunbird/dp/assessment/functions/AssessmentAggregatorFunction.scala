@@ -117,7 +117,6 @@ class AssessmentAggregatorFunction(config: AssessmentAggregatorConfig,
             updateDB(scoreMetrics = computeScoreMetrics(sortAndFilteredEvents), event = event)(metrics, context)
           }
         } else {
-          println("assessEvents for recompute::" + assessEvents)
           recomputeAggregates(event)(metrics, context)
         }
         
