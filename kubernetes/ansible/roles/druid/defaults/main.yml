@@ -116,6 +116,7 @@ druid_router_service: druid/router
 druid_router_plaintextPort: 8888
 
 enable_druid_sql: true
+persistent_storage_class: managed-premium
 
 druid_configs:
   raw:
@@ -156,13 +157,14 @@ druid_configs:
    druid_historical_min_heap_size: 512M
    druid_historical_max_heap_size: 512M
    druid_historical_max_direct_size: 800M
+   druid_historical_persistent_volume_size: 20G
    druid_historical_http_numConnections: 5
    druid_historical_server_http_numThread: 25
    druid_historical_processing_bufferBytes: 128MiB
    druid_historical_processing_threads: 2
    druid_historical_enable_cache: false
    #druid_historical_segmentcache_size: 10000000000
-   druid_historical_segmentcache_size: 1000000000
+   druid_historical_segmentcache_size: 2000000000
    druid_historical_server_maxsize: 1000000000
    druid_historical_processing_num_merge_buffers: 2
    druid_query_ondiskstorage_enabled: true
@@ -175,6 +177,7 @@ druid_configs:
    druid_middlemanager_heap_size: 128M
    druid_middlemanager_worker_cap: 2
    druid_middlemanager_peon_heap_size: 256M
+   druid_middlemanager_persistent_volume_size: 20G
    druid_mm_java_opts_array: "-server -Xms512m -Xmx512m -XX:+UseG1GC -XX:MaxGCPauseMillis=100"
    druid_middlemanager_peon_server_http_numThread: 25
    druid_middlemanager_peon_processing_bufferBytes: 25000000

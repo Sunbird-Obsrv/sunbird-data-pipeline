@@ -294,17 +294,29 @@ spec:
         fsGroup: 0
         runAsUser: 0
         runAsGroup: 0
-      volumes:
-        - name: historical-volume
-          persistentVolumeClaim:
-            claimName: historical-pv-claim
-        # - name: data-volume
-        #   emptyDir: {}
-      volumeMounts:
-        - mountPath: "/var/segments"
+
+      volumeClaimTemplates:
+      - metadata:
           name: historical-volume
-        # - mountPath: /druid/data
-        #   name: data-volume
+        spec:
+          storageClassName: "{{- .Values.storageClass }}"
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: {{ .Values.druid_historical_persistent_volume_size }}
+
+      # volumes:
+      #   - name: historical-volume
+      #     persistentVolumeClaim:
+      #       claimName: historical-pv-claim
+      #   # - name: data-volume
+      #   #   emptyDir: {}
+      # volumeMounts:
+      #   - mountPath: "/var/segments"
+      #     name: historical-volume
+      #   # - mountPath: /druid/data
+      #   #   name: data-volume
       
     middlemanagers:
       nodeType: "middleManager"
@@ -354,17 +366,28 @@ spec:
         runAsUser: 0
         runAsGroup: 0
 
-      volumeMounts:
-        - mountPath: /var/task
+      volumeClaimTemplates:
+      - metadata:
           name: middlemanager-volume
-        # - mountPath: /druid/data
-        #   name: data-volume
-      volumes:
-        - name: middlemanager-volume
-          persistentVolumeClaim:
-            claimName: middlemanager-pv-claim
-        # - name: data-volume
-        #   emptyDir: {}
+        spec:
+          storageClassName: "{{- .Values.storageClass }}"
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: {{ .Values.druid_middlemanager_persistent_volume_size }}
+
+      # volumeMounts:
+      #   - mountPath: /var/task
+      #     name: middlemanager-volume
+      #   # - mountPath: /druid/data
+      #   #   name: data-volume
+      # volumes:
+      #   - name: middlemanager-volume
+      #     persistentVolumeClaim:
+      #       claimName: middlemanager-pv-claim
+      #   # - name: data-volume
+      #   #   emptyDir: {}
           
     routers:
       nodeType: "router"

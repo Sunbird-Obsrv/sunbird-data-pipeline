@@ -5,6 +5,8 @@ druid_namespace: "{{ druid_namespace }}"
 dp_vault_pgdb_admin_password: postgres
 druid_monitoring: {{ druid_monitoring }}
 
+storageClass: {{ persistent_storage_class }}
+
 ######################### Druid common variables ########################
 
 druid_directory: "/opt/druid"
@@ -127,8 +129,7 @@ druid_query_groupBy_maxOnDiskStorage: {{ druid_configs[cluster_type].druid_query
 druid_segmentCache_locations: '{% for index in range(5) %}{"path": "{{ druid_configs[cluster_type].druid_historical_segmentcache_path }}{{index}}", "maxSize": {{ druid_configs[cluster_type].druid_historical_segmentcache_size }}}{% if not loop.last %}, {% endif %}
 {% endfor %}'
 
-# Segmentstorage
-# druid.segmentCache.locations: [{\"path\":\"/druid/historical/segments\",\"maxSize\":5368709120}]
+druid_historical_persistent_volume_size: {{ druid_middlemanager_historical_volume_size }}
 
 druid_segmentCache_numLoadingThreads: {{ druid_configs[cluster_type].druid_historical_segmentcache_numloadingthreads }}
 
@@ -145,6 +146,8 @@ druid_historical_cache_expiry: {{ druid_historical_cache_expiry }}
 druid_middlemanager_service: {{ druid_middlemanager_service }}
 druid_middlemanager_port: {{ druid_middlemanager_port }}
 druid_middlemanager_heap_size: {{ druid_configs[cluster_type].druid_middlemanager_heap_size }}
+
+druid_middlemanager_persistent_volume_size: {{ druid_middlemanager_persistent_volume_size }}
 
 # Number of tasks per middleManager
 druid_worker_capacity: {{ druid_configs[cluster_type].druid_middlemanager_worker_cap }}
