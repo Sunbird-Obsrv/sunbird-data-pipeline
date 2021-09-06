@@ -8,7 +8,7 @@ postgres:
   db_url: "{{ groups['postgres'][0] }}"
   db_port: 5432
   db_admin_user: analytics
-  db_admin_password: "{{dp_vault_postgres_admin_password}}"
+  db_admin_password: "{{dp_vault_pgdb_admin_password}}"
   druid:
     db_name: "druid"
     db_username: "druid"
