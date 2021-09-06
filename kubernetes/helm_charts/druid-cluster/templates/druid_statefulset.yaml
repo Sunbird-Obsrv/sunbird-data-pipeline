@@ -74,17 +74,17 @@ spec:
 
     # Metadata storage
     # For PostgreSQL:
-    druid.metadata.storage.type={{ .Values.druid_metadata_storage_type }}
-    druid.metadata.storage.connector.connectURI={{ .Values.druid_metadata_storage_connector_connectURI }}
-    druid.metadata.storage.connector.user={{ .Values.druid_metadata_storage_connector_user }}
-    druid.metadata.storage.connector.password={{ .Values.druid_metadata_storage_connector_password }}
+    druid.metadata.storage.type="{{ .Values.druid_metadata_storage_type }}"
+    druid.metadata.storage.connector.connectURI="{{ .Values.druid_metadata_storage_connector_connectURI }}"
+    druid.metadata.storage.connector.user="{{ .Values.druid_metadata_storage_connector_user }}"
+    druid.metadata.storage.connector.password="{{ .Values.druid_metadata_storage_connector_password }}"
 
     # Deep storage
     #Using azure
-    druid.storage.type={{ .Values.druid_storge_type }}
-    druid.azure.account={{ .Values.druid_azure_storage_account }}
-    druid.azure.key={{ .Values.druid_azure_storage_account_key }}
-    druid.azure.container={{ .Values.druid_azure_container }}
+    druid.storage.type="{{ .Values.druid_storge_type }}"
+    druid.azure.account="{{ .Values.druid_azure_storage_account }}"
+    druid.azure.key="{{ .Values.druid_azure_storage_account_key }}"
+    druid.azure.container="{{ .Values.druid_azure_container }}"
 
     # Indexing service logs
     # For local disk (only viable in a cluster if this is a network mount):

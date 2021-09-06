@@ -31,4 +31,4 @@
   shell: helm dependency update {{ chart_base_path }}/druid-cluster
 
 - name: Install druid cluster
-  shell: helm upgrade --install -n {{ druid_namespace }} druid-cluster {{ chart_base_path }}/druid-cluster --debug
+  shell: helm upgrade --install -n {{ druid_namespace }} druid-cluster {{ chart_base_path }}/druid-cluster
