@@ -76,8 +76,8 @@ spec:
     # For PostgreSQL:
     druid.metadata.storage.type={{ .Values.druid_metadata_storage_type }}
     druid.metadata.storage.connector.connectURI={{ .Values.druid_metadata_storage_connector_connectURI }}
-    druid.metadata.storage.connector.user="{{ .Values.druid_metadata_storage_connector_user }}"
-    druid.metadata.storage.connector.password="{{ .Values.druid_metadata_storage_connector_password }}"
+    druid.metadata.storage.connector.user={{ .Values.druid_metadata_storage_connector_user }}
+    druid.metadata.storage.connector.password={{ .Values.druid_metadata_storage_connector_password }}
 
     # Deep storage
     #Using azure
