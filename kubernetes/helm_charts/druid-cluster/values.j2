@@ -19,8 +19,8 @@ druid.startup.logging.logProperties: true
 # Druid Metadata Store
 druid_metadata_storage_type: "postgresql"
 druid_metadata_storage_connector_connectURI: "jdbc:postgresql://{{ druid_configs[cluster_type].druid_postgres_host }}:{{ druid_configs[cluster_type].druid_postgres_port }}/{{ druid_configs[cluster_type].druid_postgres_db }}"
-druid_metadata_storage_connector_user: "{{ druid_configs[cluster_type].druid_postgres_user }}"
-druid_metadata_storage_connector_password: "{{ druid_configs[cluster_type].druid_postgres_pass }}"
+druid_metadata_storage_connector_user: {{ druid_configs[cluster_type].druid_postgres_user }}
+druid_metadata_storage_connector_password: {{ druid_configs[cluster_type].druid_postgres_pass }}
 
 # Druid Storage Type
 druid_deepstorage_type: azure
