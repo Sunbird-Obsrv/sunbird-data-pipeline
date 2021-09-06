@@ -13,7 +13,7 @@
             state=present
 
 - name: Create druid user if not exists
-  postgresql_user: name="{{ postgres.druid.db_username }}" \
+  postgresql_user: name="druid" \
               password="{{ dp_vault_druid_postgress_pass }}" \
               no_password_changes=true \
               priv=ALL \

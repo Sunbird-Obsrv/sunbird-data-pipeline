@@ -4,15 +4,15 @@ druid_namespace: "druid-{{ cluster_type }}"
 # Druid Template variables
 druid_monitoring: false
 
-postgres:
-  db_url: "{{ groups['postgres'][0] }}"
-  db_port: 5432
-  db_admin_user: analytics
-  db_admin_password: "{{dp_vault_pgdb_admin_password}}"
-  druid:
-    db_name: "druid-{{ cluster_type }}"
-    db_username: "druid"
-    db_password: "{{dp_vault_druid_postgress_pass}}"
+# postgres:
+#   db_url: "{{ groups['postgres'][0] }}"
+#   db_port: 5432
+#   db_admin_user: analytics
+#   db_admin_password: "{{dp_vault_pgdb_admin_password}}"
+#   druid:
+#     db_name: "druid-{{ cluster_type }}"
+#     db_username: "druid"
+#     db_password: "{{dp_vault_druid_postgress_pass}}"
 
 # druid_user: druid
 druid_directory: "/opt/druid"
