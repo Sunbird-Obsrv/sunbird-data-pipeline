@@ -118,6 +118,8 @@ druid_router_plaintextPort: 8888
 enable_druid_sql: true
 persistent_storage_class: managed-premium
 
+druid_postgres_user: "loadtest@loadtest-lp-dp"
+
 druid_configs:
   raw:
    #Druid Postgres Details
