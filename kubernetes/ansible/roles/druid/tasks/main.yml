@@ -25,7 +25,7 @@
               db="{{ postgres.druid.db_name }}"
 
 - name: Install druid operator
-  shell: helm upgrade --install -n {{ druid_namespace }} --create-namespace --set env.WATCH_NAMESPACE="{{ druid_namespace }}" druid-operator {{ chart_base_path }}/druid-operator
+  shell: helm upgrade --install -n {{ druid_namespace }} --set env.WATCH_NAMESPACE="{{ druid_namespace }}" druid-operator {{ chart_base_path }}/druid-operator
 
 # - name: Install dependencies
 #   shell: helm dependency update {{ chart_base_path }}/druid-cluster
