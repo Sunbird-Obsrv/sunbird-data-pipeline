@@ -82,9 +82,9 @@ spec:
     # Deep storage
     #Using azure
     druid.storage.type={{ .Values.druid_storge_type }}
-    druid.azure.account="{{ .Values.druid_azure_storage_account }}"
-    druid.azure.key="{{ .Values.druid_azure_storage_account_key }}"
-    druid.azure.container="{{ .Values.druid_azure_container }}"
+    druid.azure.account={{ .Values.druid_azure_storage_account }}
+    druid.azure.key={{ .Values.druid_azure_storage_account_key }}
+    druid.azure.container={{ .Values.druid_azure_container }}
 
     # Indexing service logs
     # For local disk (only viable in a cluster if this is a network mount):

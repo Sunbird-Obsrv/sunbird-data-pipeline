@@ -10,7 +10,7 @@ postgres:
   db_admin_user: analytics
   db_admin_password: "{{dp_vault_pgdb_admin_password}}"
   druid:
-    db_name: "druid"
+    db_name: "druid-{{ cluster_type }}"
     db_username: "druid"
     db_password: "{{dp_vault_druid_postgress_pass}}"
 
@@ -118,15 +118,13 @@ druid_router_plaintextPort: 8888
 enable_druid_sql: true
 persistent_storage_class: managed-premium
 
-druid_postgres_user: "loadtest@loadtest-lp-dp"
-
 druid_configs:
   raw:
    #Druid Postgres Details
-   druid_postgres_db: "druid"
+   druid_postgres_db: "druid-{{ cluster_type }}"
    druid_postgres_host: "{{ postgres.db_url }}"
    druid_postgres_port: "{{ postgres.db_port }}"
-   druid_postgres_user: "{{ druid_postgres_user | default('druid@' + postgres.db_url) }}"
+   druid_postgres_user: "druid@{{ postgres.db_url }}"
    druid_postgres_pass: "{{ dp_vault_druid_postgress_pass }}"
    #Druid Azure Details 
    druid_storge_type: "azure"
@@ -195,10 +193,10 @@ druid_configs:
    druid_middlemanager_monitoring_monitor_enabled: false
   rollup:
    #Druid Postgres Details
-   druid_postgres_db: "druid"
+   druid_postgres_db: "druid-{{ cluster_type }}"
    druid_postgres_host: "{{ postgres.db_url }}"
    druid_postgres_port: "{{ postgres.db_port }}"
-   druid_postgres_user: "{{ druid_postgres_user | default('druid@' + postgres.db_url) }}"
+   druid_postgres_user: "druid@{{ postgres.db_url }}"
    #Druid Azure Details
    druid_postgres_pass: "{{ dp_vault_druid_postgress_pass }}"
    azure_account_name: "{{ sunbird_druid_storage_account_name }}"
