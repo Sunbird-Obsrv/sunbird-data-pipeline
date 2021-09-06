@@ -2,7 +2,7 @@
 - hosts: local
   gather_facts: no
   vars:
-    - cluster_type: {{ cluster_type }}
+    - cluster_type: "{{ cluster_type }}"
   vars_files:
     - "{{inventory_dir}}/secrets.yml"
   environment:
