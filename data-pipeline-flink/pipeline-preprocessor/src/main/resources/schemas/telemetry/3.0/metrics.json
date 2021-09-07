@@ -1,0 +1,63 @@
+{
+  "id": "http://api.ekstep.org/telemetry/metrics",
+  "type": "object",
+  "required": [
+    "eid",
+    "ets",
+    "ver",
+    "mid",
+    "actor",
+    "context",
+    "edata"
+  ],
+  "allOf": [
+    {
+      "$ref": "resource:/schemas/telemetry/3.0/common.json"
+    },
+    {
+      "properties": {
+        "eid": {
+          "id": "http://api.ekstep.org/telemetry/eid",
+          "enum": [
+            "METRICS"
+          ]
+        },
+        "edata": {
+          "id": "http://api.ekstep.org/telemetry/edata",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "system",
+            "subsystem"
+          ],
+          "properties": {
+            "system": {
+              "id": "http://api.ekstep.org/telemetry/edata/system",
+              "type": "string"
+            },
+            "subsystem": {
+              "id": "http://api.ekstep.org/telemetry/edata/subsystem",
+              "type": "string"
+            },
+            "metrics": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "metric": {
+                    "id": "http://api.ekstep.org/telemetry/edata/metrics/metric",
+                    "type": "string"
+                  },
+                  "value": {
+                    "id": "http://api.ekstep.org/telemetry/edata/metrics/value",
+                    "type": "number"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

@@ -46,6 +46,12 @@
     },
     {
       "$ref": "resource:/schemas/telemetry/3.0/exdata.json"
+    },
+    {
+      "$ref": "resource:/schemas/telemetry/3.0/summary.json"
+    },
+    {
+      "$ref": "resource:/schemas/telemetry/3.0/metrics.json"
     }
   ]
 }
