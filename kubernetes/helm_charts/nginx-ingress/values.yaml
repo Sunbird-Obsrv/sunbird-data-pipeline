@@ -146,7 +146,7 @@ controller:
   watchNamespace: ""
 
   ## Enable the custom resources.
-  enableCustomResources: true
+  enableCustomResources: false
 
   ## Enable preview policies.
   enablePreviewPolicies: false
