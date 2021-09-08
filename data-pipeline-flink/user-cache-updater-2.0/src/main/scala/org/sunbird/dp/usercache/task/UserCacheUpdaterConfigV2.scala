@@ -16,7 +16,7 @@ class UserCacheUpdaterConfigV2(override val config: Config) extends BaseJobConfi
 
   // Kafka Topics Configuration
   val inputTopic: String = config.getString("kafka.input.topic")
-  val userFields = List("usertype", "grade", "language", "subject", "state", "district", "usersignintype", "userlogintype","locationids")
+  val userFields = List("usertype", "grade", "language", "subject", "state", "district", "block", "cluster", "schooludisecode", "schoolname", "usersignintype", "userlogintype","locationids")
 
   // User cache updater job metrics
   val userCacheHit = "user-cache-hit"
