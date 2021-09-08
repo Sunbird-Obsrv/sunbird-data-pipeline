@@ -394,6 +394,30 @@ spec:
       druid.port: {{ .Values.druid_router_plaintextPort }}
       nodeConfigMountPath: "/opt/druid/conf/druid/cluster/query/router"
       replicas: 1
+      services:
+        - spec:
+            type: NodePort
+            ports:
+            - name: druid-router-service
+              port: 8888
+              targetPort: 8888
+              protocol: TCP
+      ingressAnnotations:
+        name: router-ingress
+        nginx.ingress.kubernetes.io/rewrite-target: /$1
+      ingress:
+        rules:
+          - host: druid.router
+            http:
+              paths:
+                - path: /
+                  pathType: Prefix
+                  backend:
+                    service:
+                      name: {{ .Values.druid_cluster_type }}-{{ .Values.druid_env }}-routers
+                      port:
+                        name: http
+
       runtime.properties: |
         druid.service={{ .Values.druid_router_service }}
         # druid.plaintextPort={{ .Values.druid_router_plaintextPort }}
