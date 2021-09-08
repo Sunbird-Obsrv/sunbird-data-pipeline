@@ -408,7 +408,7 @@ spec:
       ingress:
         ingressClassName: nginx
         rules:
-          - host: *.nip.io
+          - host: "*.nip.io"
             http:
               paths:
                 - path: /
