@@ -28,7 +28,7 @@
   shell: helm upgrade --install -n {{ druid_namespace }} --set env.WATCH_NAMESPACE="{{ druid_namespace }}" druid-operator {{ chart_base_path }}/druid-operator
 
 - name: Install nginx-controller
-  shell: helm upgrade --install -n {{ druid_namespace }} nginx-ingress-controller {{ chart_base_path }}/nginx-ingress
+  shell: helm upgrade --install -n {{ druid_namespace }} nginx-ingress-controller {{ chart_base_path }}/nginx-ingress --skip-crds
 
 - name: Install dependencies
   shell: helm dependency update {{ chart_base_path }}/druid-cluster
