@@ -396,19 +396,19 @@ spec:
       replicas: 1
       services:
         - spec:
-            type: NodePort
+            type: ClusterIP
             ports:
             - name: druidrouterport
               port: 80
               targetPort: 8888
-              protocol: TCP
+              protocol: http
       ingressAnnotations:
         name: router-ingress
         nginx.ingress.kubernetes.io/rewrite-target: /$1
       ingress:
         ingressClassName: nginx
         rules:
-          - host: druid.router
+          - host: *.nip.io
             http:
               paths:
                 - path: /
@@ -417,7 +417,7 @@ spec:
                     service:
                       name: druid-{{ .Values.druid_cluster_type }}-{{ .Values.druid_env }}-routers
                       port:
-                        name: http
+                        name: druidrouterport
 
       runtime.properties: |
         druid.service={{ .Values.druid_router_service }}
