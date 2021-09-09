@@ -301,9 +301,9 @@ flink_job_names:
     taskslots: 1
     cpu_requests: 0.3
     scale_enabled: true
-    scale_target_value: 1
-    min_replica: 0
-    max_replica: 1
+    scale_target_value: 10
+    min_replica: 1
+    max_replica: 2
   device-profile-updater:
     job_class_name: 'org.sunbird.dp.deviceprofile.task.DeviceProfileUpdaterStreamTask'
     replica: 1
