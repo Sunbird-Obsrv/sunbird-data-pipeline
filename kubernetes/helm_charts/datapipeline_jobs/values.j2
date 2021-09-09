@@ -689,8 +689,12 @@ assessment-aggregator:
     redis {
       database {
         relationCache.id = 10
+        contentCache.id = 5
       }
     }
+    assessment.skip.missingRecords = true
+    content.read.api = "{{ content_read_api_host }}/{{ content_read_api_endpoint }}"
+
   flink-conf: |+
     jobmanager.memory.flink.size: {{ flink_job_names['assessment-aggregator'].jobmanager_memory }}
     taskmanager.memory.flink.size: {{ flink_job_names['assessment-aggregator'].taskmanager_memory }}
