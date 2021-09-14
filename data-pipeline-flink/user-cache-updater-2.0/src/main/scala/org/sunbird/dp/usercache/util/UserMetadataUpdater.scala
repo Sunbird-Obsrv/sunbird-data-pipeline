@@ -27,7 +27,9 @@ object UserMetadataUpdater {
 
     val generalInfo = getGeneralInfo(userId, event, metrics, config, dataCache);
     val regdInfo = if (config.regdUserProducerPid.equals(event.producerPid())) {
-      getRegisteredUserInfo(userId, event, metrics, config, dataCache, restUtil)
+      val userInfo = getRegisteredUserInfo(userId, event, metrics, config, dataCache, restUtil)
+      UserMetadataUpdater.removeEmptyFields(config.userStoreKeyPrefix + userId, dataCache, userInfo)
+      userInfo
     } else mutable.Map[String, String]()
     generalInfo.++:(regdInfo);
   }
