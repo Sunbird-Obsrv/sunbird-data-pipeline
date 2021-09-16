@@ -123,7 +123,7 @@
 - name: Run Script
   become: yes
   become_user: root
-  shell: "sh {{ content_snapshot_path }}/scripts/run-script.sh {{ script_to_run }} {{ identifier }} {{ date }} {{ populate_anonymous_user }} {{ refresh_data }} >> {{ content_snapshot_path }}/logs/{{ansible_date_time.date}}-shell-execution.log"
+  shell: "sh {{ content_snapshot_path }}/scripts/run-script.sh {{ script_to_run }} {{ identifier }} {{ date }} {{ populate_anonymous_user }} >> {{ content_snapshot_path }}/logs/{{ansible_date_time.date}}-shell-execution.log"
   poll: 0
   async: 45
   tags:

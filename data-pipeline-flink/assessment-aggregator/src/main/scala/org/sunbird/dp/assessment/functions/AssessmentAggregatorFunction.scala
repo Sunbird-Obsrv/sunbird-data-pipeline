@@ -49,7 +49,7 @@ class AssessmentAggregatorFunction(config: AssessmentAggregatorConfig,
 
   override def metricsList() = List(config.dbUpdateCount, config.dbReadCount,
     config.failedEventCount, config.batchSuccessCount,
-    config.skippedEventCount, config.cacheHitCount, config.cacheHitMissCount, config.certIssueEventsCount, config.apiHitFailedCount, config.apiHitSuccessCount, config.ignoredEventsCount, config.recomputeAggEventCount)
+    config.skippedEventCount, config.cacheHitCount, config.cacheHitMissCount, config.certIssueEventsCount, config.apiHitFailedCount, config.apiHitSuccessCount, config.ignoredEventsCount)
 
 
   override def open(parameters: Configuration): Unit = {
@@ -88,38 +88,33 @@ class AssessmentAggregatorFunction(config: AssessmentAggregatorConfig,
       // Validating the contentId
       if (isValidContent(event.courseId, event.contentId)(metrics)) {
         val assessEvents = event.assessEvents.asScala
-        if(null != assessEvents && !assessEvents.isEmpty) {
-          val sortAndFilteredEvents: List[AssessEvent] = getUniqueQuestions(assessEvents = assessEvents.toList)
-          if (config.skipMissingRecords) { // Skip configuration to enable the force filter of duplicate questions based on the question meta
-            val totalQuestions = getTotalQuestionsCount(event.contentId)(metrics)
-            logger.info(s"The total Question count value - ContentId:${event.contentId}, TotalQuestionCount:$totalQuestions")
-            if (totalQuestions == null) {
+        val sortAndFilteredEvents: List[AssessEvent] = getUniqueQuestions(assessEvents = assessEvents.toList)
+        if (config.skipMissingRecords) { // Skip configuration to enable the force filter of duplicate questions based on the question meta
+          val totalQuestions = getTotalQuestionsCount(event.contentId)(metrics)
+          logger.info(s"The total Question count value - ContentId:${event.contentId}, TotalQuestionCount:$totalQuestions")
+          if (totalQuestions == null) {
+            updateDB(scoreMetrics = computeScoreMetrics(sortAndFilteredEvents), event = event)(metrics, context)
+          } else {
+            /**
+             * If the totalQuestions from the content Meta and Events count are matching
+             * Then we are computing the score metrics and updating the table
+             */
+            if (sortAndFilteredEvents.size <= totalQuestions.asInstanceOf[Int]) {
               updateDB(scoreMetrics = computeScoreMetrics(sortAndFilteredEvents), event = event)(metrics, context)
             } else {
               /**
-               * If the totalQuestions from the content Meta and Events count are matching
-               * Then we are computing the score metrics and updating the table
+               * if the totalQuestions Count value is not matching with the event size then job should skip those events and increase the metrics value
                */
-              if (sortAndFilteredEvents.size <= totalQuestions.asInstanceOf[Int]) {
-                updateDB(scoreMetrics = computeScoreMetrics(sortAndFilteredEvents), event = event)(metrics, context)
-              } else {
-                /**
-                 * if the totalQuestions Count value is not matching with the event size then job should skip those events and increase the metrics value
-                 */
-                context.output(config.failedEventsOutputTag, event)
-                metrics.incCounter(config.ignoredEventsCount)
-              }
+              context.output(config.failedEventsOutputTag, event)
+              metrics.incCounter(config.ignoredEventsCount)
             }
-          } else {
-            /**
-             * If the config.skipMissingRecords = false then it will work as previous logic, no further validation
-             */
-            updateDB(scoreMetrics = computeScoreMetrics(sortAndFilteredEvents), event = event)(metrics, context)
           }
         } else {
-          recomputeAggregates(event)(metrics, context)
+          /**
+           * If the config.skipMissingRecords = false then it will work as previous logic, no further validation
+           */
+          updateDB(scoreMetrics = computeScoreMetrics(sortAndFilteredEvents), event = event)(metrics, context)
         }
-        
       } else {
         context.output(config.failedEventsOutputTag, event)
         metrics.incCounter(config.failedEventCount)
@@ -287,18 +282,6 @@ class AssessmentAggregatorFunction(config: AssessmentAggregatorConfig,
 
   def isNegligibleValue(value: Int): Boolean = {
     if (value == 0) true else false
-  }
-
-  /**
-   * Pushes event to compute the score aggregates and pushes certificate issue event to kafka
-   * @param event
-   * @param metrics
-   * @param context
-   */
-  def recomputeAggregates(event: Event)(metrics: Metrics, context: ProcessFunction[Event, Event]#Context) = {
-    metrics.incCounter(config.recomputeAggEventCount)
-    context.output(config.scoreAggregateTag, event)
-    createIssueCertEvent(event, context, metrics)
   }
 
 }

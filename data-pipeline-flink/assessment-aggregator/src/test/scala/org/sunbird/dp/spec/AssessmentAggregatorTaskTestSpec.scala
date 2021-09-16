@@ -55,7 +55,7 @@ class AssessmentAggregatorTaskTestSpec extends BaseTestSpec {
     val session = cassandraUtil.session
     setupRedisTestData()
 
-    val dataLoader = new CQLDataLoader(session)
+    val dataLoader = new CQLDataLoader(session);
     dataLoader.load(new FileCQLDataSet(getClass.getResource("/test.cql").getPath, true, true));
     // Clear the metrics
     testCassandraUtil(cassandraUtil)
@@ -90,12 +90,11 @@ class AssessmentAggregatorTaskTestSpec extends BaseTestSpec {
     BaseMetricsReporter.gaugeMetrics(s"${assessmentConfig.jobName}.${assessmentConfig.dbUpdateCount}").getValue() should be(5)
     BaseMetricsReporter.gaugeMetrics(s"${assessmentConfig.jobName}.${assessmentConfig.failedEventCount}").getValue() should be(2)
     BaseMetricsReporter.gaugeMetrics(s"${assessmentConfig.jobName}.${assessmentConfig.batchSuccessCount}").getValue() should be(5)
-    BaseMetricsReporter.gaugeMetrics(s"${assessmentConfig.jobName}.${assessmentConfig.cacheHitCount}").getValue() should be(8)
+    BaseMetricsReporter.gaugeMetrics(s"${assessmentConfig.jobName}.${assessmentConfig.cacheHitCount}").getValue() should be(7)
     BaseMetricsReporter.gaugeMetrics(s"${assessmentConfig.jobName}.${assessmentConfig.cacheHitMissCount}").getValue() should be(1)
-    BaseMetricsReporter.gaugeMetrics(s"${assessmentConfig.jobName}.${assessmentConfig.certIssueEventsCount}").getValue() should be(6)
-    BaseMetricsReporter.gaugeMetrics(s"${assessmentConfig.jobName}.${assessmentConfig.dbScoreAggUpdateCount}").getValue() should be(6)
-    BaseMetricsReporter.gaugeMetrics(s"${assessmentConfig.jobName}.${assessmentConfig.dbScoreAggReadCount}").getValue() should be(6)
-    BaseMetricsReporter.gaugeMetrics(s"${assessmentConfig.jobName}.${assessmentConfig.recomputeAggEventCount}").getValue() should be(1)
+    BaseMetricsReporter.gaugeMetrics(s"${assessmentConfig.jobName}.${assessmentConfig.certIssueEventsCount}").getValue() should be(5)
+    BaseMetricsReporter.gaugeMetrics(s"${assessmentConfig.jobName}.${assessmentConfig.dbScoreAggUpdateCount}").getValue() should be(5)
+    BaseMetricsReporter.gaugeMetrics(s"${assessmentConfig.jobName}.${assessmentConfig.dbScoreAggReadCount}").getValue() should be(5)
     val test_row1 = cassandraUtil.findOne("select total_score,total_max_score from sunbird_courses.assessment_aggregator where user_id='d0d8a341-9637-484c-b871-0c27015af238' and course_id='do_2128410273679114241112'")
     assert(test_row1.getDouble("total_score") == 2.0)
     assert(test_row1.getDouble("total_max_score") == 2.0)
@@ -165,7 +164,6 @@ class AssessmentAggreagatorEventSource extends SourceFunction[Event] {
     val eventMap6 = JSONUtil.deserialize[util.HashMap[String, Any]](EventFixture.BATCH_DUPLICATE_QUESTION_EVENT)
     val eventMap7 = JSONUtil.deserialize[util.HashMap[String, Any]](EventFixture.INVALID_CONTENT_ID_EVENT)
     val eventMap8 = JSONUtil.deserialize[util.HashMap[String, Any]](EventFixture.BATCH_ASSESS_EVENT_WITHOUT_CACHE)
-    val eventMap9 = JSONUtil.deserialize[util.HashMap[String, Any]](EventFixture.RECOMPUTE_ASSESS_EVENT)
     ctx.collect(new Event(eventMap1))
     ctx.collect(new Event(eventMap2))
     ctx.collect(new Event(eventMap3))
@@ -174,7 +172,6 @@ class AssessmentAggreagatorEventSource extends SourceFunction[Event] {
     ctx.collect(new Event(eventMap6))
     ctx.collect(new Event(eventMap7))
     ctx.collect(new Event(eventMap8))
-    ctx.collect(new Event(eventMap9))
   }
 
   override def cancel() = {}
