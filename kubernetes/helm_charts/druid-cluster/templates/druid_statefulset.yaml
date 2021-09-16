@@ -81,7 +81,7 @@ spec:
 
     # Deep storage
     #Using azure
-    druid.storage.type={{ .Values.druid_storge_type }}
+    druid.storage.type={{ .Values.druid_deepstorage_type }}
     druid.azure.account={{ .Values.druid_azure_storage_account }}
     druid.azure.key={{ .Values.druid_azure_storage_account_key }}
     druid.azure.container={{ .Values.druid_azure_container }}
