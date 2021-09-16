@@ -115,6 +115,12 @@ object UserMetadataUpdater {
     userCacheData
   }
 
+  def removeEmptyFields(key: String, dataCache: DataCache, userMetaData: mutable.Map[String, AnyRef]):Unit = {
+    val redisRec = dataCache.hgetAllWithRetry(key)
+    val removableKeys = redisRec.keySet.diff(userMetaData.keySet)
+    if(removableKeys.nonEmpty) dataCache.hdelWithRetry(key, removableKeys.toSeq)
+  }
+
   def stringify(userData: mutable.Map[String, AnyRef]): mutable.Map[String, String] = {
     userData.map { f =>
       (f._1, if (!f._2.isInstanceOf[String]) {
