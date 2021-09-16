@@ -39,7 +39,6 @@ class AssessmentAggregatorConfig(override val config: Config) extends BaseJobCon
   val dbScoreAggReadCount = "db-score-read-count"
   val apiHitSuccessCount = "api-hit-success-count"
   val apiHitFailedCount = "api-hit-failed-count"
-  val recomputeAggEventCount = "recompute-agg-event-count"
 
 
   //Cassandra

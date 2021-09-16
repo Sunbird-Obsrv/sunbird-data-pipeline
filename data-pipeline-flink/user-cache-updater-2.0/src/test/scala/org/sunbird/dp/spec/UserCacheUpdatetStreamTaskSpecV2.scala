@@ -2,6 +2,7 @@ package org.sunbird.dp.spec
 
 import java.io.IOException
 import java.util
+
 import com.google.gson.Gson
 import com.typesafe.config.{Config, ConfigFactory}
 import okhttp3.mockwebserver.{MockResponse, MockWebServer}
@@ -13,7 +14,6 @@ import org.apache.flink.streaming.api.functions.source.SourceFunction.SourceCont
 import org.apache.flink.test.util.MiniClusterWithClientResource
 import org.mockito.Mockito
 import org.mockito.Mockito._
-import org.scalatest.BeforeAndAfterEach
 import org.sunbird.dp.core.cache.RedisConnect
 import org.sunbird.dp.core.job.FlinkKafkaConnector
 import org.sunbird.dp.fixture.EventFixture
@@ -23,7 +23,7 @@ import org.sunbird.dp.{BaseMetricsReporter, BaseTestSpec}
 import redis.clients.jedis.Jedis
 import redis.embedded.RedisServer
 
-class UserCacheUpdatetStreamTaskSpecV2 extends BaseTestSpec with BeforeAndAfterEach {
+class UserCacheUpdatetStreamTaskSpecV2 extends BaseTestSpec {
 
   implicit val mapTypeInfo: TypeInformation[Event] = TypeExtractor.getForClass(classOf[Event])
 
@@ -39,7 +39,7 @@ class UserCacheUpdatetStreamTaskSpecV2 extends BaseTestSpec with BeforeAndAfterE
   val mockKafkaUtil: FlinkKafkaConnector = mock[FlinkKafkaConnector](Mockito.withSettings().serializable())
   val gson = new Gson()
   var jedis: Jedis = _
-  var server = new MockWebServer()
+  val server = new MockWebServer()
 
   override protected def beforeAll(): Unit = {
     super.beforeAll()
@@ -56,12 +56,6 @@ class UserCacheUpdatetStreamTaskSpecV2 extends BaseTestSpec with BeforeAndAfterE
     redisServer.stop()
     server.close()
     flinkCluster.after()
-  }
-
-  override protected def beforeEach(): Unit = {
-    server.close()
-    server = new MockWebServer()
-    super.beforeEach()
   }
 
   def setupRestUtilData(): Unit = {
@@ -262,39 +256,6 @@ class UserCacheUpdatetStreamTaskSpecV2 extends BaseTestSpec with BeforeAndAfterE
     userInfo.get("medium") should be ("""["English"]""")
   }
 
-  "UserCacheUpdater" should "be able to add and update user record with different producer ids" in {
-    setupRestUtilData()
-    when(mockKafkaUtil.kafkaEventSource[Event](userCacheConfig.inputTopic)).thenReturn(new LeanerInputSource)
-
-    val task = new UserCacheUpdaterStreamTaskV2(userCacheConfig, mockKafkaUtil)
-    task.process()
-
-    // select index: 12
-    jedis.select(userCacheConfig.userStore)
-
-    //user information: user-1
-    var userInfo = jedis.hgetAll(userCacheConfig.userStoreKeyPrefix +  "user-1")
-    userInfo.get("firstname") should be ("Utkarsha")
-    userInfo.get("lastname") should be ("Kapoor")
-    userInfo.get("state") should be ("Odisha")
-    userInfo.get("district") should be ("CUTTACK")
-    userInfo.get("block") should be ("BLOCK1")
-    userInfo.get("cluster") should be ("CLUSTER1")
-    userInfo.getOrDefault(userCacheConfig.userLoginTypeKey, null) should be (null)
-
-    when(mockKafkaUtil.kafkaEventSource[Event](userCacheConfig.inputTopic)).thenReturn(new AppInputSource)
-    task.process()
-
-    userInfo = jedis.hgetAll(userCacheConfig.userStoreKeyPrefix +  "user-1")
-    userInfo.get("firstname") should be ("Utkarsha")
-    userInfo.get("lastname") should be ("Kapoor")
-    userInfo.get("state") should be ("Odisha")
-    userInfo.get("district") should be ("CUTTACK")
-    userInfo.get("block") should be ("BLOCK1")
-    userInfo.get("cluster") should be ("CLUSTER1")
-    userInfo.getOrDefault(userCacheConfig.userLoginTypeKey, null) should be ("teacher")
-  }
-
   "UserCacheUpdater" should "throw exception" in intercept[Exception] {
     setupRestUtilDataWithErrors
     when(mockKafkaUtil.kafkaEventSource[Event](userCacheConfig.inputTopic)).thenReturn(new InputSource)
@@ -305,11 +266,7 @@ class UserCacheUpdatetStreamTaskSpecV2 extends BaseTestSpec with BeforeAndAfterE
   }
 }
 
-abstract class InputSourceBase[T] extends SourceFunction[T] {
-  override def cancel() = {}
-}
-
-class InputSource extends InputSourceBase[Event]{
+class InputSource extends SourceFunction[Event] {
 
   override def run(ctx: SourceContext[Event]) {
     val gson = new Gson()
@@ -320,25 +277,7 @@ class InputSource extends InputSourceBase[Event]{
       ctx.collect(event)
     })
   }
-}
 
-class LeanerInputSource extends InputSourceBase[Event]{
-  override def run(ctx: SourceContext[Event]): Unit = {
-    val gson = new Gson()
-    val eventMap = gson.fromJson(EventFixture.telemetryEventWithLearnerPid, new util.HashMap[String, Any]().getClass)
-    val event = new Event(eventMap)
-    event.kafkaKey()
-    ctx.collect(event)
-  }
-}
-
-class AppInputSource extends InputSourceBase[Event]{
-  override def run(ctx: SourceContext[Event]): Unit = {
-    val gson = new Gson()
-    val eventMap = gson.fromJson(EventFixture.telemetryEventWithAppPid, new util.HashMap[String, Any]().getClass)
-    val event = new Event(eventMap)
-    event.kafkaKey()
-    ctx.collect(event)
-  }
+  override def cancel() = {}
 }
 

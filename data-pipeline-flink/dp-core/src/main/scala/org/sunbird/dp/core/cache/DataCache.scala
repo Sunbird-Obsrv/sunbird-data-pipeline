@@ -158,23 +158,6 @@ class DataCache(val config: BaseJobConfig, val redisConnect: RedisConnect, val d
     }
   }
 
-  def hdel(key: String, fieldSeq: Seq[String]): Unit = {
-    this.redisConnection.hdel(key, fieldSeq: _*)
-  }
-
-  def hdelWithRetry(key: String, fieldSeq: Seq[String]): Unit = {
-    try {
-      hdel(key, fieldSeq)
-    } catch {
-      case ex: JedisException =>
-        logger.error("Exception when deleting fields in hash", ex)
-        this.redisConnection.close()
-        this.redisConnection = redisConnect.getConnection(dbIndex)
-        hdel(key, fieldSeq)
-    }
-  }
-
-
 }
 
 // $COVERAGE-ON$
