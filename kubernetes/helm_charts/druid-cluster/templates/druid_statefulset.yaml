@@ -321,7 +321,7 @@ spec:
     middlemanagers:
       nodeType: "middleManager"
       druid.port: {{ .Values.druid_middlemanager_port }}
-      nodeConfigMountPath: "/opt/druid/conf/druid/cluster/data/middlemanager"
+      nodeConfigMountPath: "/opt/druid/conf/druid/cluster/data/middleManager"
       replicas: 1
       runtime.properties: |
         druid.service={{ .Values.druid_middlemanager_service }}
