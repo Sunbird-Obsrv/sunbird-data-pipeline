@@ -300,6 +300,7 @@ spec:
           name: historical-volume
         spec:
           storageClassName: "{{- .Values.storageClass }}"
+          persistentVolumeReclaimPolicy: Retain
           accessModes:
             - ReadWriteOnce
           resources:
@@ -371,6 +372,7 @@ spec:
           name: middlemanager-volume
         spec:
           storageClassName: "{{- .Values.storageClass }}"
+          persistentVolumeReclaimPolicy: Retain
           accessModes:
             - ReadWriteOnce
           resources:
