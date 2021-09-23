@@ -64,7 +64,7 @@ class CheckDerivedLocationStreamTaskTestSpec extends BaseTestSpec {
 
   }
 
-  "De-normalization pipeline" should "denormalize content, user, device and location metadata" in {
+  "De-normalization pipeline" should "denormalize location metadata properly for blank user declared scenario" in {
 
     when(mockKafkaUtil.kafkaEventSource[Event](denormConfig.telemetryInputTopic)).thenReturn(new InputSource1)
     when(mockKafkaUtil.kafkaEventSink[Event](denormConfig.telemetryDenormOutputTopic)).thenReturn(new DenormEventsSink1)
@@ -74,7 +74,7 @@ class CheckDerivedLocationStreamTaskTestSpec extends BaseTestSpec {
 
     val event = DenormEventsSink1.values("mid1")
     event.flags().get("loc_denorm").asInstanceOf[Boolean] should be (true)
-    // derived location be from ip-resolved
+    // derived location should be from ip-resolved
     event.getMap().get("derivedlocationdata").asInstanceOf[util.Map[String, Any]].get("district") should be("Mumbai")
     event.getMap().get("derivedlocationdata").asInstanceOf[util.Map[String, Any]].get("state") should be("Maharashtra")
     event.getMap().get("derivedlocationdata").asInstanceOf[util.Map[String, Any]].get("from") should be("ip-resolved")
@@ -99,18 +99,6 @@ class InputSource1 extends SourceFunction[Event] {
     val gson = new Gson()
     val eventMap = gson.fromJson(EventFixture.telemetryEvent, new util.HashMap[String, Any]().getClass)
     ctx.collect(new Event(eventMap))
-//    EventFixture.telemetrEvents.foreach(f => {
-//      val eventMap = gson.fromJson(f, new util.HashMap[String, Any]().getClass)
-//      ctx.collect(new Event(eventMap))
-//    })
-  }
-
-  override def cancel() = {}
-}
-
-class DerivedEventSource1 extends SourceFunction[Event] {
-  override def run(ctx: SourceContext[Event]) {
-    val gson = new Gson()
   }
 
   override def cancel() = {}
