@@ -180,7 +180,7 @@ druid_configs:
    druid_middlemanager_persistent_volume_size: 20G
    druid_mm_java_opts_array: "-server -Xms512m -Xmx512m -XX:+UseG1GC -XX:MaxGCPauseMillis=100"
    druid_middlemanager_peon_server_http_numThread: 25
-   druid_middlemanager_peon_processing_bufferBytes: 25000000
+   druid_middlemanager_peon_processing_bufferBytes: 25MiB
    druid_middlemanager_peon_processing_threads: 2
    druid_middlemanager_peon_server_maxsize: 0
    druid_indexing_queue_startDelay: PT30S
