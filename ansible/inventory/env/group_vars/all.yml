@@ -76,6 +76,12 @@ postgres:
   db_port: 5432
   db_admin_user: analytics
   db_admin_password: "{{dp_vault_pgdb_admin_password}}"
+  superset:
+    db_username: "superset"
+    db_password: "{{ dp_vault_superset_db_password | default('') }}"
+    db_name: "superset_db"
+
+superset_admin_password: "{{ dp_vault_superset_ui_admin_password | default('') }}"
 
 postgres_address_space: 0.0.0.0/0 # Postgres trust address space
 
