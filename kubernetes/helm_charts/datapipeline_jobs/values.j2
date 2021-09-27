@@ -499,6 +499,11 @@ summary-denormalization:
     parallelism.default: 1
     jobmanager.execution.failover-strategy: region
     taskmanager.memory.network.fraction: 0.1
+    scheduler-mode: reactive
+    heartbeat.timeout: 8000
+    heartbeat.interval: 5000
+    taskmanager.memory.process.size: {{ flink_job_names['summary-denormalization'].taskmanager_process_memory }}
+    jobmanager.memory.process.size: {{ flink_job_names['summary-denormalization'].jobmanager_process_memory }}
 
 druid-validator:
   druid-validator: |+
