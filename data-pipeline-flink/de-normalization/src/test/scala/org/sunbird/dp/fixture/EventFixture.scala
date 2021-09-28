@@ -10,6 +10,8 @@ object EventFixture {
   val gson = new Gson()
   val deviceCacheData1 = """{"country":"India","state_custom":"Karnataka","devicespec":"{}","city":"Bengaluru","uaspec":"{}","district_custom":"BENGALURU URBAN SOUTH","country_code":"IN","firstaccess":"1571999041881","state_code_custom":"29"}"""
   val deviceCacheData2 = """{"user_declared_state":"Maharashtra","state_custom":"Maharashtra","devicespec":"{\"scrn\":\"5.46\",\"camera\":\"\",\"idisk\":\"25.44\",\"os\":\"Android 9\",\"id\":\"45f32f48592cb9bcf26bef9178b7bd20abe24932\",\"sims\":\"-1\",\"cpu\":\"abi: armeabi-v7a processor\t: 0 \",\"webview\":\"79.0.3945.116\",\"edisk\":\"25.42\",\"make\":\"Samsung SM-J400F\"}","uaspec":"{\"agent\":\"UNKNOWN\",\"ver\":\"UNKNOWN\",\"system\":\"Android\",\"raw\":\"Dalvik/2.1.0 (Linux U Android 9 SM-J400F Build/PPR1.180610.011)\"}","city":"Mumbai","country_code":"IN","firstaccess":"1578972432419","country":"India","country_name":"India","state":"Maharashtra","continent_name":"Asia","state_code":"MH","fcm_token":"d3ddT88xXLI:APA91bF9lJ4eH8tshAPgKiiZ3hL3sbib0pUN2I388T58oFDxUBQ2WKKuvtBga6iKiOPrgssNKLs4QBjZxE_BbtdGdO0gPdFPataEeXshgYxMKC0VT-oyjrNIZKdKkybQoyichBCiokTD","producer":"sunbirddev.diksha.app","district_custom":"Mumbai","user_declared_district":"Raigad","state_code_custom":"27"}"""
+  // device data without user declared location fields
+  val deviceCacheData3 = """{"state_custom":"Maharashtra","devicespec":"{\"scrn\":\"5.46\",\"camera\":\"\",\"idisk\":\"25.44\",\"os\":\"Android 9\",\"id\":\"45f32f48592cb9bcf26bef9178b7bd20abe24932\",\"sims\":\"-1\",\"cpu\":\"abi: armeabi-v7a processor\t: 0 \",\"webview\":\"79.0.3945.116\",\"edisk\":\"25.42\",\"make\":\"Samsung SM-J400F\"}","uaspec":"{\"agent\":\"UNKNOWN\",\"ver\":\"UNKNOWN\",\"system\":\"Android\",\"raw\":\"Dalvik/2.1.0 (Linux U Android 9 SM-J400F Build/PPR1.180610.011)\"}","city":"Mumbai","country_code":"IN","firstaccess":"1578972432419","country":"India","country_name":"India","state":"Maharashtra","continent_name":"Asia","state_code":"MH","fcm_token":"d3ddT88xXLI:APA91bF9lJ4eH8tshAPgKiiZ3hL3sbib0pUN2I388T58oFDxUBQ2WKKuvtBga6iKiOPrgssNKLs4QBjZxE_BbtdGdO0gPdFPataEeXshgYxMKC0VT-oyjrNIZKdKkybQoyichBCiokTD","producer":"sunbirddev.diksha.app","district_custom":"Mumbai","state_code_custom":"27"}"""
   
   val userCacheData1 = """{"usersignintype":"Anonymous","usertype":"TEACHER"}"""
   val userCacheData2 = """{"channel":"KV123","phoneverified":false,"createdby":"c8e51123-61a3-454d-beb0-2202450b0096","subject":["English"],"email":"BJAguqy3GaJECrYqDUPjeducVxa5J9ZsW9A8qc7YHelkV7KbgkCKW10quCbhpgxbh2t4toXC8uXW\\ngiguS+8ucwzbmgPm7q7YSYz26SfpHnzBo/0Vh3TWqr2MOq9LlX6gT6a+wzaAmCWueMEdPmZuRg==","username":"I+CyiN6Bx0GCRm9lkA3xn5uNBm0AODhxeDwJebxxBfuGJ5V2v1R8v1PEQsP+V+y9sAFcM2WtaMLj\\n91hpzBq0PFcQTq6OSPQOm0sySPXTDzyLvm1cKaLwzvJ6fzLLs9nKT6a+wzaAmCWueMEdPmZuRg==","firstname":"A512","framework":{},"userid":"610bab7d-1450-4e54-bf78-c7c9b14dbc81","usertype":"TEACHER","rootorgid":"0126978705345576967","id":"610bab7d-1450-4e54-bf78-c7c9b14dbc81","language":[],"grade":[],"roles":["BOOK_REVIEWER"],"status":1,"webpages":[],"createddate":"2019-04-11 08:58:16:512+0000","emailverified":true,"isdeleted":false,"locationids":[],"maskedemail":"a5**@yopmail.com","profilevisibility":{},"loginid":"I+CyiN6Bx0GCRm9lkA3xnx2W8+QgN39Y0We3KjR98O8hD6YjyoCirIBDsWHGwRf65PY/Cx+pFFK1\\nIz1VinIaKgDnSQwkl7ajzQjjRTzQbKOyHsAXkJgo9I5l7ulEYVXRT6a+wzaAmCWueMEdPmZuRg==","usersignintype":"Self-Signed-In","userlogintype":"Student","state":"Telangana","district":"Hyderabad"}"""
@@ -32,6 +34,15 @@ object EventFixture {
   val currentDate: Long = DateTime.now().getMillis
   val olderDate: Long = DateTime.now().minusMonths(5).getMillis
   val futureDate: Long = DateTime.now().plusMonths(1).getMillis
+
+  val telemetryEvent: String = s"""{"actor":{"type":"User","id":"b7470841-7451-43db-b5c7-2dcf4f8d3b23"},"eid":"INTERACT",
+                                  |"edata":{"type":"OTHER","subtype":"sheen-animation-ended","id":"library","pageid":"library","extra":{"pos":[]}},
+                                  |"ver":"3.0","syncts":1.579564974098E12,"@timestamp":"2020-01-21T00:02:54.098Z","ets":$currentDate,
+                                  |"context":{"cdata":[],"env":"home","channel":"505c7c48ac6dc1edc9b08f21db5a571d",
+                                  |"pdata":{"id":"sunbird.app","pid":"sunbird.app","ver":"2.3.144"},"sid":"df936f82-e982-41ec-8412-70d414458272",
+                                  |"did":"45f32f48592cb9bcf26bef9178b7bd20abe24932"},"flags":{"dd_processed":true},
+                                  |"mid":"mid1","type":"events","object":{"id":"","type":"",
+                                  |"version":"","rollup":{}}}""".stripMargin
   
   val telemetrEvents: List[String] = List(
       
