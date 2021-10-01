@@ -127,7 +127,7 @@
   tags: update
 
 - name: update {{ env }}_dataset_metadata
-  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "ALTER TABLE {{ env }}_dataset_metadata ADD COLUMN IF NOT EXISTS dataset_sub_id TYPE VARCHAR(50), ADD COLUMN IF NOT EXISTS validation_json TYPE json, ADD COLUMN IF NOT EXISTS druid_query TYPE json, ADD COLUMN IF NOT EXISTS limits TYPE json, ADD COLUMN IF NOT EXISTS supported_formats TYPE text[], ADD COLUMN IF NOT EXISTS exhaust_type TYPE VARCHAR(50)"
+  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "ALTER TABLE {{ env }}_dataset_metadata ADD COLUMN IF NOT EXISTS dataset_sub_id VARCHAR(50), ADD COLUMN IF NOT EXISTS validation_json json, ADD COLUMN IF NOT EXISTS druid_query json, ADD COLUMN IF NOT EXISTS limits json, ADD COLUMN IF NOT EXISTS supported_formats text[], ADD COLUMN IF NOT EXISTS exhaust_type VARCHAR(50)"
   run_once: true
   tags: update  
 
