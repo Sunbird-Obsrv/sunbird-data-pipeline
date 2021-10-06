@@ -129,7 +129,17 @@
 - name: update {{ env }}_dataset_metadata
   shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "ALTER TABLE {{ env }}_dataset_metadata ADD COLUMN IF NOT EXISTS dataset_sub_id VARCHAR(50), ADD COLUMN IF NOT EXISTS validation_json json, ADD COLUMN IF NOT EXISTS druid_query json, ADD COLUMN IF NOT EXISTS limits json, ADD COLUMN IF NOT EXISTS supported_formats text[], ADD COLUMN IF NOT EXISTS exhaust_type VARCHAR(50)"
   run_once: true
-  tags: update  
+  tags: update 
+
+- name: update {{ env }}_dataset_metadata
+  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "ALTER TABLE {{ env }}_dataset_metadata DROP CONSTRAINT {{ env }}_dataset_metadata_pkey"
+  run_once: true
+  tags: update
+
+- name: update {{ env }}_dataset_metadata
+  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "ALTER TABLE {{ env }}_dataset_metadata ADD PRIMARY KEY(dataset_id, dataset_sub_id)"
+  run_once: true
+  tags: update    
 
 - name: update report
   shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "ALTER TABLE report ADD COLUMN IF NOT EXISTS parameters jsonb"
