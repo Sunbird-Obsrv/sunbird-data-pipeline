@@ -132,7 +132,7 @@
   tags: update 
 
 - name: update {{ env }}_dataset_metadata
-  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "ALTER TABLE {{ env }}_dataset_metadata DROP CONSTRAINT {{ env }}_dataset_metadata_pkey"
+  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "ALTER TABLE {{ env }}_dataset_metadata DROP CONSTRAINT IF EXISTS {{ env }}_dataset_metadata_pkey"
   run_once: true
   tags: update
 
