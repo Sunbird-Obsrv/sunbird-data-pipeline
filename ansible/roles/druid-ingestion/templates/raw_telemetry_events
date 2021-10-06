@@ -843,21 +843,6 @@
               "type": "path",
               "name": "object_l2_subjects",
               "expr": "$.l2data.subject[*]"
-            },
-            {
-              "type": "path",
-              "name": "utm_source",
-              "expr": "$.edata.extra.values[*].utm_data.utm_source"
-            },
-            {
-              "type": "path",
-              "name": "utm_medium",
-              "expr": "$.edata.extra.values[*].utm_data.utm_medium"
-            },
-            {
-              "type": "path",
-              "name": "utm_campaign",
-              "expr": "$.edata.extra.values[*].utm_data.utm_campaign"
             }
           ]
         },
