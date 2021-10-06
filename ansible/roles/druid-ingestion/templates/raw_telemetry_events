@@ -843,21 +843,6 @@
               "type": "path",
               "name": "object_l2_subjects",
               "expr": "$.l2data.subject[*]"
-            },
-            {
-              "type": "path",
-              "name": "utm_source",
-              "expr": "$.edata.extra.values[*].utm_data.utm_source"
-            },
-            {
-              "type": "path",
-              "name": "utm_medium",
-              "expr": "$.edata.extra.values[*].utm_data.utm_medium"
-            },
-            {
-              "type": "path",
-              "name": "utm_campaign",
-              "expr": "$.edata.extra.values[*].utm_data.utm_campaign"
             }
           ]
         },
@@ -1514,6 +1499,10 @@
             },
             {
               "type": "string",
+              "name": "utm_content"
+            },
+            {
+              "type": "string",
               "name": "utm_medium"
             },
             {
@@ -1534,6 +1523,30 @@
       "type": "uniform",
       "segmentGranularity": "day",
       "rollup": false
+    },
+    "transformSpec": {
+      "transforms": [
+        {
+          "type": "expression",
+          "name": "utm_source",
+          "expression": "if(like(\"context_cdata_type\",'UtmSource'), context_cdata_id, '')"
+        },
+        {
+          "type": "expression",
+          "name": "utm_content",
+          "expression": "if(like(\"context_cdata_type\",'UtmContent'), context_cdata_id, '')"
+        },
+        {
+          "type": "expression",
+          "name": "utm_medium",
+          "expression": "if(like(\"context_cdata_type\",'UtmMedium'), context_cdata_id, '')"
+        },
+        {
+          "type": "expression",
+          "name": "utm_campaign",
+          "expression": "if(like(\"context_cdata_type\",'UtmCampaign'), context_cdata_id, '')"
+        }
+      ]
     }
   },
   "ioConfig": {
