@@ -254,9 +254,45 @@ sunbird.content.hierarchy.keyspace="{{ cassandra_hierarchy_store_keyspace }}"
 sunbird.user.cluster.host="{{ core_cassandra_host }}"
 sunbird.courses.cluster.host="{{ core_cassandra_host }}"
 sunbird.content.cluster.host="{{ core_cassandra_host }}"
-sunbird.report.cluster.host="{{ report_cassandra_host }}"
+sunbird.report.cluster.host="{{ report_cassandra_cluster_host }}"
 sunbird.user.report.keyspace="{{ report_user_table_keyspace }}"
 collection.exhaust.store.prefix=""
 postgres.table.job_request="{{ job_request_table }}"
+postgres.table.dataset_metadata="{{ dataset_metadata_table }}"
 
 ## Collection Exhaust Jobs Configuration -- End ##
+
+## Exhaust throttling variables
+exhaust.batches.limit.per.channel={{ exhaust_batches_limit_per_channel }}
+exhaust.file.size.limit.per.channel={{ exhaust_file_size_limit_bytes_per_channel }}
+
+exhaust.parallel.batch.load.limit={{ exhaust_parallel_batch_load_limit }}
+exhaust.user.parallelism={{ exhaust_user_parallelism }}
+
+data_exhaust.batch.limit.per.request={{ data_exhaust_batch_limit_per_request }}
+
+
+
+//START of UCI Postgres Config
+
+uci.conversation.postgres.db="{{ uci_postgres.conversation_db_name }}"
+uci.conversation.postgres.url="jdbc:postgresql://{{uci_postgres.conversation_db_host}}:{{uci_postgres.conversation_db_port}}/"
+
+uci.fushionauth.postgres.db="{{ uci_postgres.fushionauth_db_name }}"
+uci.fushionauth.postgres.url="jdbc:postgresql://{{uci_postgres.fushionauth_db_host}}:{{uci_postgres.fushionauth_db_port}}/"
+
+uci.postgres.table.conversation="{{ uci_postgres.conversation_table_name }}"
+uci.postgres.table.user="{{ uci_postgres.user_table_name }}"
+uci.postgres.table.user_registration="{{ uci_postgres.user_registration_table_name }}"
+uci.postgres.table.identities="{{ uci_postgres.user_identities_table_name }}"
+
+uci.conversation.postgres.user="{{ uci_postgres.conversation_db_user }}"
+uci.conversation.postgres.pass="{{ uci_postgres.conversation_db_psss }}"
+
+uci.fushionauth.postgres.user="{{ uci_postgres.fushionauth_db_user }}"
+uci.fushionauth.postgres.pass="{{ uci_postgres.fushionauth_db_psss }}"
+
+uci.exhaust.store.prefix=""
+uci.encryption.secret="{{ uci_encryption_secret_key }}"
+
+// END OF UCI Related Job Configs

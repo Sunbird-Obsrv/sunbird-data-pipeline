@@ -101,6 +101,12 @@ processing_kafka_overriden_topics:
   - name: telemetry.unique.secondary
     retention_time: 172800000
     replication_factor: 1
+  - name: ml.observation.raw
+    retention_time: 172800000
+    replication_factor: 1
+  - name: ml.observation.druid
+    retention_time: 172800000
+    replication_factor: 1
 
 processing_kafka_topics:
   - name: analytics.job_queue
@@ -191,5 +197,11 @@ processing_kafka_topics:
     num_of_partitions: 1
     replication_factor: 1
   - name: druid.events.summary
+    num_of_partitions: 1
+    replication_factor: 1
+  - name: ml.observation.raw
+    num_of_partitions: 1
+    replication_factor: 1
+  - name: ml.observation.druid
     num_of_partitions: 1
     replication_factor: 1

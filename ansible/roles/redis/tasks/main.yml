@@ -1,14 +1,30 @@
 ---
 # tasks file for redis
+- name: change the data dir ownership
+  file:
+    path: /data
+    state: directory
+    owner: "{{ redis_user }}"
+    group: "{{ redis_user }}"
+    mode: 0755
+  become: yes
+
+- name: create the redis dir
+  become: yes
+  become_user: "{{ redis_user }}"
+  file:
+    path: "{{ analytics_redis_user_home }}/redis"
+    state: directory
+
 - name: download redis zipfile
   become: yes
   become_user: "{{ redis_user }}"
-  get_url: url={{ redis_tar_ball }} dest={{ redis_dir }}/redis-stable.tar.gz timeout=50 force=no owner={{ redis_user }}
+  get_url: url={{ redis_tar_ball }} dest={{ redis_dir }}/redis-{{ redis_version }}.tar.gz timeout=50 force=no owner={{ redis_user }}
 
 - name: unzip
   become: yes
   become_user: "{{ redis_user }}"
-  unarchive: src={{ redis_dir }}/redis-stable.tar.gz dest={{ redis_dir }} copy=no group={{ redis_user }} owner={{ redis_user }} creates={{ redis_home }}
+  unarchive: src={{ redis_dir }}/redis-{{ redis_version }}.tar.gz dest={{ redis_dir }} copy=no group={{ redis_user }} owner={{ redis_user }} creates={{ redis_home }}
 
 - name: Change ownership of redis installation
   become: yes
@@ -16,7 +32,7 @@
 
 - name: redis conf
   become: yes
-  template: src=redis.conf.j2 dest={{ redis_dir }}/redis-stable/redis.conf
+  template: src=redis.conf.j2 dest={{ redis_dir }}/redis-{{ redis_version }}/redis.conf
 
 - name: Install required utils
   apt: name={{ item }} state=present
@@ -25,7 +41,6 @@
     - make
     - gcc
     - build-essential
-    - tcl8.5
 
 - name: Go to the folder and run make
   become: yes
