@@ -1529,22 +1529,22 @@
         {
           "type": "expression",
           "name": "utm_source",
-          "expression": "if(context_cdata_type=='UtmSource', context_cdata_id, '')"
+          "expression": "if(like(\"context_cdata_type\",'%UtmSource%'), context_cdata_id, '')"
         },
         {
           "type": "expression",
           "name": "utm_content",
-          "expression": "if(context_cdata_type=='UtmContent', context_cdata_id, '')"
+          "expression": "if(like(\"context_cdata_type\",'%UtmContent%'), context_cdata_id, '')"
         },
         {
           "type": "expression",
           "name": "utm_medium",
-          "expression": "if(context_cdata_type=='UtmMedium', context_cdata_id, '')"
+          "expression": "if(like(\"context_cdata_type\",'%UtmMedium%'), context_cdata_id, '')"
         },
         {
           "type": "expression",
           "name": "utm_campaign",
-          "expression": "if(context_cdata_type=='UtmCampaign', context_cdata_id, '')"
+          "expression": "if(like(\"context_cdata_type\",'%UtmCampaign%'), context_cdata_id, '')"
         }
       ]
     }
