@@ -40,6 +40,8 @@ get_report_job_model_name(){
 		;;
 		"collection-summary-report-v2") echo 'org.sunbird.analytics.job.report.CollectionSummaryJobV2'
 		;;
+		"assessment-score-metric-correction") echo 'org.sunbird.analytics.audit.AssessmentScoreCorrectionJob'
+		;;
 		"course-batch-status-updater") echo 'org.sunbird.analytics.audit.CourseBatchStatusUpdaterJob'
 		;;
 		"collection-reconciliation-job") echo 'org.sunbird.analytics.audit.CollectionReconciliationJob'
@@ -49,6 +51,10 @@ get_report_job_model_name(){
         "assessment-archival") echo 'org.sunbird.analytics.job.report.AssessmentArchivalJob'
         ;;
         "assessment-archived-removal") echo 'org.sunbird.analytics.job.report.AssessmentArchivalJob'
+		;;
+        "uci-private-exhaust") echo 'org.sunbird.analytics.exhaust.uci.UCIPrivateExhaustJob'
+        ;;
+        "uci-response-exhaust") echo 'org.sunbird.analytics.exhaust.uci.UCIResponseExhaustJob'
         ;;
 		*) echo $1
 		;;

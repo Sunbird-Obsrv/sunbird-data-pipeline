@@ -77,16 +77,16 @@ class PipelineProcessorStreamTaskTestSpec extends BaseTestSpec {
     task.process()
 
     // 5 telemetry and 3 SHARE_ITEM
-    TelemetryPrimaryEventSink.values.size() should be(9)
+    TelemetryPrimaryEventSink.values.size() should be(10)
     TelemetryPrimaryEventSink.values.asScala.count(event => event.eid().equals("SHARE_ITEM")) should be (3)
-    TelemetryFailedEventsSink.values.size() should be(6)
+    TelemetryFailedEventsSink.values.size() should be(7)
     DupEventsSink.values.size() should be(1)
     TelemetryAuditEventSink.values.size() should be(1)
     TelemetryLogEventSink.values.size() should be(1)
     TelemetryErrorEventSink.values.size() should be(1)
 
     TelemetryDenormSecondaryEventSink.values.size() should be(4) // 1 INTERACT and 3 SHARE_ITEM
-    TelemetryDenormPrimaryEventSink.values.size() should be(5)
+    TelemetryDenormPrimaryEventSink.values.size() should be(6)
 
     /**
      * * 1. primary-route-success-count -> 05
@@ -115,21 +115,21 @@ class PipelineProcessorStreamTaskTestSpec extends BaseTestSpec {
         expectedShareItems should contain (actualShareItem)
     }
 
-    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.primaryRouterMetricCount}").getValue() should be(6)
+    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.primaryRouterMetricCount}").getValue() should be(7)
     BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.shareItemEventsMetircsCount}").getValue() should be(3)
     BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.auditEventRouterMetricCount}").getValue() should be(1)
     BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.shareEventsRouterMetricCount}").getValue() should be(1)
     BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.logEventsRouterMetricsCount}").getValue() should be(1)
     BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.errorEventsRouterMetricsCount}").getValue() should be(1)
 
-    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.validationSuccessMetricsCount}").getValue() should be(9)
-    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.validationFailureMetricsCount}").getValue() should be(6)
+    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.validationSuccessMetricsCount}").getValue() should be(10)
+    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.validationFailureMetricsCount}").getValue() should be(7)
 
-    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.unique-event-count").getValue() should be(7) // ONLY LOG events are skipped from dedup
+    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.unique-event-count").getValue() should be(8) // ONLY LOG events are skipped from dedup
     BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.duplicate-event-count").getValue() should be(1)
 
     BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.denormSecondaryEventsRouterMetricsCount}").getValue() should be(4)
-    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.denormPrimaryEventsRouterMetricsCount}").getValue() should be(5)
+    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.denormPrimaryEventsRouterMetricsCount}").getValue() should be(6)
 
   }
   }
@@ -153,6 +153,8 @@ class PipeLineProcessorEventSource extends SourceFunction[Event] {
     val event13 = gson.fromJson(EventFixtures.EVENT_13, new util.LinkedHashMap[String, Any]().getClass)
     val event14 = gson.fromJson(EventFixtures.EVENT_14, new util.LinkedHashMap[String, Any]().getClass)
     val event15 = gson.fromJson(EventFixtures.EVENT_15, new util.LinkedHashMap[String, Any]().getClass)
+    val event16 = gson.fromJson(EventFixtures.EVENT_16, new util.LinkedHashMap[String, Any]().getClass)
+    val event17 = gson.fromJson(EventFixtures.EVENT_17, new util.LinkedHashMap[String, Any]().getClass)
     ctx.collect(new Event(event1))
     ctx.collect(new Event(event2))
     ctx.collect(new Event(event3))
@@ -168,6 +170,8 @@ class PipeLineProcessorEventSource extends SourceFunction[Event] {
     ctx.collect(new Event(event13))
     ctx.collect(new Event(event14))
     ctx.collect(new Event(event15))
+    ctx.collect(new Event(event16))
+    ctx.collect(new Event(event17))
   }
 
   override def cancel() = {}

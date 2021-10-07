@@ -223,7 +223,7 @@ ingest-router:
     heartbeat.timeout: 8000
     heartbeat.interval: 5000
     taskmanager.memory.process.size: {{ flink_job_names['ingest-router'].taskmanager_process_memory }}
-    jobmanager.memory.process.size: 1600m
+    jobmanager.memory.process.size: {{ flink_job_names['ingest-router'].jobmanager_process_memory }}
 
 
 telemetry-extractor:
@@ -274,7 +274,7 @@ telemetry-extractor:
     heartbeat.timeout: 8000
     heartbeat.interval: 5000
     taskmanager.memory.process.size: {{ flink_job_names['telemetry-extractor'].taskmanager_process_memory }}
-    jobmanager.memory.process.size: 1600m
+    jobmanager.memory.process.size: {{ flink_job_names['telemetry-extractor'].jobmanager_process_memory }}
 
 pipeline-preprocessor:
   pipeline-preprocessor: |+
@@ -317,7 +317,7 @@ pipeline-preprocessor:
     heartbeat.timeout: 8000
     heartbeat.interval: 5000
     taskmanager.memory.process.size: {{ flink_job_names['pipeline-preprocessor'].taskmanager_process_memory }}
-    jobmanager.memory.process.size: 1600m
+    jobmanager.memory.process.size: {{ flink_job_names['pipeline-preprocessor'].jobmanager_process_memory }}
 
 de-normalization-secondary:
   de-normalization-secondary: |+
@@ -333,6 +333,7 @@ de-normalization-secondary:
       groupId = {{ env_name }}-telemetry-denorm-secondary-group
     }
     skip.events = ["INTERRUPT"]
+    permit.eid=["AUDIT"]
     task {
       window.count = {{ denorm_secondary_window_count }}
       window.shards = {{ denorm_secondary_window_shards }}
@@ -378,7 +379,7 @@ de-normalization-secondary:
     heartbeat.timeout: 8000
     heartbeat.interval: 5000
     taskmanager.memory.process.size: {{ flink_job_names['de-normalization-secondary'].taskmanager_process_memory }}
-    jobmanager.memory.process.size: 1600m
+    jobmanager.memory.process.size: {{ flink_job_names['de-normalization-secondary'].jobmanager_process_memory }}
 
 de-normalization-primary:
   de-normalization-primary: |+
@@ -394,6 +395,7 @@ de-normalization-primary:
       groupId = {{ env_name }}-telemetry-denorm-primary-group
     }
     skip.events = ["INTERRUPT"]
+    permit.eid=["AUDIT"]
     task {
       window.count = {{ denorm_primary_window_count }}
       window.shards = {{ denorm_primary_window_shards }}
@@ -439,7 +441,7 @@ de-normalization-primary:
     heartbeat.timeout: 8000
     heartbeat.interval: 5000
     taskmanager.memory.process.size: {{ flink_job_names['de-normalization-primary'].taskmanager_process_memory }}
-    jobmanager.memory.process.size: 1600m   
+    jobmanager.memory.process.size: {{ flink_job_names['de-normalization-primary'].jobmanager_process_memory }}
 
 summary-denormalization:
   summary-denormalization: |+
@@ -455,6 +457,7 @@ summary-denormalization:
       groupId = {{ env_name }}-summmary-denorm-group
     }
     skip.events = ["INTERRUPT"]
+    permit.eid=["AUDIT"]
     task {
       window.count = {{ denorm_summary_window_count }}
       window.shards = {{ denorm_summary_window_shards }}
@@ -496,6 +499,11 @@ summary-denormalization:
     parallelism.default: 1
     jobmanager.execution.failover-strategy: region
     taskmanager.memory.network.fraction: 0.1
+    scheduler-mode: reactive
+    heartbeat.timeout: 8000
+    heartbeat.interval: 5000
+    taskmanager.memory.process.size: {{ flink_job_names['summary-denormalization'].taskmanager_process_memory }}
+    jobmanager.memory.process.size: {{ flink_job_names['summary-denormalization'].jobmanager_process_memory }}
 
 druid-validator:
   druid-validator: |+
@@ -543,7 +551,7 @@ druid-validator:
     heartbeat.timeout: 8000
     heartbeat.interval: 5000
     taskmanager.memory.process.size: {{ flink_job_names['druid-validator'].taskmanager_process_memory }}
-    jobmanager.memory.process.size: 1600m
+    jobmanager.memory.process.size: {{ flink_job_names['druid-validator'].jobmanager_process_memory }}
 
 device-profile-updater:
   device-profile-updater: |+
@@ -686,8 +694,12 @@ assessment-aggregator:
     redis {
       database {
         relationCache.id = 10
+        contentCache.id = 5
       }
     }
+    assessment.skip.missingRecords = true
+    content.read.api = "{{ content_read_api_host }}/{{ content_read_api_endpoint }}"
+
   flink-conf: |+
     jobmanager.memory.flink.size: {{ flink_job_names['assessment-aggregator'].jobmanager_memory }}
     taskmanager.memory.flink.size: {{ flink_job_names['assessment-aggregator'].taskmanager_memory }}
@@ -710,6 +722,7 @@ error-denormalization:
       groupId = {{ env_name }}-error-denorm-group
     }
     skip.events = ["INTERRUPT"]
+    permit.eid=["AUDIT"]
     task {
       window.count = {{ denorm_primary_window_count }}
       window.shards = {{ denorm_primary_window_shards }}

@@ -144,6 +144,8 @@ middleware_cassandra_assessment_aggregator_table: assessment_aggregator
 middleware_cassandra_assessment_question_type : question
 middleware_cassandra_user_enrolments_table: user_enrolments
 middleware_cassandra_user_activity_agg_table: user_activity_agg
+content_read_api_host: "http://dev.sunbirded.org"
+content_read_api_endpoint: "/api/content/v1/read/" 
 
 ### taskmanager related vars
 healthcheck: true
@@ -170,6 +172,7 @@ flink_job_names:
     jobmanager_memory: 1024m
     taskmanager_memory: 1024m
     taskmanager_process_memory: 1700m
+    jobmanager_process_memory: 1600m
     taskslots: 1
     cpu_requests: 0.3
     scale_enabled: true
@@ -182,6 +185,7 @@ flink_job_names:
     jobmanager_memory: 1024m
     taskmanager_memory: 1024m
     taskmanager_process_memory: 1700m
+    jobmanager_process_memory: 1600m
     taskslots: 1
     cpu_requests: 0.3
     scale_enabled: true
@@ -194,6 +198,7 @@ flink_job_names:
     jobmanager_memory: 1024m
     taskmanager_memory: 1024m
     taskmanager_process_memory: 1700m
+    jobmanager_process_memory: 1600m
     taskslots: 1
     cpu_requests: 0.3
     scale_enabled: false
@@ -203,6 +208,7 @@ flink_job_names:
     jobmanager_memory: 1024m
     taskmanager_memory: 1024m
     taskmanager_process_memory: 1700m
+    jobmanager_process_memory: 1600m
     taskslots: 1
     cpu_requests: 0.3
     scale_enabled: false 
@@ -212,6 +218,7 @@ flink_job_names:
     jobmanager_memory: 1024m
     taskmanager_memory: 1024m
     taskmanager_process_memory: 1700m
+    jobmanager_process_memory: 1600m
     taskslots: 1
     cpu_requests: 0.3
     scale_enabled: true
@@ -224,6 +231,7 @@ flink_job_names:
     jobmanager_memory: 1024m
     taskmanager_memory: 1024m
     taskmanager_process_memory: 1700m
+    jobmanager_process_memory: 1600m
     taskslots: 1
     cpu_requests: 0.3
     scale_enabled: true
@@ -236,6 +244,7 @@ flink_job_names:
     jobmanager_memory: 1024m
     taskmanager_memory: 1024m
     taskmanager_process_memory: 1700m
+    jobmanager_process_memory: 1600m
     taskslots: 1
     cpu_requests: 0.3
     scale_enabled: true
@@ -248,6 +257,7 @@ flink_job_names:
     jobmanager_memory: 1024m
     taskmanager_memory: 1024m
     taskmanager_process_memory: 1700m
+    jobmanager_process_memory: 1600m
     taskslots: 1
     cpu_requests: 0.3
     scale_enabled: false
@@ -257,6 +267,7 @@ flink_job_names:
     jobmanager_memory: 1024m
     taskmanager_memory: 1024m
     taskmanager_process_memory: 1700m
+    jobmanager_process_memory: 1600m
     taskslots: 1
     cpu_requests: 0.3
     scale_enabled: false
@@ -266,6 +277,7 @@ flink_job_names:
     jobmanager_memory: 1024m
     taskmanager_memory: 1024m
     taskmanager_process_memory: 1700m
+    jobmanager_process_memory: 1600m
     taskslots: 1
     cpu_requests: 0.3
     scale_enabled: false
@@ -275,6 +287,7 @@ flink_job_names:
     jobmanager_memory: 1024m
     taskmanager_memory: 1024m
     taskmanager_process_memory: 1700m
+    jobmanager_process_memory: 1600m
     taskslots: 1
     cpu_requests: 0.3
     scale_enabled: false
@@ -284,15 +297,20 @@ flink_job_names:
     jobmanager_memory: 1024m
     taskmanager_memory: 1024m
     taskmanager_process_memory: 1700m
+    jobmanager_process_memory: 1600m
     taskslots: 1
     cpu_requests: 0.3
-    scale_enabled: false
+    scale_enabled: true
+    scale_target_value: 100
+    min_replica: 1
+    max_replica: 2
   device-profile-updater:
     job_class_name: 'org.sunbird.dp.deviceprofile.task.DeviceProfileUpdaterStreamTask'
     replica: 1
     jobmanager_memory: 1024m
     taskmanager_memory: 1024m
     taskmanager_process_memory: 1700m
+    jobmanager_process_memory: 1600m
     taskslots: 1
     cpu_requests: 0.3
     scale_enabled: false
@@ -302,6 +320,7 @@ flink_job_names:
     jobmanager_memory: 1024m
     taskmanager_memory: 1024m
     taskmanager_process_memory: 1700m
+    jobmanager_process_memory: 1600m
     taskslots: 1
     cpu_requests: 0.3
     scale_enabled: true
@@ -314,6 +333,7 @@ flink_job_names:
     jobmanager_memory: 1024m
     taskmanager_memory: 1024m
     taskmanager_process_memory: 1700m
+    jobmanager_process_memory: 1600m
     taskslots: 1
     cpu_requests: 0.3
     scale_enabled: false 

@@ -2,7 +2,7 @@
 
 # Url to access prometheus
 prometheus:
-  url: http://{{core_prom_ip.split(":")[0]}}
+  url: http://sunbird-monitoring-prometheus.monitoring.svc.cluster.local
   port: 9090
   path: ""
 

@@ -72,9 +72,35 @@ object EventFixture {
     """
       |
       |{"eid":"AUDIT","ets":1573121861118,"ver":"3.0","mid":"1573121861118.40f9136b-1cc3-458d-a04a-4459606df","actor":{"id":"5609876543234567890987654345678","type":"Request"},"context":{"channel":"01285019302823526477","pdata":{"id":"dev.sunbird.portal","pid":"learner-service","ver":"2.5.0"},"env":"User","did":"user-5","cdata":[{"id":"25cb0530-7c52-ecb1-cff2-6a14faab7910","type":"UserRole"}],"rollup":{"l1":"01285019302823526477"}},"object":{"id":"user-7","type":"user"},"edata":{"state":"wrongState"},"syncts":1573121861125,"@timestamp":"2019-11-07T10:17:41.125Z","flags":{"tv_processed":true,"dd_processed":true},"type":"events","ts":"2019-11-07T10:17:41.118+0000"}
+      |""".stripMargin,
+    /**
+     * User-Id : user-10
+     * schoolname starting with '['
+     * Having all the user data
+     */
+    """
+      {"eid":"AUDIT","ets":1573121861118,"ver":"3.0","mid":"1573121861118.40f9136b-1cc3-458d-a04a-4459606df","actor":{"id":"5609876543234567890987654345678","type":"Request"},"context":{"channel":"01285019302823526477","pdata":{"id":"dev.sunbird.portal","pid":"learner-service","ver":"2.5.0"},"env":"User","did":"user-3","cdata":[{"id":"google","type":"SignupType"}],"rollup":{"l1":"01285019302823526477"}},"object":{"id":"user-10","type":"user"},"edata":{"state":"Update","props":["recoveryEmail","recoveryPhone","userId","id","externalIds","updatedDate","updatedBy"]},"syncts":1573121861125,"@timestamp":"2019-11-07T10:17:41.125Z","flags":{"tv_processed":true,"dd_processed":true},"type":"events","ts":"2019-11-07T10:17:41.118+0000"}
+      |
       |""".stripMargin
 
   )
 
+  /**
+   * User-Id : user-1
+   * Edata.state is update
+   * Having pid as sunbird.app
+   */
+  val telemetryEventWithAppPid: String = """
+      |{"actor":{"type":"System","id":"cb0defc7-9f5f-4c0a-bb73-207d34ed2cf0"},"eid":"AUDIT","edata":{"state":"Updated","props":[]},"ver":"3.0","syncts":1631551986826,"@timestamp":"2021-09-13T16:53:06.826Z","ets":1.63155195956E12,"context":{"cdata":[{"id":"teacher","type":"UserRole"},{"type":"Tabs","id":"Library-Course"},{"id":"a9d1d5df-da2e-4006-8495-363cce1ceec2","type":"UserSession"}],"env":"sdk","channel":"0126684405014528002","pdata":{"id":"dev.sunbird.app","pid":"sunbird.app","ver":"4.1.892"},"sid":"a9d1d5df-da2e-4006-8495-363cce1ceec2","did":"575fc6d8a853d2f543e4ef54d57aa3b6cd0110cf","rollup":{"l1":"0126684405014528002"}},"flags":{"ex_processed":true,"pp_validation_processed":true,"pp_duplicate_skipped":true},"mid":"bb429169-f320-4da3-80ad-660093aafe3b","type":"events","object":{"id":"user-1","type":"user","version":"","rollup":{}}}
+      |""".stripMargin
+
+  /**
+   * User-Id : user-1
+   * Edata.state is update
+   * Having pid as learner-service
+   */
+  val telemetryEventWithLearnerPid: String = """
+      |{"eid":"AUDIT","ets":1573121861118,"ver":"3.0","mid":"1573121861118.40f9136b-1cc3-458d-a04a-4459606df","actor":{"id":"5609876543234567890987654345678","type":"Request"},"context":{"channel":"01285019302823526477","pdata":{"id":"dev.sunbird.portal","pid":"learner-service","ver":"2.5.0"},"env":"User","did":"user-3","cdata":[{"id":"google","type":"SignupType"}],"rollup":{"l1":"01285019302823526477"}},"object":{"id":"user-1","type":"user"},"edata":{"state":"Update","props":["recoveryEmail","recoveryPhone","userId","id","externalIds","updatedDate","updatedBy"]},"syncts":1573121861125,"@timestamp":"2019-11-07T10:17:41.125Z","flags":{"tv_processed":true,"dd_processed":true},"type":"events","ts":"2019-11-07T10:17:41.118+0000"}
+      |""".stripMargin
 
 }
