@@ -1,3 +1,4 @@
 ---
-- name: Restart zookeeper
-  service: name=zookeeper state=restarted
+- name: Restart zookeeper 
+  systemd: name=zookeeper state=restarted
+  become: yes

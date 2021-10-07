@@ -32,6 +32,11 @@
                 },
                 {
                   "type": "root",
+                  "name": "osid",
+                  "expr": "osid"
+                },
+                {
+                  "type": "root",
                   "name": "user_type",
                   "expr": "user_type"
                 },
@@ -77,6 +82,10 @@
                 },
                 {
                   "type": "string",
+                  "name": "osid"
+                },
+                {
+                  "type": "string",
                   "name": "user_type"
                 },
                 {
@@ -102,9 +111,8 @@
         },
         "metricsSpec": [
           {
-            "type": "longSum",
-            "name": "total_contributed_content",
-            "fieldName": "total_contributed_content"
+            "name": "total_count",
+            "type": "count"
           }
         ],
         "granularitySpec": {

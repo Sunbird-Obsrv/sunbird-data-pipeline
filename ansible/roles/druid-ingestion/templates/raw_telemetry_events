@@ -336,6 +336,31 @@
             },
             {
               "type": "path",
+              "name": "edata_timespent",
+              "expr": "$.edata.timespent"
+            },
+            {
+              "type": "path",
+              "name": "edata_pageviews",
+              "expr": "$.edata.pageviews"
+            },
+            {
+              "type": "path",
+              "name": "edata_interactions",
+              "expr": "$.edata.interactions"
+            },
+            {
+              "type": "path",
+              "name": "edata_starttime",
+              "expr": "$.edata.starttime"
+            },
+            {
+              "type": "path",
+              "name": "edata_endtime",
+              "expr": "$.edata.endtime"
+            },
+            {
+              "type": "path",
               "name": "device_loc_state",
               "expr": "$.devicedata.state"
             },
@@ -716,6 +741,21 @@
             },
             {
               "type": "path",
+              "name": "user_loc_block",
+              "expr": "$.userdata.block"
+            },
+            {
+              "type": "path",
+              "name": "user_loc_cluster",
+              "expr": "$.userdata.cluster"
+            },
+            {
+              "type": "path",
+              "name": "user_school_name",
+              "expr": "$.userdata.schoolname"
+            },
+            {
+              "type": "path",
               "name": "dialcode_channel",
               "expr": "$.dialcodedata.channel"
             },
@@ -803,6 +843,21 @@
               "type": "path",
               "name": "object_l2_subjects",
               "expr": "$.l2data.subject[*]"
+            },
+            {
+              "type": "path",
+              "name": "utm_source",
+              "expr": "$.edata.extra.values[*].utm_data.utm_source"
+            },
+            {
+              "type": "path",
+              "name": "utm_medium",
+              "expr": "$.edata.extra.values[*].utm_data.utm_medium"
+            },
+            {
+              "type": "path",
+              "name": "utm_campaign",
+              "expr": "$.edata.extra.values[*].utm_data.utm_campaign"
             }
           ]
         },
@@ -1068,6 +1123,26 @@
             {
               "type": "string",
               "name": "edata_visits_index"
+            },
+            {
+              "type": "double",
+              "name": "edata_timespent"
+            },
+            {
+              "type": "long",
+              "name": "edata_pageviews"
+            },
+            {
+              "type": "long",
+              "name": "edata_interactions"
+            },
+            {
+              "type": "long",
+              "name": "edata_starttime"
+            },
+            {
+              "type": "long",
+              "name": "edata_endtime"
             },
             {
               "type": "string",
@@ -1359,6 +1434,18 @@
             },
             {
               "type": "string",
+              "name": "user_loc_block"
+            },
+            {
+              "type": "string",
+              "name": "user_loc_cluster"
+            },
+            {
+              "type": "string",
+              "name": "user_school_name"
+            },
+            {
+              "type": "string",
               "name": "dialcode_channel"
             },
             {
@@ -1420,7 +1507,19 @@
             },
             {
               "name": "object_l2_subjects"
-            }      
+            },
+            {
+              "type": "string",
+              "name": "utm_source"
+            },
+            {
+              "type": "string",
+              "name": "utm_medium"
+            },
+            {
+              "type": "string",
+              "name": "utm_campaign"
+            }
           ],
           "dimensionsExclusions": []
         },

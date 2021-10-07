@@ -144,6 +144,8 @@ middleware_cassandra_assessment_aggregator_table: assessment_aggregator
 middleware_cassandra_assessment_question_type : question
 middleware_cassandra_user_enrolments_table: user_enrolments
 middleware_cassandra_user_activity_agg_table: user_activity_agg
+content_read_api_host: "http://dev.sunbirded.org"
+content_read_api_endpoint: "/api/content/v1/read/" 
 
 ### taskmanager related vars
 healthcheck: true
@@ -169,106 +171,169 @@ flink_job_names:
     replica: 1
     jobmanager_memory: 1024m
     taskmanager_memory: 1024m
+    taskmanager_process_memory: 1700m
+    jobmanager_process_memory: 1600m
     taskslots: 1
     cpu_requests: 0.3
+    scale_enabled: true
+    scale_target_value: 500000
+    min_replica: 1
+    max_replica: 2
   pipeline-preprocessor:
     job_class_name: 'org.sunbird.dp.preprocessor.task.PipelinePreprocessorStreamTask'
     replica: 1
     jobmanager_memory: 1024m
     taskmanager_memory: 1024m
+    taskmanager_process_memory: 1700m
+    jobmanager_process_memory: 1600m
     taskslots: 1
     cpu_requests: 0.3
+    scale_enabled: true
+    scale_target_value: 1000000
+    min_replica: 1
+    max_replica: 2
   de-normalization:
     job_class_name: 'org.sunbird.dp.denorm.task.DenormalizationStreamTask'
     replica: 1
     jobmanager_memory: 1024m
     taskmanager_memory: 1024m
+    taskmanager_process_memory: 1700m
+    jobmanager_process_memory: 1600m
     taskslots: 1
     cpu_requests: 0.3
+    scale_enabled: false
   de-normalization-v2:
     job_class_name: 'org.sunbird.dp.denorm.task.DenormalizationStreamTask'
     replica: 1
     jobmanager_memory: 1024m
     taskmanager_memory: 1024m
+    taskmanager_process_memory: 1700m
+    jobmanager_process_memory: 1600m
     taskslots: 1
-    cpu_requests: 0.3 
+    cpu_requests: 0.3
+    scale_enabled: false 
   de-normalization-secondary:
     job_class_name: 'org.sunbird.dp.denorm.task.DenormalizationStreamTask'
     replica: 1
     jobmanager_memory: 1024m
     taskmanager_memory: 1024m
+    taskmanager_process_memory: 1700m
+    jobmanager_process_memory: 1600m
     taskslots: 1
-    cpu_requests: 0.3 
+    cpu_requests: 0.3
+    scale_enabled: true
+    scale_target_value: 1000000
+    min_replica: 1
+    max_replica: 2 
   de-normalization-primary:
     job_class_name: 'org.sunbird.dp.denorm.task.DenormalizationStreamTask'
     replica: 1
     jobmanager_memory: 1024m
     taskmanager_memory: 1024m
+    taskmanager_process_memory: 1700m
+    jobmanager_process_memory: 1600m
     taskslots: 1
-    cpu_requests: 0.3      
+    cpu_requests: 0.3
+    scale_enabled: true
+    scale_target_value: 1000000
+    min_replica: 1
+    max_replica: 2      
   druid-validator:
     job_class_name: 'org.sunbird.dp.validator.task.DruidValidatorStreamTask'
     replica: 1
     jobmanager_memory: 1024m
     taskmanager_memory: 1024m
+    taskmanager_process_memory: 1700m
+    jobmanager_process_memory: 1600m
     taskslots: 1
     cpu_requests: 0.3
+    scale_enabled: true
+    scale_target_value: 1000000
+    min_replica: 1
+    max_replica: 2
   assessment-aggregator:
     job_class_name: 'org.sunbird.dp.assessment.task.AssessmentAggregatorStreamTask'
     replica: 1
     jobmanager_memory: 1024m
     taskmanager_memory: 1024m
+    taskmanager_process_memory: 1700m
+    jobmanager_process_memory: 1600m
     taskslots: 1
     cpu_requests: 0.3
+    scale_enabled: false
   content-cache-updater:
     job_class_name: 'org.sunbird.dp.contentupdater.task.ContentCacheUpdaterStreamTask'
     replica: 1
     jobmanager_memory: 1024m
     taskmanager_memory: 1024m
+    taskmanager_process_memory: 1700m
+    jobmanager_process_memory: 1600m
     taskslots: 1
     cpu_requests: 0.3
+    scale_enabled: false
   user-cache-updater:
     job_class_name: 'org.sunbird.dp.usercache.task.UserCacheUpdaterStreamTask'
     replica: 1
     jobmanager_memory: 1024m
     taskmanager_memory: 1024m
+    taskmanager_process_memory: 1700m
+    jobmanager_process_memory: 1600m
     taskslots: 1
     cpu_requests: 0.3
+    scale_enabled: false
   user-cache-updater-v2:
     job_class_name: 'org.sunbird.dp.usercache.task.UserCacheUpdaterStreamTaskV2'
     replica: 1
     jobmanager_memory: 1024m
     taskmanager_memory: 1024m
+    taskmanager_process_memory: 1700m
+    jobmanager_process_memory: 1600m
     taskslots: 1
     cpu_requests: 0.3
+    scale_enabled: false
   summary-denormalization:
     job_class_name: 'org.sunbird.dp.denorm.task.SummaryDenormalizationStreamTask'
     replica: 1
     jobmanager_memory: 1024m
     taskmanager_memory: 1024m
+    taskmanager_process_memory: 1700m
+    jobmanager_process_memory: 1600m
     taskslots: 1
     cpu_requests: 0.3
+    scale_enabled: false
   device-profile-updater:
     job_class_name: 'org.sunbird.dp.deviceprofile.task.DeviceProfileUpdaterStreamTask'
     replica: 1
     jobmanager_memory: 1024m
     taskmanager_memory: 1024m
+    taskmanager_process_memory: 1700m
+    jobmanager_process_memory: 1600m
     taskslots: 1
     cpu_requests: 0.3
+    scale_enabled: false
   ingest-router:
     job_class_name: 'org.sunbird.dp.ingestrouter.task.IngestRouterStreamTask'
     replica: 1
     jobmanager_memory: 1024m
     taskmanager_memory: 1024m
+    taskmanager_process_memory: 1700m
+    jobmanager_process_memory: 1600m
     taskslots: 1
     cpu_requests: 0.3
+    scale_enabled: true
+    scale_target_value: 500000
+    min_replica: 1
+    max_replica: 2
   error-denormalization:
     job_class_name: 'org.sunbird.dp.denorm.task.DenormalizationStreamTask'
     replica: 1
     jobmanager_memory: 1024m
     taskmanager_memory: 1024m
+    taskmanager_process_memory: 1700m
+    jobmanager_process_memory: 1600m
     taskslots: 1
-    cpu_requests: 0.3 
+    cpu_requests: 0.3
+    scale_enabled: false 
 
 ### controlling the flink jobs log level
 flink_jobs_console_log_level: INFO

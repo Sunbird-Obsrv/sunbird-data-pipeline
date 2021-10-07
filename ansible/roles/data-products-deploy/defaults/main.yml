@@ -26,12 +26,13 @@ course_keyspace: "sunbird_courses"
 hierarchy_store_keyspace: "{{ env }}_hierarchy_store"
 job_request_table: "{{ env }}_job_request"
 report_user_table_keyspace: "sunbird_courses"
-
+report_user_enrolment_table: "report_user_enrolments"
 
 analytics_job_list: '"wfs", "content-rating-updater", "monitor-job-summ"'
 analytics_jobs_count: 3
 
 cassandra_keyspace_prefix: '{{ env }}_'
+report_cassandra_cluster_host: "{{ report_cassandra_host | default(core_cassandra_host) }}"
 cassandra_hierarchy_store_keyspace: "{{ env_name}}_hierarchy_store"
 spark_version: 2.4.4
 
@@ -198,7 +199,7 @@ analytics_cluster:
 
 analytics_ed_dataporducts_jar_artifact: "data-products-{{ analytics_ed_dataporducts_artifact_ver }}.jar"  
 
-spark_enable_dynamic_allocation: true
+spark_enable_dynamic_allocation: false
 # Spark Cassandra config-vars
 spark_cassandra_connection_timeout_millis: 30000
 spark_cassandra_query_timeout_millis: 180000
@@ -212,3 +213,42 @@ druid_report_postgres_db_username: druid
 #Override this variable in production and point to druid rollup ingestion cluster 
 # Example: "http://$rollup_cluster_ip:8090"
 druid_rollup_cluster_ingestion_task_url: "http://{{groups['raw-overlord'][0]}}:8081"
+
+# On demand Exhaust throttling vars
+exhaust_batches_limit_per_channel: 30
+exhaust_file_size_limit_bytes_per_channel: 1073741824
+
+exhaust_parallel_batch_load_limit: 10
+exhaust_user_parallelism: 200
+
+data_exhaust_batch_limit_per_request: 20
+
+# Start Of UCI Related Variables
+uci_postgres_host: dev-postgres
+uci_bot_postgres_database: bot
+uci_fusionauth_postgres_database: fusionauth
+uci_postgres_user: postgres
+uci_postgres_password: postgres
+
+uci_postgres:
+  conversation_db_name: "{{ uci_bot_postgres_database }}"
+  conversation_db_host: "{{ uci_postgres_host }}"
+  conversation_db_port: "5432"
+  conversation_db_user: "{{ uci_postgres_user }}"
+  conversation_db_psss: "{{ uci_postgres_password }}"
+  conversation_table_name: "bot"
+  fushionauth_db_name: "{{ uci_fusionauth_postgres_database }}"
+  fushionauth_db_host: "{{ uci_postgres_host }}"
+  fushionauth_db_port: "5432"
+  fushionauth_db_user: "{{ uci_postgres_user }}"
+  fushionauth_db_psss: "{{ uci_postgres_password }}"
+  user_table_name: "users"
+  user_registration_table_name: "user_registrations"
+  user_identities_table_name: "identities"
+
+uci_encryption_secret_key: ""
+uci_pdata_id: "{{ env }}.UCI.diksha"
+
+# End Of UCI Related Variables 
+
+

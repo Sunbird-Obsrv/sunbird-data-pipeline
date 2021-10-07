@@ -26,7 +26,7 @@ class ContentCacheUpdaterConfig(override val config: Config) extends BaseJobConf
   val contentStore: Int = config.getInt("redis-meta.database.contentstore.id")
   val dialcodeStore: Int = config.getInt("redis-meta.database.dialcodestore.id")
 
-  val contentListFields=List("gradeLevel","subject","medium","language")
+  val contentListFields=List("gradeLevel","subject","medium","language", "keywords")
   val contentDateFields=List("lastStatusChangedOn","lastUpdatedOn","createdOn")
   val dialcodeFields = List( "identifier", "channel", "publisher", "batchCode","status","generatedOn","publishedOn","metadata")
 

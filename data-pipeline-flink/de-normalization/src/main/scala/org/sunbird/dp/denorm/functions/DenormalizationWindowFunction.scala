@@ -67,13 +67,14 @@ class DenormalizationWindowFunction(config: DenormalizationConfig)(implicit val 
 
     override def process(key: Int, context: ProcessWindowFunction[Event, Event, Int, GlobalWindow]#Context, elements: lang.Iterable[Event], metrics: Metrics): Unit = {
 
+        val summaryEventsList = List("ME_WORKFLOW_SUMMARY", "SUMMARY")
         val eventsList = elements.asScala.toList
         val filteredEventsList: List[Event] = eventsList.filter { event =>
             if (event.isOlder(config.ignorePeriodInMonths)) { // Skip events older than configured value (default: 3 months)
                 metrics.incCounter(config.eventsExpired)
                 false
             } else {
-                if ("ME_WORKFLOW_SUMMARY" == event.eid() || !(event.eid().contains("SUMMARY") || config.eventsToskip.contains(event.eid()))) {
+                if (summaryEventsList.contains(event.eid()) || !(event.eid().contains("SUMMARY") || config.eventsToskip.contains(event.eid()))) {
                     true
                 } else {
                     metrics.incCounter(config.eventsSkipped)
@@ -124,7 +125,7 @@ class DenormalizationWindowFunction(config: DenormalizationConfig)(implicit val 
             val actorId = event.actorId()
             val actorType = event.actorType()
 
-            val contentIds = if (null != objectType && !List("user", "qr", "dialcode").contains(objectType.toLowerCase()) && null != objectId) {
+            val contentIds = if (event.isValidEventForContentDenorm(config, objectId, objectType, event.eid())) {
                 contentMap.put(objectId, null)
                 val collectionId = if (event.checkObjectIdNotEqualsRollUpId(EventsPath.OBJECT_ROLLUP_L1)) {
                     collectionMap.put(event.objectRollUpl1ID(), null)
