@@ -32,6 +32,11 @@
                 },
                 {
                   "type": "root",
+                  "name": "osid",
+                  "expr": "osid"
+                },
+                {
+                  "type": "root",
                   "name": "user_type",
                   "expr": "user_type"
                 },
@@ -74,6 +79,10 @@
                 {
                   "type": "string",
                   "name": "user_id"
+                },
+                {
+                  "type": "string",
+                  "name": "osid"
                 },
                 {
                   "type": "string",

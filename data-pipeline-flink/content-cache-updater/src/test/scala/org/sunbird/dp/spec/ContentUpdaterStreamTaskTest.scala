@@ -108,6 +108,7 @@ class ContentUpdaterStreamTaskTest extends BaseTestSpec {
         assert(!contentJedis.get("do_312999792564027392148").contains("Class 12"))
         assert(contentJedis.get("do_312999792564027392148").contains("\"copyright\":\"Ekstep\""))
         assert(!contentJedis.get("do_312999792564027392148").contains("\"copyright\":\"EKSTEP\""))
+        assert(contentJedis.get("do_312999792564027392148").contains(""""keywords":["Story"]"""))
     }
 }
 

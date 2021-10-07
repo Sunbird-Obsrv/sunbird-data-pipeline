@@ -419,6 +419,31 @@ secor_jobs:
       memory: 500Mi
     lag_threshold_warning: 50000
     lag_threshold_critical: 100000
+  batch-assess-failed-events-backup:
+    replicas: 1
+    service_name: "batch_assess_failed_events_backup"
+    consumer_group: "{{ env_name }}.telemetry.assess.failed.events.backup"
+    base_path: "telemetry-batch-assess-failed"
+    timestamp_key: "assessmentTs"
+    fallback_timestamp_key: "assessmentTs"
+    topic: "{{ env_name }}.telemetry.assess.failed"
+    kafka_broker_host: "{{ secor_ingestion_kafka_brokers }}"
+    zookeeper_quorum: "{{ ingestion_zookeepers }}"
+    max_file_size: 100000000
+    max_file_age: 21600
+    partition_prefix_enabled: "false"
+    partition_prefix_key: ""
+    partition_prefix_mapping: "{}"
+    output_file_pattern: "{partition}-{currentTimestamp}.json"
+    message_channel_identifier: ""
+    message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
+    storage:
+      size: 10Gi
+    requests:
+      cpu: 500m
+      memory: 500Mi
+    lag_threshold_warning: 50000
+    lag_threshold_critical: 100000  
   ingestion-telemetry-backup:
     replicas: 1
     service_name: "ingestion_telemetry_backup"

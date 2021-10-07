@@ -55,7 +55,7 @@ class AssessmentAggregatorTaskTestSpec extends BaseTestSpec {
     val session = cassandraUtil.session
     setupRedisTestData()
 
-    val dataLoader = new CQLDataLoader(session);
+    val dataLoader = new CQLDataLoader(session)
     dataLoader.load(new FileCQLDataSet(getClass.getResource("/test.cql").getPath, true, true));
     // Clear the metrics
     testCassandraUtil(cassandraUtil)
@@ -90,12 +90,12 @@ class AssessmentAggregatorTaskTestSpec extends BaseTestSpec {
     BaseMetricsReporter.gaugeMetrics(s"${assessmentConfig.jobName}.${assessmentConfig.dbUpdateCount}").getValue() should be(5)
     BaseMetricsReporter.gaugeMetrics(s"${assessmentConfig.jobName}.${assessmentConfig.failedEventCount}").getValue() should be(2)
     BaseMetricsReporter.gaugeMetrics(s"${assessmentConfig.jobName}.${assessmentConfig.batchSuccessCount}").getValue() should be(5)
-    BaseMetricsReporter.gaugeMetrics(s"${assessmentConfig.jobName}.${assessmentConfig.cacheHitCount}").getValue() should be(7)
+    BaseMetricsReporter.gaugeMetrics(s"${assessmentConfig.jobName}.${assessmentConfig.cacheHitCount}").getValue() should be(8)
     BaseMetricsReporter.gaugeMetrics(s"${assessmentConfig.jobName}.${assessmentConfig.cacheHitMissCount}").getValue() should be(1)
-    BaseMetricsReporter.gaugeMetrics(s"${assessmentConfig.jobName}.${assessmentConfig.certIssueEventsCount}").getValue() should be(5)
-    BaseMetricsReporter.gaugeMetrics(s"${assessmentConfig.jobName}.${assessmentConfig.dbScoreAggUpdateCount}").getValue() should be(5)
-    BaseMetricsReporter.gaugeMetrics(s"${assessmentConfig.jobName}.${assessmentConfig.dbScoreAggReadCount}").getValue() should be(5)
-    
+    BaseMetricsReporter.gaugeMetrics(s"${assessmentConfig.jobName}.${assessmentConfig.certIssueEventsCount}").getValue() should be(6)
+    BaseMetricsReporter.gaugeMetrics(s"${assessmentConfig.jobName}.${assessmentConfig.dbScoreAggUpdateCount}").getValue() should be(6)
+    BaseMetricsReporter.gaugeMetrics(s"${assessmentConfig.jobName}.${assessmentConfig.dbScoreAggReadCount}").getValue() should be(6)
+    BaseMetricsReporter.gaugeMetrics(s"${assessmentConfig.jobName}.${assessmentConfig.recomputeAggEventCount}").getValue() should be(1)
     val test_row1 = cassandraUtil.findOne("select total_score,total_max_score from sunbird_courses.assessment_aggregator where user_id='d0d8a341-9637-484c-b871-0c27015af238' and course_id='do_2128410273679114241112'")
     assert(test_row1.getDouble("total_score") == 2.0)
     assert(test_row1.getDouble("total_max_score") == 2.0)
@@ -108,6 +108,19 @@ class AssessmentAggregatorTaskTestSpec extends BaseTestSpec {
     val resultMap = test_row3.getMap("agg", new TypeToken[String]() {}, new TypeToken[Integer]() {})
     assert(null != resultMap)
     assert(2 == resultMap.getOrDefault("score:do_2128373396098744321673", 0))
+  }
+
+  "AssessmentAggregator " should "Skip the missing records from the event" in {
+    val forceValidationAssessmentConfig: AssessmentAggregatorConfig = new AssessmentAggregatorConfig(ConfigFactory.load("forcevalidate.conf"))
+    when(mockKafkaUtil.kafkaEventSource[Event](forceValidationAssessmentConfig.kafkaInputTopic)).thenReturn(new AssessmentAggreagatorEventSourceForceValidation)
+    when(mockKafkaUtil.kafkaEventSink[Event](forceValidationAssessmentConfig.kafkaFailedTopic)).thenReturn(new FailedEventsSink)
+    when(mockKafkaUtil.kafkaStringSink(forceValidationAssessmentConfig.kafkaCertIssueTopic)).thenReturn(new certificateIssuedEventsSink)
+    val task = new AssessmentAggregatorStreamTask(forceValidationAssessmentConfig, mockKafkaUtil)
+    task.process()
+    BaseMetricsReporter.gaugeMetrics(s"${assessmentConfig.jobName}.${assessmentConfig.batchSuccessCount}").getValue() should be(3)
+    BaseMetricsReporter.gaugeMetrics(s"${assessmentConfig.jobName}.${assessmentConfig.cacheHitCount}").getValue() should be(5)
+    BaseMetricsReporter.gaugeMetrics(s"${assessmentConfig.jobName}.${assessmentConfig.apiHitSuccessCount}").getValue() should be(2)
+    BaseMetricsReporter.gaugeMetrics(s"${assessmentConfig.jobName}.${assessmentConfig.ignoredEventsCount}").getValue() should be(1)
   }
 
   def testCassandraUtil(cassandraUtil: CassandraUtil): Unit = {
@@ -124,8 +137,18 @@ class AssessmentAggregatorTaskTestSpec extends BaseTestSpec {
         jedis.sadd(node._1, node._2)
       })
     })
+
+    // Setup content Cache
+    val contentCache = redisConnect.getConnection(assessmentConfig.contentCacheNode)
+    EventFixture.contentCacheList.map(nodes => {
+      nodes.map(node => {
+        contentCache.set(node._1, node._2)
+      })
+    })
   }
 }
+
+
 
 class AssessmentAggreagatorEventSource extends SourceFunction[Event] {
 
@@ -142,6 +165,7 @@ class AssessmentAggreagatorEventSource extends SourceFunction[Event] {
     val eventMap6 = JSONUtil.deserialize[util.HashMap[String, Any]](EventFixture.BATCH_DUPLICATE_QUESTION_EVENT)
     val eventMap7 = JSONUtil.deserialize[util.HashMap[String, Any]](EventFixture.INVALID_CONTENT_ID_EVENT)
     val eventMap8 = JSONUtil.deserialize[util.HashMap[String, Any]](EventFixture.BATCH_ASSESS_EVENT_WITHOUT_CACHE)
+    val eventMap9 = JSONUtil.deserialize[util.HashMap[String, Any]](EventFixture.RECOMPUTE_ASSESS_EVENT)
     ctx.collect(new Event(eventMap1))
     ctx.collect(new Event(eventMap2))
     ctx.collect(new Event(eventMap3))
@@ -150,6 +174,24 @@ class AssessmentAggreagatorEventSource extends SourceFunction[Event] {
     ctx.collect(new Event(eventMap6))
     ctx.collect(new Event(eventMap7))
     ctx.collect(new Event(eventMap8))
+    ctx.collect(new Event(eventMap9))
+  }
+
+  override def cancel() = {}
+
+}
+
+
+class AssessmentAggreagatorEventSourceForceValidation extends SourceFunction[Event] {
+  override def run(ctx: SourceContext[Event]) {
+    val eventMap1 = JSONUtil.deserialize[util.HashMap[String, Any]](EventFixture.DUPLICATE_BATCH_ASSESS_EVENTS_1)
+    val eventMap2 = JSONUtil.deserialize[util.HashMap[String, Any]](EventFixture.DUPLICATE_BATCH_ASSESS_EVENTS_2)
+    val eventMap3 = JSONUtil.deserialize[util.HashMap[String, Any]](EventFixture.DUPLICATE_BATCH_ASSESS_EVENTS_3)
+    val eventMap4 = JSONUtil.deserialize[util.HashMap[String, Any]](EventFixture.DUPLICATE_BATCH_ASSESS_EVENTS_4)
+    ctx.collect(new Event(eventMap1))
+    ctx.collect(new Event(eventMap2))
+    ctx.collect(new Event(eventMap3))
+    ctx.collect(new Event(eventMap4))
   }
 
   override def cancel() = {}

@@ -192,6 +192,21 @@
               "type": "path",
               "name": "edata_rating",
               "expr": "$.edata.rating"
+            },
+            {
+              "type": "path",
+              "name": "edata_timespent",
+              "expr": "$.edata.timespent"
+            },
+            {
+              "type": "path",
+              "name": "edata_pageviews",
+              "expr": "$.edata.pageviews"
+            },
+            {
+              "type": "path",
+              "name": "edata_interactions",
+              "expr": "$.edata.interactions"
             }
           ]
         },
@@ -356,6 +371,21 @@
         "type": "doubleSum",
         "name": "total_max_score",
         "fieldName": "edata_item_maxscore"
+      },
+      {
+        "type": "doubleSum",
+        "name": "total_edata_timespent",
+        "fieldName": "edata_timespent"
+      },
+      {
+        "type": "longSum",
+        "name": "total_edata_pageviews",
+        "fieldName": "edata_pageviews"
+      },
+      {
+        "type": "longSum",
+        "name": "total_edata_interactions",
+        "fieldName": "edata_interactions"
       }
     ],
     "granularitySpec": {
