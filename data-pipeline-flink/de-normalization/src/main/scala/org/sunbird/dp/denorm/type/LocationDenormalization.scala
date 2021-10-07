@@ -13,7 +13,9 @@ class LocationDenormalization(config: DenormalizationConfig) {
     val ipLocation = event.getIpLocation()
 
     val declaredLocation = if (nonEmpty(userProfileLocation)) userProfileLocation
-    else if (nonEmpty(userDeclaredLocation)) userDeclaredLocation else ipLocation
+    else if (nonEmpty(userDeclaredLocation)) {
+      if(userDeclaredLocation.get._1.nonEmpty) userDeclaredLocation else ipLocation
+    } else ipLocation
 
     if (nonEmpty(declaredLocation)) {
       event.addDerivedLocation(declaredLocation.get)
