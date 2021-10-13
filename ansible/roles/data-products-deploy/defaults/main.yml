@@ -251,4 +251,8 @@ uci_pdata_id: "{{ env }}.UCI.diksha"
 
 # End Of UCI Related Variables 
 
+run_druid_dataset:
+  userinfo-exhaust:
+    hour: 4
+    minute: 00
 
