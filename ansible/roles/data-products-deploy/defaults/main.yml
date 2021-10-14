@@ -250,5 +250,7 @@ uci_encryption_secret_key: ""
 uci_pdata_id: "{{ env }}.UCI.diksha"
 
 # End Of UCI Related Variables 
-
-
+run_druid_dataset:
+  druid-dataset:
+    hour: 4
+    minute: 00
