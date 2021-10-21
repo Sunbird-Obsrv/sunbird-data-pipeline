@@ -699,6 +699,7 @@ assessment-aggregator:
     }
     assessment.skip.missingRecords = true
     content.read.api = "{{ content_read_api_host }}/{{ content_read_api_endpoint }}"
+    user.activity.agg.type="attempt_metrics"
 
   flink-conf: |+
     jobmanager.memory.flink.size: {{ flink_job_names['assessment-aggregator'].jobmanager_memory }}
