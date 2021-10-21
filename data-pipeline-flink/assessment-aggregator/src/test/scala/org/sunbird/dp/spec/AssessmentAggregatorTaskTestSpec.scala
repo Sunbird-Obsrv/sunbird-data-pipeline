@@ -117,7 +117,7 @@ class AssessmentAggregatorTaskTestSpec extends BaseTestSpec {
     assert("do_212686723743318016173" == resultList6.content_id)
     assert(1 == resultList6.score)
     assert(2 == resultList6.max_score)
-    assert("attempt-metrics" == resultList6.`type`)
+    assert("attempt_metrics" == resultList6.`type`)
 
     val test_row4 = cassandraUtil.findOne("select agg from sunbird_courses.user_activity_agg where activity_type='Course' and activity_id='do_2128415652377067521125' and  user_id='ff1c4bdf-27e2-49bc-a53f-6e304bb3a87f'")
     val resultMap4 = test_row4.getMap("agg", new TypeToken[String]() {}, new TypeToken[Integer]() {})
