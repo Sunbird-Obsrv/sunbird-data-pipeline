@@ -17,6 +17,7 @@ import org.cassandraunit.utils.EmbeddedCassandraServerHelper
 import org.mockito.Mockito
 import org.mockito.Mockito._
 import org.sunbird.dp.assessment.domain.Event
+import org.sunbird.dp.assessment.functions.{AggDetails, UserActivityAgg}
 import org.sunbird.dp.assessment.task.{AssessmentAggregatorConfig, AssessmentAggregatorStreamTask}
 import org.sunbird.dp.core.cache.RedisConnect
 import org.sunbird.dp.core.job.FlinkKafkaConnector
@@ -85,12 +86,12 @@ class AssessmentAggregatorTaskTestSpec extends BaseTestSpec {
     val task = new AssessmentAggregatorStreamTask(assessmentConfig, mockKafkaUtil)
     task.process()
     assert(FailedEventsSink.values.get(0).getTelemetry.getMap.containsKey("metadata"))
-    BaseMetricsReporter.gaugeMetrics(s"${assessmentConfig.jobName}.${assessmentConfig.skippedEventCount}").getValue() should be(1)
-    BaseMetricsReporter.gaugeMetrics(s"${assessmentConfig.jobName}.${assessmentConfig.dbReadCount}").getValue() should be(2)
+    BaseMetricsReporter.gaugeMetrics(s"${assessmentConfig.jobName}.${assessmentConfig.skippedEventCount}").getValue() should be(2)
+    BaseMetricsReporter.gaugeMetrics(s"${assessmentConfig.jobName}.${assessmentConfig.dbReadCount}").getValue() should be(3)
     BaseMetricsReporter.gaugeMetrics(s"${assessmentConfig.jobName}.${assessmentConfig.dbUpdateCount}").getValue() should be(5)
     BaseMetricsReporter.gaugeMetrics(s"${assessmentConfig.jobName}.${assessmentConfig.failedEventCount}").getValue() should be(2)
     BaseMetricsReporter.gaugeMetrics(s"${assessmentConfig.jobName}.${assessmentConfig.batchSuccessCount}").getValue() should be(5)
-    BaseMetricsReporter.gaugeMetrics(s"${assessmentConfig.jobName}.${assessmentConfig.cacheHitCount}").getValue() should be(7)
+    BaseMetricsReporter.gaugeMetrics(s"${assessmentConfig.jobName}.${assessmentConfig.cacheHitCount}").getValue() should be(8)
     BaseMetricsReporter.gaugeMetrics(s"${assessmentConfig.jobName}.${assessmentConfig.cacheHitMissCount}").getValue() should be(1)
     BaseMetricsReporter.gaugeMetrics(s"${assessmentConfig.jobName}.${assessmentConfig.certIssueEventsCount}").getValue() should be(5)
     BaseMetricsReporter.gaugeMetrics(s"${assessmentConfig.jobName}.${assessmentConfig.dbScoreAggUpdateCount}").getValue() should be(5)
@@ -108,6 +109,15 @@ class AssessmentAggregatorTaskTestSpec extends BaseTestSpec {
     assert(null != resultMap3)
     assert(2 == resultMap3.getOrDefault("score:do_2128373396098744321673", 0))
     assert(2 == resultMap3.getOrDefault("max_score:do_2128373396098744321673", 0))
+
+    val test_row6 = cassandraUtil.findOne("select agg_details from sunbird_courses.user_activity_agg where activity_type='Course' and activity_id='do_2128415652377067521125' and  user_id='ff1c4bdf-27e2-49bc-a53f-6e304bb3a87f'")
+    val resultList6 = new Gson().fromJson(test_row6.getList("agg_details", new TypeToken[String](){}).get(0), classOf[AggDetails])
+    assert(null != resultList6)
+    assert("8cd87e24df268ad09a8b0060c0a40271" == resultList6.attempt_id)
+    assert("do_212686723743318016173" == resultList6.content_id)
+    assert(1 == resultList6.score)
+    assert(2 == resultList6.max_score)
+    assert("attempt_metrics" == resultList6.`type`)
 
     val test_row4 = cassandraUtil.findOne("select agg from sunbird_courses.user_activity_agg where activity_type='Course' and activity_id='do_2128415652377067521125' and  user_id='ff1c4bdf-27e2-49bc-a53f-6e304bb3a87f'")
     val resultMap4 = test_row4.getMap("agg", new TypeToken[String]() {}, new TypeToken[Integer]() {})
@@ -177,6 +187,7 @@ class AssessmentAggreagatorEventSource extends SourceFunction[Event] {
     val eventMap6 = JSONUtil.deserialize[util.HashMap[String, Any]](EventFixture.BATCH_DUPLICATE_QUESTION_EVENT)
     val eventMap7 = JSONUtil.deserialize[util.HashMap[String, Any]](EventFixture.INVALID_CONTENT_ID_EVENT)
     val eventMap8 = JSONUtil.deserialize[util.HashMap[String, Any]](EventFixture.BATCH_ASSESS_EVENT_WITHOUT_CACHE)
+    val eventMap9 = JSONUtil.deserialize[util.HashMap[String, Any]](EventFixture.BATCH_ASSESS_EVENT_2)
     ctx.collect(new Event(eventMap1))
     ctx.collect(new Event(eventMap2))
     ctx.collect(new Event(eventMap3))
@@ -185,6 +196,7 @@ class AssessmentAggreagatorEventSource extends SourceFunction[Event] {
     ctx.collect(new Event(eventMap6))
     ctx.collect(new Event(eventMap7))
     ctx.collect(new Event(eventMap8))
+    ctx.collect(new Event(eventMap9))
   }
 
   override def cancel() = {}

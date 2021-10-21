@@ -79,7 +79,10 @@ class AssessmentAggregatorConfig(override val config: Config) extends BaseJobCon
   val contextId = "context_id"
   val activityUser = "user_id"
   val aggLastUpdated = "agg_last_updated"
+  val aggDetails = "agg_details"
   val agg = "agg"
+
+  val aggType = config.getString("user.activity.agg.type")
 
   val skipMissingRecords: Boolean = config.getBoolean("assessment.skip.missingRecords")
   val contentReadAPI: String = config.getString("content.read.api")
