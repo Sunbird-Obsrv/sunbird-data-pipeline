@@ -113,7 +113,7 @@
   when: dockdataproducts is undefined
 
 - name: Copy python sanity check script file
-  template: src=exhaust_sanity_check.py.j2 dest={{ analytics.home }}/exhaust_sanity_check.py
+  template: src=exhaust_sanity_check.py.j2 dest={{ analytics.home }}/scripts/exhaust_sanity_check.py
   tags: [ dataproducts, framework, ed-dataproducts ]
   when: dockdataproducts is undefined
 
@@ -411,7 +411,7 @@
 # Execute Exhaust job sanity check script tasks
 
 - name: Run sanity check python script
-  shell: python {{ analytics.home }}/exhaust_sanity_check.py
+  shell: python {{ analytics.home }}/scripts/exhaust_sanity_check.py
   tags:
     - run-sanity
   register: SanityCheckStatus
