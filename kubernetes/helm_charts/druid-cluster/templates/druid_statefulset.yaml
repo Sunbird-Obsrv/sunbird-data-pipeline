@@ -141,7 +141,7 @@ spec:
       # - name: tutu
       druid.port: {{ .Values.druid_broker_port }}
       nodeConfigMountPath: "/opt/druid/conf/druid/cluster/query/broker"
-      replicas: 1
+      replicas: {{ .Values.druid_broker_replicas }}
       runtime.properties: |
         druid.service={{ .Values.druid_broker_service }}
 
@@ -194,7 +194,7 @@ spec:
       nodeType: "coordinator"
       druid.port: {{ .Values.druid_coordinator_port }}
       nodeConfigMountPath: "/opt/druid/conf/druid/cluster/master/coordinator-overlord"
-      replicas: 1
+      replicas: {{ .Values.druid_coordinator_replicas }}
       runtime.properties: |
         druid.service={{ .Values.druid_coordinator_service }}
         druid.coordinator.startDelay={{ .Values.druid_coordinator_startDelay }}
@@ -224,7 +224,7 @@ spec:
       nodeType: "overlord"
       druid.port: {{ .Values.druid_overlord_port }}
       nodeConfigMountPath: "/opt/druid/conf/druid/cluster/master/coordinator-overlord"
-      replicas: 1
+      replicas: {{ .Values.druid_overlord_replicas }}
       runtime.properties: |
         druid.service={{ .Values.druid_overlord_service }}
 
@@ -253,10 +253,11 @@ spec:
           port: {{ .Values.druid_overlord_port }}
 
     historicals:
+      kind: Deployment
       nodeType: "historical"
       druid.port: {{ .Values.druid_historical_port }}
       nodeConfigMountPath: "/opt/druid/conf/druid/cluster/data/historical"
-      replicas: 1
+      replicas: {{ .Values.druid_historical_replicas }}
       readinessProbe:
         httpGet:
           path: /status/health
@@ -319,10 +320,11 @@ spec:
       #   #   name: data-volume
       
     middlemanagers:
+      kind: Deployment
       nodeType: "middleManager"
       druid.port: {{ .Values.druid_middlemanager_port }}
       nodeConfigMountPath: "/opt/druid/conf/druid/cluster/data/middleManager"
-      replicas: 1
+      replicas: {{ .Values.druid_middlemanager_replicas }}
       runtime.properties: |
         druid.service={{ .Values.druid_middlemanager_service }}
 
@@ -393,7 +395,7 @@ spec:
       nodeType: "router"
       druid.port: {{ .Values.druid_router_plaintextPort }}
       nodeConfigMountPath: "/opt/druid/conf/druid/cluster/query/router"
-      replicas: 1
+      replicas: {{ .Values.druid_router_replicas }}
       services:
         - spec:
             type: ClusterIP

@@ -81,6 +81,8 @@ druid_broker_processing_numThreads: {{ druid_configs[cluster_type].druid_broker_
 druid_javascript.enabled: true
 druid_sql_enable: {{ enable_druid_sql | lower }}
 
+druid_broker_replicas: {{ druid_configs[cluster_type].druid_broker_replicas }}
+
 ##################### Druid Coordinator Variables #######################
 
 druid_coordinator_service: {{ druid_coordinator_service }}
@@ -90,6 +92,8 @@ druid_coordinator_heap_size: {{ druid_configs[cluster_type].druid_coordinator_he
 druid_coordinator_startDelay: {{ druid_configs[cluster_type].druid_coordinator_startDelay }}
 druid_coordinator_period: {{ druid_configs[cluster_type].druid_coordinator_period }}
 druid_coordinator_balancer_strategy: {{ druid_configs[cluster_type].druid_coordinator_balance_strategy }}
+
+druid_coordinator_replicas: {{ druid_configs[cluster_type].druid_coordinator_replicas }}
 
 ####################### Druid Overlord Variables ########################
 
@@ -104,6 +108,8 @@ druid_indexer_storage_type: {{ druid_indexing_storage_type }}
 
 # Additional parameters for minor compaction
 druid_indexer_tasklock_forceTimeChunkLock: false
+
+druid_overlord_replicas: {{ druid_configs[cluster_type].druid_overlord_replicas }}
 
 ###################### Druid Historical Variables #######################
 
@@ -141,6 +147,8 @@ druid_cache_type: caffeine
 druid_historical_cache_size: {{ druid_historical_cache_size }}
 druid_historical_cache_expiry: {{ druid_historical_cache_expiry }}
 
+druid_historical_replicas: {{ druid_configs[cluster_type].druid_historical_replicas }}
+
 #################### Druid Middlemanager Variables ######################
 
 druid_middlemanager_service: {{ druid_middlemanager_service }}
@@ -166,6 +174,8 @@ druid_indexer_fork_property_druid_server_http_numThreads: {{ druid_configs[clust
 #Additional Parameters
 druid_indexer_task_restoreTasksOnRestart: true
 
+druid_middlemanager_replicas: {{ druid_configs[cluster_type].druid_middlemanager_replicas }}
+
 ######################## Druid Router Variables #########################
 
 druid_router_service: {{ druid_router_service }}
@@ -184,6 +194,8 @@ druid_router_coordinatorServiceName: {{ druid_coordinator_service }}
 
 # Management proxy to coordinator / overlord: required for unified web console.
 druid_router_managementProxy_enabled: {{ druid_configs[cluster_type].druid_router_managementProxy_enabled }}
+
+druid_router_replicas: {{ druid_configs[cluster_type].druid_router_replicas }}
 
 #################### Zookeeper Variables ######################
 

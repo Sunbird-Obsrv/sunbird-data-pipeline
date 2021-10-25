@@ -139,9 +139,11 @@ druid_configs:
    druid_coordinator_startDelay: PT30S
    druid_coordinator_balance_strategy: diskNormalized
    druid_coordinator_monitoring_monitor_enabled: false
+   druid_coordinator_replicas: 1
    #Druid overlord node configuration
    druid_overlord_heap_size: 256M
    druid_overlord_monitoring_monitor_enabled: false
+   druid_overlord_replicas: 1
    #Druid broker node configuration
    druid_broker_min_heap_size: 128M
    druid_broker_max_heap_size: 128M
@@ -151,6 +153,7 @@ druid_configs:
    druid_broker_processing_bufferBytes: 128MiB
    druid_broker_processing_threads: 2
    druid_broker_monitor_enabled: false
+   druid_broker_replicas: 1
    #Druid historical node configuration
    #druid_historical_min_heap_size: 1048m
    #druid_historical_max_heap_size: 1048m
@@ -173,6 +176,7 @@ druid_configs:
    druid_historical_segmentcache_path: "/var/segments/store"
    druid_query_groupBy_maxOnDiskStorage: 1073741824
    druid_historical_monitoring_monitor_enabled: false
+   druid_historical_replicas: 1
    #Druid middlemanager configuration
    druid_middlemanager_heap_size: 128M
    druid_middlemanager_worker_cap: 2
@@ -183,14 +187,17 @@ druid_configs:
    druid_middlemanager_peon_processing_bufferBytes: 25MiB
    druid_middlemanager_peon_processing_threads: 2
    druid_middlemanager_peon_server_maxsize: 0
+   druid_middlemanager_monitoring_monitor_enabled: false
    druid_indexing_queue_startDelay: PT30S
+   druid_middlemanager_replicas: 1
+   #Druid Router configurations
    druid_router_heap_size: 512M
    druid_router_http_numConnections: 50
    druid_router_http_readTimeout: PT5M
    druid_router_http_numMaxThreads: 100
    druid_server_http_numThreads: 100
    druid_router_managementProxy_enabled: true
-   druid_middlemanager_monitoring_monitor_enabled: false
+   druid_router_replicas: 1
   rollup:
    #Druid Postgres Details
    druid_postgres_db: "druid-{{ cluster_type }}"
@@ -208,9 +215,13 @@ druid_configs:
    druid_coordinator_heap_size: 128m
    druid_coordinator_period: PT30S
    druid_coordinator_startDelay: PT30S
-   druid_coordinator_balance_strategy: cost
+   druid_coordinator_balance_strategy: diskNormalized
+   druid_coordinator_monitoring_monitor_enabled: false
+   druid_coordinator_replicas: 1
    #Druid overlord node configuration
-   druid_overlord_heap_size: 256m
+   druid_overlord_heap_size: 256M
+   druid_overlord_monitoring_monitor_enabled: false
+   druid_overlord_replicas: 1
    #Druid broker node configuration
    druid_broker_min_heap_size: 128m
    druid_broker_max_heap_size: 128m
@@ -219,6 +230,8 @@ druid_configs:
    druid_broker_server_http_numThread: 25
    druid_broker_processing_bufferBytes: 134217728
    druid_broker_processing_threads: 2
+   druid_broker_monitor_enabled: false
+   druid_broker_replicas: 1
    #Druid historical node configuration
    druid_historical_min_heap_size: 1048m
    druid_historical_max_heap_size: 1048m
@@ -234,6 +247,7 @@ druid_configs:
    druid_query_ondiskstorage_enabled: false
    druid_historical_segmentcache_numloadingthreads: 4
    druid_historical_segmentcache_path: "/var/segments/store"
+   druid_historical_replicas: 1
    #Druid middlemanager configuration
    druid_middlemanager_heap_size: 128m
    druid_middlemanager_worker_cap: 4
@@ -244,9 +258,12 @@ druid_configs:
    druid_middlemanager_peon_processing_threads: 2
    druid_middlemanager_peon_server_maxsize: 0
    druid_indexing_queue_startDelay: PT30S
+   druid_middlemanager_replicas: 1
+   #Druid router configuration
    druid_router_heap_size: 1g
    druid_router_http_numConnections: 50
    druid_router_http_readTimeout: PT5M
    druid_router_http_numMaxThreads: 100
    druid_server_http_numThreads: 100
    druid_router_managementProxy_enabled: true
+   druid_router_replicas: 1
