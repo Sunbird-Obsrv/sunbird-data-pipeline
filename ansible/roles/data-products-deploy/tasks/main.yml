@@ -410,6 +410,14 @@
 
 # Execute Exhaust job sanity check script tasks
 
+- name: Install required python packages
+  pip:
+    name:
+      - requests
+      - kafka-python
+  tags:
+    - run-sanity    
+
 - name: Run sanity check python script
   shell: python {{ analytics.home }}/scripts/exhaust_sanity_check.py
   tags:
