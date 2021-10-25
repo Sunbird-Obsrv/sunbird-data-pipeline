@@ -112,6 +112,11 @@
   tags: [ dataproducts, framework, ed-dataproducts ]
   when: dockdataproducts is undefined
 
+- name: Copy python sanity check script file
+  template: src=exhaust_sanity_check.py.j2 dest={{ analytics.home }}/exhaust_sanity_check.py
+  tags: [ dataproducts, framework, ed-dataproducts ]
+  when: dockdataproducts is undefined
+
 - name: Copy Dock Scripts
   template: src={{ item }}.j2 dest={{ analytics.home }}/scripts/{{ item }}.sh mode=755 owner={{ analytics_user }} group={{ analytics_group }}
   with_items: "{{ analytics.dockScripts }}"
@@ -402,3 +407,11 @@
     var: submitOutput 
   tags:
     - parallel-jobs-submit      
+
+# Execute Exhaust job sanity check script tasks
+
+- name: Run sanity check python script
+  shell: python {{ analytics.home }}/exhaust_sanity_check.py
+  tags:
+    - run-sanity
+  register: SanityCheckStatus
