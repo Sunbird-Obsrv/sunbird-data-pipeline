@@ -54,7 +54,7 @@ def main():
 	if(cassandraMigratorState == "SUCCESS" and clusterState == "SUCCESS"):
 		return finalSuccessMessage
 	else:
-		return "Required checks failed. Job Status: {0} and Cluster status: {1}".format(cassandraMigratorState, clusterState)
+		raise Exception("Required checks failed. Job Status: {0} and Cluster status: {1}".format(cassandraMigratorState, clusterState))
 
 result=main()
 print(result)
