@@ -253,7 +253,6 @@ spec:
           port: {{ .Values.druid_overlord_port }}
 
     historicals:
-      kind: Deployment
       nodeType: "historical"
       druid.port: {{ .Values.druid_historical_port }}
       nodeConfigMountPath: "/opt/druid/conf/druid/cluster/data/historical"
@@ -320,7 +319,6 @@ spec:
       #   #   name: data-volume
       
     middlemanagers:
-      kind: Deployment
       nodeType: "middleManager"
       druid.port: {{ .Values.druid_middlemanager_port }}
       nodeConfigMountPath: "/opt/druid/conf/druid/cluster/data/middleManager"
