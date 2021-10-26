@@ -29,7 +29,7 @@ def checkCassandraMigratorStatus():
 		migratorENDEvent = ""
 		with open ('{{ analytics.home }}/scripts/logs/joblog.log', 'rt') as logs:
 		    for log in logs:
-		    	if (log.count("JOB_END") == 1 & log.count("Cassandra Migrator") == 1):
+		    	if (log.count("JOB_END") == 1 & log.count("{{ cassandra_migrator_job_name }}") == 1):
 		    		migratorENDEvent = log
 		logJson = json.loads(migratorENDEvent)
 		jobStatus = logJson["edata"]["status"]

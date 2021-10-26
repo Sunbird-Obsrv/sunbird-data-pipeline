@@ -252,4 +252,6 @@ uci_pdata_id: "{{ env }}.UCI.diksha"
 
 # End Of UCI Related Variables 
 
+# Exhaust sanity check vars
+cassandra_migrator_job_name: "Cassandra Migrator"
 
