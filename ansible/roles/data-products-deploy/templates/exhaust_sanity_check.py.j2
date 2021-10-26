@@ -37,9 +37,7 @@ def checkCassandraMigratorStatus():
 			print("Cassandra Migrator Completed successfully!")
 			return "SUCCESS"
 		else:
-			return "Cassandra Migrator failed"	
-	except IOError as e:
-	    return "FAILED with {0}".format(str(e))
+			return "Cassandra Migrator failed"
 	except Exception as e:
 	    return "FAILED with {0}".format(str(e))
 
