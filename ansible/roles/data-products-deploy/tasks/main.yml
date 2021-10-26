@@ -414,7 +414,6 @@
   pip:
     name:
       - requests
-      - kafka-python
   tags:
     - run-sanity    
 
