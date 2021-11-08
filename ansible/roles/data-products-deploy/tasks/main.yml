@@ -288,6 +288,12 @@
     - update-jobmanager-config
     - dataproducts
 
+- name: Set dynamic allocation true for specific jobs
+  set_fact:
+    spark_enable_dynamic_allocation: "{{ dynamic_allocation }}"
+  tags:
+    - parallel-jobs-submit
+
 # Cluster job sumbit tasks
 - name: Copy cluster-config.json file
   template: src=cluster-config.json.j2 dest={{ analytics_cluster.home }}/cluster-config.json
