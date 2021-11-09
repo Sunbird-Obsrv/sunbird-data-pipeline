@@ -17,6 +17,7 @@
         "spark.dynamicAllocation.enabled" :"{{ spark_enable_dynamic_allocation }}",
         "spark.shuffle.service.enabled" :"{{ spark_enable_dynamic_allocation }}",
         "spark.sql.shuffle.partitions" : "{{ spark_sql_shuffle_partitions }}",
+        "spark.dynamicAllocation.minExecutors": {{ spark_cluster.num_executors }},
         "spark.scheduler.mode" : "FAIR",
         "spark.cassandra.connection.timeoutMS" : "{{ spark_cassandra_connection_timeout_millis }}",
         "spark.cassandra.read.timeoutMS" : "{{ spark_cassandra_query_timeout_millis }}",
