@@ -77,6 +77,7 @@ submit_cluster_job() {
    echo $finalRequestBody
    response=$(curl -k --user "{{ admin_name }}:{{ admin_password }}" -v -H "Content-Type: application/json" -X POST -d "$finalRequestBody" 'https://{{ spark_cluster_name }}.azurehdinsight.net/livy/batches' -H "X-Requested-By: admin_name }}")
    echo "Submitted job for batchNumer $i below is the response"
+   sleep 5
    echo $response
 }
 
@@ -123,9 +124,8 @@ elif [ "$mode" = "parallel-jobs" ]; then
     echo $parallelisation
     if [ $parallelisation -ge 1 ]; then
         for i in $(seq 1 $parallelisation)
-            do 
+            do
             submit_cluster_job $i
-            sleep 5
             done
     else echo "No requests found in table"; fi       
 
