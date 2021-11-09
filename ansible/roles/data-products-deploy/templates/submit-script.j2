@@ -125,9 +125,7 @@ elif [ "$mode" = "parallel-jobs" ]; then
     if [ $parallelisation -ge 1 ]; then
         for i in $(seq 1 $parallelisation)
             do
-            sleep 5 &
-            submit_cluster_job $i
-            wait 
+            submit_cluster_job $i && sleep 5
             done
     else echo "No requests found in table"; fi       
 
