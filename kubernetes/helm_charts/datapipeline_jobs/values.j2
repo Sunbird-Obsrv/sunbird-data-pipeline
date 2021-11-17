@@ -499,6 +499,11 @@ summary-denormalization:
     parallelism.default: 1
     jobmanager.execution.failover-strategy: region
     taskmanager.memory.network.fraction: 0.1
+    scheduler-mode: reactive
+    heartbeat.timeout: 8000
+    heartbeat.interval: 5000
+    taskmanager.memory.process.size: {{ flink_job_names['summary-denormalization'].taskmanager_process_memory }}
+    jobmanager.memory.process.size: {{ flink_job_names['summary-denormalization'].jobmanager_process_memory }}
 
 druid-validator:
   druid-validator: |+
@@ -689,8 +694,12 @@ assessment-aggregator:
     redis {
       database {
         relationCache.id = 10
+        contentCache.id = 5
       }
     }
+    assessment.skip.missingRecords = true
+    content.read.api = "{{ content_read_api_host }}/{{ content_read_api_endpoint }}"
+
   flink-conf: |+
     jobmanager.memory.flink.size: {{ flink_job_names['assessment-aggregator'].jobmanager_memory }}
     taskmanager.memory.flink.size: {{ flink_job_names['assessment-aggregator'].taskmanager_memory }}

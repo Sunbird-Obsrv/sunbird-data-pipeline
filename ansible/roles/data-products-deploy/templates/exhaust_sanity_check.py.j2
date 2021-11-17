@@ -1,0 +1,58 @@
+import requests
+from requests.auth import HTTPBasicAuth
+import json
+from kafka import KafkaConsumer
+from json import loads
+import sys
+
+def checkClusterStatus():
+	try:
+		res = requests.get('https://{{ spark_cluster_name }}.azurehdinsight.net/api/v1/clusters/{{ spark_cluster_name }}/alerts?format=summary', auth = HTTPBasicAuth("{{ admin_name }}" ,"{{ admin_password }}"))
+		if(res.status_code == 200):
+			resJson = json.loads(res.text)
+			warningCount = resJson["alerts_summary"]["WARNING"]["count"]
+			criticalCount = resJson["alerts_summary"]["CRITICAL"]["count"]
+			unknownCount = resJson["alerts_summary"]["UNKNOWN"]["count"]
+			if((warningCount + criticalCount + unknownCount) == 0):
+				print("Cluster is up & running fine. With these - WARNING:{0}, CRITICAL:{1}, UNKNOWN:{2}".format(warningCount, criticalCount, unknownCount))
+				return "SUCCESS"
+			else:
+				return "FAILED. Cluster is not running properly. Found these - WARNING:{0}, CRITICAL:{1}, UNKNOWN:{2}".format(warningCount, criticalCount, unknownCount)
+		else:
+			return "FAILED. Cluster failed to provide response. Resulted in {0} response".format(res.status_code)    
+	except Exception as e:
+	    return "FAILED with {0}".format(str(e))
+
+def checkCassandraMigratorStatus():
+	try:
+		## from joblog file
+		migratorENDEvent = ""
+		with open ('{{ analytics.home }}/scripts/logs/joblog.log', 'rt') as logs:
+		    for log in logs:
+		    	if (log.count("JOB_END") == 1 & log.count("{{ cassandra_migrator_job_name }}") == 1):
+		    		migratorENDEvent = log
+		logJson = json.loads(migratorENDEvent)
+		jobStatus = logJson["edata"]["status"]
+		if (jobStatus == "SUCCESS"):
+			print("Cassandra Migrator Completed successfully!")
+			return "SUCCESS"
+		else:
+			return "Cassandra Migrator failed"
+	except Exception as e:
+	    return "FAILED with {0}".format(str(e))
+
+
+def main():
+	finalSuccessMessage="All checks are successful"
+	## check Cassandra Migrator status
+	cassandraMigratorState=checkCassandraMigratorStatus()
+	## check spark cluster status
+	clusterState=checkClusterStatus()
+
+	if(cassandraMigratorState == "SUCCESS" and clusterState == "SUCCESS"):
+		return finalSuccessMessage
+	else:
+		raise Exception("Required checks failed. Job Status: {0} and Cluster status: {1}".format(cassandraMigratorState, clusterState))
+
+result=main()
+print(result)
