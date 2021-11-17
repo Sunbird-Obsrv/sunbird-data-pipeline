@@ -179,7 +179,7 @@ object EventFixture {
        |"version":"","rollup":{}}}""".stripMargin,
 
       // SUMMARY event - user_denorm = true, device_denorm=true, content_denorm=true
-      s"""{"eid":"SUMMARY","ets":1625043400402,"ver":"3.0","mid":"SUMMARY:a3e517153c4ba392297e70521aa5e17a",
+      s"""{"eid":"SUMMARY","ets":$currentDate,"ver":"3.0","mid":"SUMMARY:a3e517153c4ba392297e70521aa5e17a",
          |"actor":{"id":"610bab7d-1450-4e54-bf78-c7c9b14dbc81","type":"User"},
          |"context":{"channel":"01268904781886259221","pdata":{"id":"staging.sunbird.portal","ver":"4.1.0",
          |"pid":"sunbird-portal"},"env":"contentplayer","sid":"73d82044-8ea5-dffc-1af5-6cdf2a1fa1da",
@@ -201,9 +201,9 @@ object EventFixture {
          |"contents_played":0,"total_ts":0.0,"total_launches":0,"unique_contents_played":0}}}
          """.stripMargin,
       //SB-25755: if enrol-complete , denorm the event
-      """
+      s"""
           |{"actor":{"id":"7426472e-8b1a-4387-8b7a-962cb6cda006","type":"User"},"eid":"AUDIT","edata":{"props":["status","completedon"],
-          |"type":"enrol-complete"},"ver":"3.0","syncts":1626346241621,"ets":1626346241621,"context":{"channel":"in.sunbird",
+          |"type":"enrol-complete"},"ver":"3.0","syncts":1626346241621,"ets":$currentDate,"context":{"channel":"in.sunbird",
           |"env":"Course","sid":"2ba8a10a-9722-42c6-a27f-f9fd86ff6bb5","did":"0a65cbaf-2d0e-4cc8-bc70-6ee1e71fb605","pdata":
           |{"ver":"3.0","id":"org.sunbird.learning.platform","pid":"course-progress-updater"},"cdata":[{"type":"CourseBatch","id":"01331092647782809655"},
           |{"type":"Course","id":"do_31331086175718604812701"}]},"mid":"LP.AUDIT.d14d8be6-da4e-4ee9-b833-fd86d57b8808",
