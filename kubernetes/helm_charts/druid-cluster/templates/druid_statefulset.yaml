@@ -297,7 +297,7 @@ spec:
 
       volumeMounts:
         - mountPath: /druid/data
-          name: data-volume
+          name: historical-volume
       volumeClaimTemplates:
       - metadata:
           name: historical-volume
@@ -371,7 +371,7 @@ spec:
 
       volumeMounts:
         - mountPath: /druid/data
-          name: data-volume
+          name: middlemanager-volume
       volumeClaimTemplates:
       - metadata:
           name: middlemanager-volume
