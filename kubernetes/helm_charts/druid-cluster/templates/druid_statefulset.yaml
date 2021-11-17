@@ -295,6 +295,9 @@ spec:
         runAsUser: 0
         runAsGroup: 0
 
+      volumeMounts:
+        - mountPath: /opt/druid/var
+          name: data-volume
       volumeClaimTemplates:
       - metadata:
           name: historical-volume
@@ -376,6 +379,9 @@ spec:
           resources:
             requests:
               storage: {{ .Values.druid_middlemanager_persistent_volume_size }}
+      volumeMounts:
+        - mountPath: /opt/druid/var
+          name: data-volume
 
       # volumeMounts:
       #   - mountPath: /var/task
