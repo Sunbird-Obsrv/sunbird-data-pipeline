@@ -55,6 +55,8 @@ druid_emitter_graphite_eventConverter: '{"type":"whiteList", "namespacePrefix": 
 # ommiting this will lead to index double as float at the storage layer
 druid_indexing_doubleStorage: double
 
+druid_default_tmp_dir: {{druid_default_tmp_dir}}
+
 #Writing query logs into file 
 druid_request_logging_type: {{ druid_request_logging_type }}
 druid_request_logging_dir: "{{ druid_log_dir }}"

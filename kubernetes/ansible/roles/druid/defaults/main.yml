@@ -77,7 +77,7 @@ druid_broker_port: 8082
 druid_broker_service: druid/broker
 
 druid_broker_max_direct_size: 800m
-druid_broker_tmp_dir: /var/tmp
+druid_broker_tmp_dir: "{{ druid_default_tmp_dir }}"
 druid_broker_gc_logdir: "{{ druid_crash_logdir }}/gc.log"
 druid_broker_heap_dump_file : "{{ druid_crash_logdir }}/broker.hprof"
 
