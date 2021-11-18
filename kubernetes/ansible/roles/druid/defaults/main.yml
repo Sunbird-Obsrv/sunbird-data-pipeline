@@ -1,0 +1,269 @@
+druid_image: "apache/druid:0.21.1"
+druid_namespace: "druid-{{ cluster_type }}"
+
+# Druid Template variables
+druid_monitoring: false
+
+# postgres:
+#   db_url: "{{ groups['postgres'][0] }}"
+#   db_port: 5432
+#   db_admin_user: analytics
+#   db_admin_password: "{{dp_vault_pgdb_admin_password}}"
+#   druid:
+#     db_name: "druid-{{ cluster_type }}"
+#     db_username: "druid"
+#     db_password: "{{dp_vault_druid_postgress_pass}}"
+
+# druid_user: druid
+druid_directory: "/opt/druid"
+
+###################### Common Varibles ###########################
+
+druid_default_tmp_dir: "/var/tmp"
+druid_log_dir: "/var/log/druid/"
+druid_gc_logdir: "/var/log/druid/crash_logs"
+druid_crash_logdir: "/var/log/druid/crash_logs"
+
+
+#Writing request query logs to file 
+# druid_request_logging_type: "file"
+druid_request_logging_type: "composing"
+
+#Druid Extensions
+
+druid_extensions_loadList : '"druid-azure-extensions", "postgresql-metadata-storage", "druid-kafka-indexing-service"'
+druid_community_extensions:
+  - "graphite-emitter"
+druid_emitter_logging_logLevel: INFO
+
+# End of druid_extensions
+
+druid_indexing_logs_type: "azure"
+druid_indexing_log_dir: "/var/druid/indexing-logs"
+druid_indexing_storage_type: "metadata"
+druid_indexing_task_basedir: "/var/task"
+
+druid_common_monitors: '"com.metamx.metrics.JvmMonitor","org.apache.druid.java.util.metrics.JvmMonitor"'
+# druid_common_emitters: '"logging","graphite"'
+druid_common_emitters: '"logging"'
+
+druid_graphite_prefix: "druid.metric"
+druid_whitelist_filepath: "{{ druid_directory }}/whitelist"
+
+#End of Common variables
+
+######################## Coordinator Varibles #########################
+
+druid_coordinator_port: 8081
+druid_coordinator_service : druid/coordinator
+
+druid_coordinator_tmp_dir: "{{ druid_default_tmp_dir }}"
+druid_coordinator_gc_logfile: "{{ druid_crash_logdir }}/gc.log"
+druid_coordinator_heap_dump_file : "{{ druid_crash_logdir }}/coordinator.hprof"
+
+####################### Overlord Varibles #############################
+
+druid_overlord_port: 8090
+druid_overlord_service : druid/overlord
+
+druid_overlord_heap_size: 256m
+druid_overlord_tmp_dir: "{{ druid_default_tmp_dir }}"
+druid_overlord_gc_logfile: "{{ druid_crash_logdir }}/gc_overlord.log"
+druid_overlord_heap_dump_file : "{{ druid_crash_logdir }}/overlord.hprof"
+
+######################### Broker Varibles #############################
+
+druid_broker_port: 8082
+druid_broker_service: druid/broker
+
+druid_broker_max_direct_size: 800m
+druid_broker_tmp_dir: /var/tmp
+druid_broker_gc_logdir: "{{ druid_crash_logdir }}/gc.log"
+druid_broker_heap_dump_file : "{{ druid_crash_logdir }}/broker.hprof"
+
+####################### Historical Varibles ###########################
+
+druid_historical_port: 8084
+druid_historical_service: druid/historical
+
+druid_historical_tmp_dir: "{{ druid_default_tmp_dir }}"
+druid_historical_gc_logfile: "{{ druid_crash_logdir }}/historical.gc.log"
+druid_historical_heap_dump_file: "{{ druid_crash_logdir }}/historical.hprof"
+
+druid_historical_monitoring_monitors: '"org.apache.druid.server.metrics.HistoricalMetricsMonitor","com.metamx.metrics.JvmMonitor"'
+
+# druid_historical_segmentcache_path: "/var/segments/store"
+druid_historical_cache_size: 256MiB
+druid_historical_cache_expiry: 3600000
+
+druid_historical_cache_unCacheable: '"select", "scan"'
+
+##################### Middlemanager Varibles ##########################
+
+druid_middlemanager_port: 8091
+druid_middlemanager_service: druid/middlemanager
+
+druid_middlemanager_tmp_dir: "{{ druid_default_tmp_dir }}"
+druid_middlemanager_gc_logdir: "{{ druid_crash_logdir }}/gc.log"
+
+druid_middlemanager_peon_segmentcache_path: "/var/segment_cache"
+druid_azure_container_name: "telemetry-data-store"
+druid_mm_heap_dump_file : "{{ druid_crash_logdir }}/middlemanager.hprof"
+
+##################### Middlemanager Varibles ##########################
+
+druid_router_service: druid/router
+druid_router_plaintextPort: 8888
+
+enable_druid_sql: true
+persistent_storage_class: managed-premium
+
+druid_configs:
+  raw:
+   #Druid Postgres Details
+   druid_postgres_db: "druid-{{ cluster_type }}"
+   druid_postgres_host: "{{ postgres.db_url }}"
+   druid_postgres_port: "{{ postgres.db_port }}"
+   druid_postgres_user: "druid@{{ postgres.db_url }}"
+   druid_postgres_pass: "{{ dp_vault_druid_postgress_pass }}"
+   #Druid Azure Details 
+   druid_storge_type: "azure"
+   azure_account_name: "{{ sunbird_druid_storage_account_name }}"
+   azure_storage_secret: "{{ sunbird_druid_storage_account_key }}"
+   azure_container: "{{ druid_azure_container_name }}"
+   #Logging the indexing logs to azure
+   druid_log_azure_container: "{{ druid_azure_container_name }}"
+   druid_log_azure_folder: "druidlogs"
+   druid_coordinator_heap_size: 128M
+   druid_coordinator_period: PT30S
+   druid_coordinator_startDelay: PT30S
+   druid_coordinator_balance_strategy: diskNormalized
+   druid_coordinator_monitoring_monitor_enabled: false
+   druid_coordinator_replicas: 1
+   #Druid overlord node configuration
+   druid_overlord_heap_size: 256M
+   druid_overlord_monitoring_monitor_enabled: false
+   druid_overlord_replicas: 1
+   #Druid broker node configuration
+   druid_broker_min_heap_size: 128M
+   druid_broker_max_heap_size: 128M
+   druid_broker_max_direct_size: 800M
+   druid_broker_http_numConnections: 5
+   druid_broker_server_http_numThread: 25
+   druid_broker_processing_bufferBytes: 128MiB
+   druid_broker_processing_threads: 2
+   druid_broker_monitor_enabled: false
+   druid_broker_replicas: 1
+   #Druid historical node configuration
+   #druid_historical_min_heap_size: 1048m
+   #druid_historical_max_heap_size: 1048m
+   druid_historical_min_heap_size: 512M
+   druid_historical_max_heap_size: 512M
+   druid_historical_max_direct_size: 800M
+   druid_historical_persistent_volume_size: 20G
+   druid_historical_http_numConnections: 5
+   druid_historical_server_http_numThread: 25
+   druid_historical_processing_bufferBytes: 128MiB
+   druid_historical_processing_threads: 2
+   druid_historical_enable_cache: false
+   #druid_historical_segmentcache_size: 10000000000
+   druid_historical_segmentcache_size: 2000000000
+   druid_historical_server_maxsize: 1000000000
+   druid_historical_processing_num_merge_buffers: 2
+   druid_query_ondiskstorage_enabled: true
+   druid_historical_maxMergingDictionarySize: 100000000
+   druid_historical_segmentcache_numloadingthreads: 4
+   druid_historical_segmentcache_path: "/var/segments/store"
+   druid_query_groupBy_maxOnDiskStorage: 1073741824
+   druid_historical_monitoring_monitor_enabled: false
+   druid_historical_replicas: 1
+   #Druid middlemanager configuration
+   druid_middlemanager_heap_size: 128M
+   druid_middlemanager_worker_cap: 2
+   druid_middlemanager_peon_heap_size: 256M
+   druid_middlemanager_persistent_volume_size: 20G
+   druid_mm_java_opts_array: "-server -Xms512m -Xmx512m -XX:+UseG1GC -XX:MaxGCPauseMillis=100"
+   druid_middlemanager_peon_server_http_numThread: 25
+   druid_middlemanager_peon_processing_bufferBytes: 25MiB
+   druid_middlemanager_peon_processing_threads: 2
+   druid_middlemanager_peon_server_maxsize: 0
+   druid_middlemanager_monitoring_monitor_enabled: false
+   druid_indexing_queue_startDelay: PT30S
+   druid_middlemanager_replicas: 1
+   #Druid Router configurations
+   druid_router_heap_size: 512M
+   druid_router_http_numConnections: 50
+   druid_router_http_readTimeout: PT5M
+   druid_router_http_numMaxThreads: 100
+   druid_server_http_numThreads: 100
+   druid_router_managementProxy_enabled: true
+   druid_router_replicas: 1
+  rollup:
+   #Druid Postgres Details
+   druid_postgres_db: "druid-{{ cluster_type }}"
+   druid_postgres_host: "{{ postgres.db_url }}"
+   druid_postgres_port: "{{ postgres.db_port }}"
+   druid_postgres_user: "druid@{{ postgres.db_url }}"
+   #Druid Azure Details
+   druid_postgres_pass: "{{ dp_vault_druid_postgress_pass }}"
+   azure_account_name: "{{ sunbird_druid_storage_account_name }}"
+   azure_storage_secret: "{{ sunbird_druid_storage_account_key }}"
+   azure_container: "{{ druid_azure_container_name }}"
+   #Logging the indexing logs to azure
+   druid_log_azure_container: "{{ druid_azure_container_name }}"
+   druid_log_azure_folder: "druidlogs"
+   druid_coordinator_heap_size: 128m
+   druid_coordinator_period: PT30S
+   druid_coordinator_startDelay: PT30S
+   druid_coordinator_balance_strategy: diskNormalized
+   druid_coordinator_monitoring_monitor_enabled: false
+   druid_coordinator_replicas: 1
+   #Druid overlord node configuration
+   druid_overlord_heap_size: 256M
+   druid_overlord_monitoring_monitor_enabled: false
+   druid_overlord_replicas: 1
+   #Druid broker node configuration
+   druid_broker_min_heap_size: 128m
+   druid_broker_max_heap_size: 128m
+   druid_broker_max_direct_size: 700m
+   druid_broker_http_numConnections: 5
+   druid_broker_server_http_numThread: 25
+   druid_broker_processing_bufferBytes: 134217728
+   druid_broker_processing_threads: 2
+   druid_broker_monitor_enabled: false
+   druid_broker_replicas: 1
+   #Druid historical node configuration
+   druid_historical_min_heap_size: 1048m
+   druid_historical_max_heap_size: 1048m
+   druid_historical_max_direct_size: 800m
+   druid_historical_http_numConnections: 5
+   druid_historical_server_http_numThread: 25
+   druid_historical_processing_bufferBytes: 134217728
+   druid_historical_processing_threads: 2
+   druid_historical_enable_cache: false
+   druid_historical_segmentcache_size: 2000000000
+   druid_historical_server_maxsize: 10000000000
+   druid_historical_processing_num_merge_buffers: 2
+   druid_query_ondiskstorage_enabled: false
+   druid_historical_segmentcache_numloadingthreads: 4
+   druid_historical_segmentcache_path: "/var/segments/store"
+   druid_historical_replicas: 1
+   #Druid middlemanager configuration
+   druid_middlemanager_heap_size: 128m
+   druid_middlemanager_worker_cap: 4
+   druid_middlemanager_peon_heap_size: 512m
+   druid_mm_java_opts_array: "-server -Xms256m -Xmx256m -XX:+UseG1GC -XX:MaxGCPauseMillis=100"
+   druid_middlemanager_peon_server_http_numThread: 25
+   druid_middlemanager_peon_processing_bufferBytes: 25000000
+   druid_middlemanager_peon_processing_threads: 2
+   druid_middlemanager_peon_server_maxsize: 0
+   druid_indexing_queue_startDelay: PT30S
+   druid_middlemanager_replicas: 1
+   #Druid router configuration
+   druid_router_heap_size: 1g
+   druid_router_http_numConnections: 50
+   druid_router_http_readTimeout: PT5M
+   druid_router_http_numMaxThreads: 100
+   druid_server_http_numThreads: 100
+   druid_router_managementProxy_enabled: true
+   druid_router_replicas: 1
