@@ -19,7 +19,7 @@ druid_directory: "/opt/druid"
 
 ###################### Common Varibles ###########################
 
-druid_default_tmp_dir: "/druid/data/tmp"
+druid_default_tmp_dir: "/var/tmp"
 druid_log_dir: "/var/log/druid/"
 druid_gc_logdir: "/var/log/druid/crash_logs"
 druid_crash_logdir: "/var/log/druid/crash_logs"
