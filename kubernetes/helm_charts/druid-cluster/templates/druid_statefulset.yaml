@@ -43,7 +43,7 @@ spec:
     -Duser.timezone=UTC
     -Dfile.encoding=UTF-8
     -Djava.util.logging.manager=org.apache.logging.log4j.jul.LogManager
-    -Djava.io.tmpdir={{druid_default_tmp_dir}}
+    -Djava.io.tmpdir={{ .Values.druid_default_tmp_dir }}
   log4j.config: |-
     <?xml version="1.0" encoding="UTF-8" ?>
     <Configuration status="WARN">
