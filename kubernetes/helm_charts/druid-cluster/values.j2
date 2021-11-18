@@ -1,0 +1,272 @@
+druid_env: "{{ env }}"
+druid_cluster_type: "{{ cluster_type }}"
+druid_image: "{{ druid_image }}"
+druid_namespace: "{{ druid_namespace }}"
+dp_vault_pgdb_admin_password: postgres
+druid_monitoring: {{ druid_monitoring }}
+
+storageClass: {{ persistent_storage_class }}
+
+######################### Druid common variables ########################
+
+druid_directory: "/opt/druid"
+druid_extensions_loadList: '{{ druid_extensions_loadList }}'
+
+# Logging
+# Log all runtime properties on startup. Disable to avoid logging properties on startup:
+druid.startup.logging.logProperties: true
+
+# Druid Metadata Store
+druid_metadata_storage_type: "postgresql"
+druid_metadata_storage_connector_connectURI: "jdbc:postgresql://{{ druid_configs[cluster_type].druid_postgres_host }}:{{ druid_configs[cluster_type].druid_postgres_port }}/{{ druid_configs[cluster_type].druid_postgres_db }}"
+druid_metadata_storage_connector_user: {{ druid_configs[cluster_type].druid_postgres_user }}
+druid_metadata_storage_connector_password: {{ druid_configs[cluster_type].druid_postgres_pass }}
+
+# Druid Storage Type
+druid_deepstorage_type: azure
+druid_azure_storage_account: "{{ sunbird_private_storage_account_name }}"
+druid_azure_storage_account_key: "{{ sunbird_private_storage_account_key }}"
+druid_azure_container: "{{ druid_configs[cluster_type].azure_container }}"
+
+# Indexing service logs
+# For local disk (only viable in a cluster_type if this is a network mount):
+druid_indexer_logs_type: "{{ druid_indexing_logs_type }}"
+druid_indexer_logs_container: "{{ druid_configs[cluster_type].druid_log_azure_container }}"
+druid_indexer_logs_prefix: "{{ druid_configs[cluster_type].druid_log_azure_folder }}"
+
+# Service discovery
+druid_selectors_indexing_serviceName: {{ druid_overlord_service }}
+druid_selectors_coordinator_serviceName: {{ druid_coordinator_service }}
+
+# Monitoring
+druid_monitoring_monitors: '{{ druid_common_monitors }}'
+druid_emitter: composing
+druid_emitter_composing_emitters: '{{ druid_common_emitters }}'
+druid_emitter_logging_logLevel: {{ druid_emitter_logging_logLevel }}
+
+{% if druid_monitoring %}
+druid_emitter_graphite_port: {{ druid_graphite_port | d(9109)}}
+druid_emitter_graphite_hostname: {{ druid_graphite_host | d("localhost") }}
+druid_emitter_graphite_protocol: plaintext
+druid_emitter_graphite_eventConverter: '{"type":"whiteList", "namespacePrefix": "{{ druid_graphite_prefix }}", "ignoreHostname":false, "ignoreServiceName":false ,"mapPath":"{{ druid_whitelist_filepath }}"}'
+{% endif %}
+
+# Storage type of double columns
+# ommiting this will lead to index double as float at the storage layer
+druid_indexing_doubleStorage: double
+
+#Writing query logs into file 
+druid_request_logging_type: {{ druid_request_logging_type }}
+druid_request_logging_dir: "{{ druid_log_dir }}"
+
+druid_javascript_enabled: true
+druid_sql_enable: {{ enable_druid_sql | lower }}
+
+####################### Druid Broker Variables ##########################
+
+druid_broker_service: {{ druid_broker_service }}
+druid_broker_port: {{ druid_broker_port }}
+druid_broker_min_heap_size: {{ druid_configs[cluster_type].druid_broker_min_heap_size }}
+druid_broker_max_heap_size: {{ druid_configs[cluster_type].druid_broker_max_heap_size }}
+druid_broker_max_direct_size: {{ druid_configs[cluster_type].druid_broker_max_direct_size }}
+
+# HTTP server threads
+druid_broker_http_numConnections: {{ druid_configs[cluster_type].druid_broker_http_numConnections }}
+druid_server_http_numThreads: {{ druid_configs[cluster_type].druid_broker_server_http_numThread }}
+
+# Processing threads and buffers
+druid_broker_processing_buffer_sizeBytes: {{ druid_configs[cluster_type].druid_broker_processing_bufferBytes }}
+druid_broker_processing_numThreads: {{ druid_configs[cluster_type].druid_broker_processing_threads }}
+
+druid_javascript.enabled: true
+druid_sql_enable: {{ enable_druid_sql | lower }}
+
+druid_broker_replicas: {{ druid_configs[cluster_type].druid_broker_replicas }}
+
+##################### Druid Coordinator Variables #######################
+
+druid_coordinator_service: {{ druid_coordinator_service }}
+druid_coordinator_port: {{ druid_coordinator_port }}
+druid_coordinator_heap_size: {{ druid_configs[cluster_type].druid_coordinator_heap_size }}
+
+druid_coordinator_startDelay: {{ druid_configs[cluster_type].druid_coordinator_startDelay }}
+druid_coordinator_period: {{ druid_configs[cluster_type].druid_coordinator_period }}
+druid_coordinator_balancer_strategy: {{ druid_configs[cluster_type].druid_coordinator_balance_strategy }}
+
+druid_coordinator_replicas: {{ druid_configs[cluster_type].druid_coordinator_replicas }}
+
+####################### Druid Overlord Variables ########################
+
+druid_overlord_service: {{ druid_overlord_service }}
+druid_overlord_port: {{ druid_overlord_port }}
+druid_overlord_heap_size: {{ druid_configs[cluster_type].druid_overlord_heap_size }}
+
+druid_indexer_queue_startDelay: {{ druid_configs[cluster_type].druid_indexing_queue_startDelay }}
+
+druid_indexer_runner_type: remote
+druid_indexer_storage_type: {{ druid_indexing_storage_type }}
+
+# Additional parameters for minor compaction
+druid_indexer_tasklock_forceTimeChunkLock: false
+
+druid_overlord_replicas: {{ druid_configs[cluster_type].druid_overlord_replicas }}
+
+###################### Druid Historical Variables #######################
+
+druid_historical_service: {{ druid_historical_service }}
+druid_historical_port: {{ druid_historical_port }}
+druid_historical_min_heap_size: {{ druid_configs[cluster_type].druid_historical_min_heap_size }}
+druid_historical_max_heap_size: {{ druid_configs[cluster_type].druid_historical_max_heap_size }}
+druid_historical_max_direct_size: {{ druid_configs[cluster_type].druid_historical_max_direct_size }}
+
+# HTTP server threads
+druid_server_http_numThreads: {{ druid_configs[cluster_type].druid_historical_server_http_numThread }}
+
+# Processing threads and buffers
+druid_historical_processing_buffer_sizeBytes: {{ druid_configs[cluster_type].druid_historical_processing_bufferBytes }}
+druid_historical_processing_numThreads: {{ druid_configs[cluster_type].druid_historical_processing_threads }}
+druid_historical_processing_numMergeBuffers: {{ druid_configs[cluster_type].druid_historical_processing_num_merge_buffers }}
+
+druid_query_ondiskstorage_enabled: {{ druid_configs[cluster_type].druid_query_ondiskstorage_enabled }}
+druid_query_groupBy_maxMergingDictionarySize: {{ druid_configs[cluster_type].druid_historical_maxMergingDictionarySize }}
+druid_query_groupBy_maxOnDiskStorage: {{ druid_configs[cluster_type].druid_query_groupBy_maxOnDiskStorage }}
+
+# Segmentstorage
+druid_segmentCache_locations: '{% for index in range(5) %}{"path": "{{ druid_configs[cluster_type].druid_historical_segmentcache_path }}{{index}}", "maxSize": {{ druid_configs[cluster_type].druid_historical_segmentcache_size }}}{% if not loop.last %}, {% endif %}
+{% endfor %}'
+
+druid_historical_persistent_volume_size: {{ druid_configs[cluster_type].druid_historical_persistent_volume_size }}
+
+druid_segmentCache_numLoadingThreads: {{ druid_configs[cluster_type].druid_historical_segmentcache_numloadingthreads }}
+
+# Caching
+druid_historical_cache_useCache: {{ druid_configs[cluster_type].druid_historical_enable_cache }} 
+druid_historical_cache_populateCache: true
+druid_historical_cache_unCacheable: '{{ druid_historical_cache_unCacheable }}'
+druid_cache_type: caffeine
+druid_historical_cache_size: {{ druid_historical_cache_size }}
+druid_historical_cache_expiry: {{ druid_historical_cache_expiry }}
+
+druid_historical_replicas: {{ druid_configs[cluster_type].druid_historical_replicas }}
+
+#################### Druid Middlemanager Variables ######################
+
+druid_middlemanager_service: {{ druid_middlemanager_service }}
+druid_middlemanager_port: {{ druid_middlemanager_port }}
+druid_middlemanager_heap_size: {{ druid_configs[cluster_type].druid_middlemanager_heap_size }}
+
+druid_middlemanager_persistent_volume_size: {{ druid_configs[cluster_type].druid_middlemanager_persistent_volume_size }}
+
+# Number of tasks per middleManager
+druid_worker_capacity: {{ druid_configs[cluster_type].druid_middlemanager_worker_cap }}
+druid_middlemanager_heap_size: {{ druid_configs[cluster_type].druid_middlemanager_heap_size }}
+druid_middlemanager_peon_heap_size: {{ druid_configs[cluster_type].druid_middlemanager_peon_heap_size}}
+
+# Task launch parameters
+druid_indexer_runner_javaOpts: "{{ druid_configs[cluster_type].druid_mm_java_opts_array }}"
+druid_indexer_task_baseTaskDir: "{{ druid_indexing_task_basedir }}"
+
+# Peon properties
+druid_indexer_fork_property_druid_processing_buffer_sizeBytes: {{ druid_configs[cluster_type].druid_middlemanager_peon_processing_bufferBytes }}
+druid_indexer_fork_property_druid_processing_numThreads: {{ druid_configs[cluster_type].druid_middlemanager_peon_processing_threads }}
+druid_indexer_fork_property_druid_server_http_numThreads: {{ druid_configs[cluster_type].druid_middlemanager_peon_server_http_numThread }}
+
+#Additional Parameters
+druid_indexer_task_restoreTasksOnRestart: true
+
+druid_middlemanager_replicas: {{ druid_configs[cluster_type].druid_middlemanager_replicas }}
+
+######################## Druid Router Variables #########################
+
+druid_router_service: {{ druid_router_service }}
+druid_router_plaintextPort: {{ druid_router_plaintextPort }}
+druid_router_heap_size: {{ druid_configs[cluster_type].druid_router_heap_size }}
+
+# HTTP proxy
+druid_router_http_numConnections: {{ druid_configs[cluster_type].druid_router_http_numConnections }}
+druid_router_http_readTimeout: {{ druid_configs[cluster_type].druid_router_http_readTimeout }}
+druid_router_http_numMaxThreads: {{ druid_configs[cluster_type].druid_router_http_numMaxThreads }}
+druid_server_http_numThreads: {{ druid_configs[cluster_type].druid_server_http_numThreads }}
+
+# Service discovery
+druid_router_defaultBrokerServiceName: {{ druid_broker_service }}
+druid_router_coordinatorServiceName: {{ druid_coordinator_service }}
+
+# Management proxy to coordinator / overlord: required for unified web console.
+druid_router_managementProxy_enabled: {{ druid_configs[cluster_type].druid_router_managementProxy_enabled }}
+
+druid_router_replicas: {{ druid_configs[cluster_type].druid_router_replicas }}
+
+#################### Zookeeper Variables ######################
+
+zookeeper:
+  image:
+    registry: docker.io
+    repository: bitnami/zookeeper
+    tag: 3.6-debian-10
+    pullPolicy: Always
+
+  heapSize: 256
+  replicaCount: 3
+
+  resources:
+    requests:
+      memory: 256Mi
+      cpu: 250m
+
+  tickTime: 2000
+  initLimit: 10
+  syncLimit: 5
+  preAllocSize: 65536
+  snapCount: 100000
+  maxClientCnxns: 60
+  fourlwCommandsWhitelist: srvr, mntr, ruok
+  listenOnAllIPs: false
+  allowAnonymousLogin: true
+  autopurge:
+    snapRetainCount: 3
+    purgeInterval: 0
+  maxSessionTimeout: 40000
+
+  allowAnonymousLogin: true
+
+  minServerId: 1
+
+  securityContext:
+    enabled: true
+    fsGroup: 1001
+    runAsUser: 1001
+
+  livenessProbe:
+    enabled: true
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 6
+    successThreshold: 1
+    probeCommandTimeout: 2
+
+  readinessProbe:
+    enabled: true
+    initialDelaySeconds: 5
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 6
+    successThreshold: 1
+    probeCommandTimeout: 2
+
+  service:
+    type: ClusterIP
+    # loadBalancerIP: ""
+    port: 2181
+    followerPort: 2888
+    electionPort: 3888
+    nodePorts:
+      client: ""
+      clientTls: ""
+    publishNotReadyAddresses: true
+    tlsClientPort: 3181
+    disableBaseClientPort: false
+    annotations: {}
+    headless:
+      annotations: {}
