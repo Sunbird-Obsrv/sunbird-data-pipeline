@@ -257,6 +257,17 @@ spec:
       druid.port: {{ .Values.druid_historical_port }}
       nodeConfigMountPath: "/opt/druid/conf/druid/cluster/data/historical"
       replicas: {{ .Values.druid_historical_replicas }}
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+                - key: "nodeSpecUniqueStr"
+                  operator: In
+                  values:
+                  - {{ .Values.druid_namespace }}-{{ .Values.druid_env }}-historicals
+                  - {{ .Values.druid_namespace }}-{{ .Values.druid_env }}-middlemanagers
+            topologyKey: "kubernetes.io/hostname"
       readinessProbe:
         httpGet:
           path: /status/health
@@ -326,6 +337,17 @@ spec:
       druid.port: {{ .Values.druid_middlemanager_port }}
       nodeConfigMountPath: "/opt/druid/conf/druid/cluster/data/middleManager"
       replicas: {{ .Values.druid_middlemanager_replicas }}
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+                - key: "nodeSpecUniqueStr"
+                  operator: In
+                  values:
+                  - {{ .Values.druid_namespace }}-{{ .Values.druid_env }}-historicals
+                  - {{ .Values.druid_namespace }}-{{ .Values.druid_env }}-middlemanagers
+            topologyKey: "kubernetes.io/hostname"
       runtime.properties: |
         druid.service={{ .Values.druid_middlemanager_service }}
 
