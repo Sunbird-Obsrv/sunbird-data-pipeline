@@ -13,7 +13,7 @@ import scala.collection.mutable
 
 case class UserReadResult(result: java.util.HashMap[String, Any], responseCode: String, params: Params)
 case class Response(firstName: String, lastName: String, encEmail: String, encPhone: String, language: java.util.List[String], rootOrgId: String, profileUserType: java.util.HashMap[String, String],
-                    userLocations: java.util.ArrayList[java.util.Map[String, AnyRef]], rootOrg: RootOrgInfo, userId: String, framework: java.util.LinkedHashMap[String, java.util.List[String]])
+                    userLocations: java.util.ArrayList[java.util.Map[String, AnyRef]], rootOrg: RootOrgInfo, userId: String, framework: java.util.LinkedHashMap[String, java.util.List[String]], profileUserTypes: java.util.List[java.util.HashMap[String, String]])
 case class RootOrgInfo(orgName: String)
 case class Params(msgid: String, err: String, status: String, errmsg: String)
 
@@ -89,10 +89,19 @@ object UserMetadataUpdater {
       }
 
       //Flatten User Type and subType
-      val profileUserType = response.profileUserType
-      if (null != profileUserType && !profileUserType.isEmpty) {
-        userCacheData.+=(config.userTypeKey -> profileUserType.getOrDefault(config.`type`, ""),
-          config.userSubtypeKey -> profileUserType.getOrDefault(config.subtype, ""))
+      val profileUserTypes = response.profileUserTypes
+      if (null != profileUserTypes && !profileUserTypes.isEmpty) {
+        var userTypeValue = Array[String]()
+        var userSubtypeValue = Array[String]()
+        profileUserTypes.forEach(userType => {
+          val typeVal:String = userType.get(config.`type`)
+          val subTypeVal:String = userType.get(config.subtype)
+
+          if (typeVal != null && typeVal.nonEmpty && !userTypeValue.contains(typeVal)) userTypeValue :+= typeVal
+          if (subTypeVal != null && subTypeVal.nonEmpty && !userSubtypeValue.contains(subTypeVal)) userSubtypeValue :+= subTypeVal
+        })
+        userCacheData.+=(config.userTypeKey -> userTypeValue.mkString(","), config.userSubtypeKey -> userSubtypeValue.mkString(","))
+        userCacheData.+=(config.profileUserTypesKey -> new Gson().toJson(profileUserTypes))
       }
 
       //Personal information
