@@ -25,6 +25,7 @@ user_table_keyspace: "sunbird"
 course_keyspace: "sunbird_courses"
 hierarchy_store_keyspace: "{{ env }}_hierarchy_store"
 job_request_table: "{{ env }}_job_request"
+dataset_metadata_table: "{{ env }}_dataset_metadata"
 report_user_table_keyspace: "sunbird_courses"
 report_user_enrolment_table: "report_user_enrolments"
 
@@ -225,13 +226,13 @@ data_exhaust_batch_limit_per_request: 20
 
 # Start Of UCI Related Variables
 uci_postgres_host: dev-postgres
-uci_bot_postgres_database: bot
+uci_forms_postgres_database: bot
 uci_fusionauth_postgres_database: fusionauth
 uci_postgres_user: postgres
 uci_postgres_password: postgres
 
 uci_postgres:
-  conversation_db_name: "{{ uci_bot_postgres_database }}"
+  conversation_db_name: "{{ uci_forms_postgres_database }}"
   conversation_db_host: "{{ uci_postgres_host }}"
   conversation_db_port: "5432"
   conversation_db_user: "{{ uci_postgres_user }}"
@@ -251,4 +252,6 @@ uci_pdata_id: "{{ env }}.UCI.diksha"
 
 # End Of UCI Related Variables 
 
+# Exhaust sanity check vars
+cassandra_migrator_job_name: "Cassandra Migrator"
 

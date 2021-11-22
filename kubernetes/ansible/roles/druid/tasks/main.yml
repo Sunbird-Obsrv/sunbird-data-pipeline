@@ -1,0 +1,37 @@
+- name: template values.yaml file
+  template:
+    src: "{{ chart_base_path }}/druid-cluster/values.j2"
+    dest: "{{ chart_base_path }}/druid-cluster/values.yaml"
+
+- name: Create druid database if not exists
+  postgresql_db: name="{{ postgres.druid.db_name }}" \
+            login_host="{{ postgres.db_url }}" \
+            port="{{ postgres.db_port }}" \
+            login_user="{{ postgres.db_admin_user }}" \
+            login_password="{{ postgres.db_admin_password }}" \
+            encoding='UTF-8' \
+            state=present
+
+- name: Create druid user if not exists
+  postgresql_user: name="druid" \
+              password="{{ dp_vault_druid_postgress_pass }}" \
+              no_password_changes=true \
+              priv=ALL \
+              state=present \
+              login_host="{{ postgres.db_url }}" \
+              port="{{ postgres.db_port }}" \
+              login_user="{{ postgres.db_admin_user }}" \
+              login_password="{{ postgres.db_admin_password }}" \
+              db="{{ postgres.druid.db_name }}"
+
+- name: Install druid operator
+  shell: helm upgrade --install -n {{ druid_namespace }} --set env.WATCH_NAMESPACE="{{ druid_namespace }}" druid-operator {{ chart_base_path }}/druid-operator
+
+- name: Install nginx-controller
+  shell: helm upgrade --install -n {{ druid_namespace }} druid-{{ cluster_type }} {{ chart_base_path }}/nginx-ingress --skip-crds
+
+- name: Install dependencies
+  shell: helm dependency update {{ chart_base_path }}/druid-cluster
+
+- name: Install druid cluster
+  shell: helm upgrade --install -n {{ druid_namespace }} druid-cluster {{ chart_base_path }}/druid-cluster
