@@ -70,6 +70,7 @@ user_id text,
 context_id text,
 agg map<text, int>,
 agg_last_updated map<text, timestamp>,
+aggregates map<text, double>,
 agg_details list<text>,
 PRIMARY KEY ((activity_type, activity_id, user_id), context_id)
 ) WITH CLUSTERING ORDER BY (context_id ASC);

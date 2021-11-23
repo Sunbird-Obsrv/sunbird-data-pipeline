@@ -81,7 +81,7 @@ class AssessmentAggregatorConfig(override val config: Config) extends BaseJobCon
   val activityUser = "user_id"
   val aggLastUpdated = "agg_last_updated"
   val aggDetails = "agg_details"
-  val agg = "agg"
+  val aggregates = "aggregates"
 
   val aggType = config.getString("user.activity.agg.type")
 
