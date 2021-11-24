@@ -44,9 +44,9 @@ class UserScoreAggregateFunction(config: AssessmentAggregatorConfig,
     super.close()
   }
 
-  def getAggregateDetails(assessAggRows: util.List[Row]): List[String] = {
+  def getAggregateDetails(assessAggRows: List[Row]): List[String] = {
     if (null != assessAggRows && !assessAggRows.isEmpty) {
-      assessAggRows.asScala.map { row =>
+      assessAggRows.map { row =>
         val aggMap = AggDetails(row.getString("attempt_id"), row.getTimestamp("last_attempted_on"),
           row.getDouble("score"), row.getString("content_id"), row.getDouble("total_max_score"), config.aggType)
         new Gson().toJson(aggMap)
@@ -55,14 +55,17 @@ class UserScoreAggregateFunction(config: AssessmentAggregatorConfig,
   }
 
   def getBestScore(event: Event): UserActivityAgg = {
-    val query = QueryBuilder.select().column("content_id").column("attempt_id").column("last_attempted_on").column("total_max_score").max("total_score").as("score").from(config.dbKeyspace, config.dbTable)
+    val query = QueryBuilder.select().column("content_id").column("attempt_id").column("last_attempted_on").column("total_max_score").column("total_score").as("score").from(config.dbKeyspace, config.dbTable)
       .where(QueryBuilder.eq("course_id", event.courseId)).and(QueryBuilder.eq("batch_id", event.batchId))
-      .and(QueryBuilder.eq("user_id", event.userId)).groupBy("user_id", "course_id", "batch_id", "content_id")
-    val rows: java.util.List[Row] = cassandraUtil.find(query.toString)
+      .and(QueryBuilder.eq("user_id", event.userId))
+    val rows = cassandraUtil.find(query.toString).asScala.toList
     val aggDetailsList = getAggregateDetails(rows)
 
     val aggMap = if (null != rows && !rows.isEmpty) {
-      rows.asScala.toList.flatMap(row => {
+      val attemptGroupList = rows.groupBy(row => row.getString("content_id")).values
+      val topScores = attemptGroupList.map(row => row.maxBy(r => r.getDouble("score")))
+
+      topScores.flatMap(row => {
         Map(s"score:${row.getString("content_id")}" -> row.getDouble("score"),
           s"max_score:${row.getString("content_id")}" -> row.getDouble("total_max_score"))
       }).toMap
@@ -74,7 +77,7 @@ class UserScoreAggregateFunction(config: AssessmentAggregatorConfig,
     val scoreLastUpdatedTime: Map[String, Long] = score.aggregates.map(m => m._1 -> System.currentTimeMillis())
     val updateQuery = QueryBuilder.update(config.dbKeyspace, config.activityTable)
       .`with`(QueryBuilder.putAll(config.aggregates, score.aggregates.asJava))
-      .and(QueryBuilder.appendAll(config.aggDetails, score.aggDetails.asJava))
+      .and(QueryBuilder.set(config.aggDetails, score.aggDetails.asJava))
       .and(QueryBuilder.putAll(config.aggLastUpdated, scoreLastUpdatedTime.asJava))
       .where(QueryBuilder.eq(config.activityId, event.courseId))
       .and(QueryBuilder.eq(config.activityType, "Course"))
