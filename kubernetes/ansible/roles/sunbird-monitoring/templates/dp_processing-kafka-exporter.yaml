@@ -1,3 +1,5 @@
+ingestion_cluster_kafka_server_count: "{{ groups['ingestion_cluster_kafka'] | length }}"
+
 kafkaExporter:
   zookeeper:
     servers: ["{{ processing_cluster_zookeeper | join('","') }}"]
