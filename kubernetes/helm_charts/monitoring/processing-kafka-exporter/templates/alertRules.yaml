@@ -50,3 +50,13 @@ spec:
       labels:
         severity: critical
         module: dp
+        
+    - alert: kafka_broker_unavailable_ingestion_cluster
+      annotations:
+        summary: {{`"Kafka brokers unavailable"`}}
+        message: "There are only {{`{{humanize $value}}`}} kafka brokers available; Expected count: {{ Values.ingestion_cluster_kafka_server_count }}"
+      expr: kafka_brokers{job="processing-kafka-exporter"} < {{ Values.ingestion_cluster_kafka_server_count }}
+      for: 5m
+      labels:
+        severity: critical
+        module: dp
