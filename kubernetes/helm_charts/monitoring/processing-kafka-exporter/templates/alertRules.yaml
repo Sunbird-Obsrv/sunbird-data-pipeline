@@ -45,7 +45,7 @@ spec:
       annotations:
         summary: {{`"Kafka brokers unavailable"`}}
         message: "There are only {{`{{humanize $value}}`}} kafka brokers available; Expected count: {{ len .["{{ processing_cluster_kafka | join('","') }}"]}}"
-      expr: kafka_brokers{job="processing-kafka-exporter"} < {{ len ["{{ ingestion_cluster_kafka | join('","') }}"] }}
+      expr: kafka_brokers{job="processing-kafka-exporter"} < {{ len .["{{ ingestion_cluster_kafka | join('","') }}"] }}
       for: 5m
       labels:
         severity: critical
