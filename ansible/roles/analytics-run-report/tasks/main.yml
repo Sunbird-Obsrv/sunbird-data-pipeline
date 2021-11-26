@@ -9,7 +9,7 @@
    report_config: "{{ config.result.config | to_json }}"
 
 - set_fact:
-    dynamic: true
+    dynamic: false
   #when: report_start_date is defined  and report_end_date is defined  and {{ report_start_date }} != ""  and {{ report_end_date }} != ""
 
 - set_fact:
