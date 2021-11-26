@@ -1,4 +1,4 @@
-ingestion_cluster_kafka_server_count: "{{ groups['ingestion_cluster_kafka'] | length }}"
+ingestion_cluster_kafka_server_count: "{{ groups['ingestion-cluster-kafka'] | length }}"
 
 kafkaExporter:
   zookeeper:
