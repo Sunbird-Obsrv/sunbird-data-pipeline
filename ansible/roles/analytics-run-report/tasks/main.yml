@@ -10,7 +10,7 @@
 
 - set_fact:
     dynamic: true
-  when: {{ report_start_date }} is defined  and {{ report_end_date }} is defined  and {{ report_start_date }} != ""  and {{ report_end_date }} != ""
+  #when: report_start_date is defined  and report_end_date is defined  and {{ report_start_date }} != ""  and {{ report_end_date }} != ""
 
 - set_fact:
     dateRange: "{{config.result.config.reportConfig.dateRange}}"
