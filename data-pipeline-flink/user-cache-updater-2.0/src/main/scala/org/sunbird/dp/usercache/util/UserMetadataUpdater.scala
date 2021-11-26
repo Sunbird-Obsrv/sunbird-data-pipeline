@@ -91,16 +91,9 @@ object UserMetadataUpdater {
       //Flatten User Type and subType
       val profileUserTypes = response.profileUserTypes
       if (null != profileUserTypes && !profileUserTypes.isEmpty) {
-        var userTypeValue = Array[String]()
-        var userSubtypeValue = Array[String]()
-        profileUserTypes.forEach(userType => {
-          val typeVal:String = userType.get(config.`type`)
-          val subTypeVal:String = userType.get(config.subtype)
+        val List(userTypeString, userSubtypeString) = makeUsertypeStrings(profileUserTypes, config)
 
-          if (typeVal != null && typeVal.nonEmpty && !userTypeValue.contains(typeVal)) userTypeValue :+= typeVal
-          if (subTypeVal != null && subTypeVal.nonEmpty && !userSubtypeValue.contains(subTypeVal)) userSubtypeValue :+= subTypeVal
-        })
-        userCacheData.+=(config.userTypeKey -> userTypeValue.mkString(","), config.userSubtypeKey -> userSubtypeValue.mkString(","))
+        userCacheData.+=(config.userTypeKey -> userTypeString, config.userSubtypeKey -> userSubtypeString)
         userCacheData.+=(config.profileUserTypesKey -> new Gson().toJson(profileUserTypes))
       }
 
@@ -122,6 +115,20 @@ object UserMetadataUpdater {
       throw new Exception(s"User Read API does not have details for user: ${userId}")
     }
     userCacheData
+  }
+
+  def makeUsertypeStrings(profileUserTypes: java.util.List[java.util.HashMap[String, String]], config: UserCacheUpdaterConfigV2): List[String] = {
+    val userTypeValue = mutable.ListBuffer[String]()
+    val userSubtypeValue = mutable.ListBuffer[String]()
+    profileUserTypes.forEach(userType => {
+      val typeVal:String = userType.get(config.`type`)
+      val subTypeVal:String = userType.get(config.subtype)
+
+      if (typeVal != null && typeVal.nonEmpty && !userTypeValue.contains(typeVal)) userTypeValue.append(typeVal)
+      if (subTypeVal != null && subTypeVal.nonEmpty && !userSubtypeValue.contains(subTypeVal)) userSubtypeValue.append(subTypeVal)
+    })
+
+    List(userTypeValue.mkString(","), userSubtypeValue.mkString(","))
   }
 
   def removeEmptyFields(key: String, dataCache: DataCache, userMetaData: mutable.Map[String, AnyRef]):Unit = {
