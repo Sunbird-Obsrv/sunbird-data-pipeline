@@ -41,7 +41,7 @@ spec:
         severity: critical
         module: dp
 
-    - alert: kafka_broker_unavailable processing-cluster
+    - alert: kafka_broker_unavailable_processing_cluster
       annotations:
         summary: {{`"Kafka brokers unavailable"`}}
         message: "There are only {{`{{humanize $value}}`}} kafka brokers available; Expected count: {{ len .["{{ processing_cluster_kafka | join('","') }}"]}}"
@@ -51,7 +51,7 @@ spec:
         severity: critical
         module: dp
         
-    - alert: kafka_broker_unavailable
+    - alert: kafka_broker_unavailable_ingestion_cluster
       annotations:
         summary: {{`"Kafka brokers unavailable"`}}
         message: "There are only {{`{{humanize $value}}`}} kafka brokers available; Expected count: {{len .["{{ ingestion_cluster_kafka | join('","') }}"]}}"
