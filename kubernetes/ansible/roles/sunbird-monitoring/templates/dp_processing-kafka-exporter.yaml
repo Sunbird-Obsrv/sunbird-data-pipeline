@@ -1,3 +1,4 @@
+
 kafkaExporter:
   zookeeper:
     servers: ["{{ processing_cluster_zookeeper | join('","') }}"]
