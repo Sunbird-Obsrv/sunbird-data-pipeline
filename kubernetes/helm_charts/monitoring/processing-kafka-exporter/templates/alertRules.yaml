@@ -1,4 +1,4 @@
-ingestion_cluster_kafka_server_count: "{{ groups['ingestion-cluster-kafka'] | length }}"
+ingestion_cluster_kafka_server_count: ["{{ ingestion_cluster_kafka | join('","') }}"]
 ---
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
@@ -55,8 +55,8 @@ spec:
     - alert: kafka_broker_unavailable_ingestion_cluster
       annotations:
         summary: {{`"Kafka brokers unavailable"`}}
-        message: "There are only {{`{{humanize $value}}`}} kafka brokers available; Expected count: {{ Values.ingestion_cluster_kafka_server_count }}"
-      expr: kafka_brokers{job="ingestion-kafka-exporter"} < {{ Values.ingestion_cluster_kafka_server_count }}
+        message: "There are only {{`{{humanize $value}}`}} kafka brokers available; Expected count: {{ len .Values.ingestion_cluster_kafka_server_count }}"
+      expr: kafka_brokers{job="ingestion-kafka-exporter"} < {{ len .Values.ingestion_cluster_kafka_server_count }}
       for: 5m
       labels:
         severity: critical
