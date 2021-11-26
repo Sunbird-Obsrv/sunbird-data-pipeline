@@ -24,8 +24,8 @@
 #    report_config: "{{ config.result.config.reportConfig | combine(dynamic_interval) | to_json  }}"
 #   when: dynamic is defined and dynamic == true
 
-- name: Update report config
-  template: src=config.json.j2 dest={{ analytics.home }}/scripts/report_config.json mode=755 owner={{ analytics_user }} group={{ analytics_group }}
+# - name: Update report config
+#   template: src=config.json.j2 dest={{ analytics.home }}/scripts/report_config.json mode=755 owner={{ analytics_user }} group={{ analytics_group }}
 
 
 - name: Update run job config
