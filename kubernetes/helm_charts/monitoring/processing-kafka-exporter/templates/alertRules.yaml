@@ -44,8 +44,8 @@ spec:
     - alert: kafka_broker_unavailable_processing_cluster
       annotations:
         summary: {{`"Kafka brokers unavailable"`}}
-        message: "There are only {{`{{humanize $value}}`}} kafka brokers available; Expected count: {{ len .Values.kafkaExporter.kafka.servers.{{ processing_cluster_kafka | join('","') }} }}"
-      expr: kafka_brokers{job="processing-kafka-exporter"} < {{ len .Values.kafkaExporter.kafka.servers.{{ processing_cluster_kafka | join('","') }} }}
+        message: "There are only {{`{{humanize $value}}`}} kafka brokers available; Expected count: {{ len .Values.kafkaExporter.kafka.servers }}"
+      expr: kafka_brokers{job="processing-kafka-exporter"} < {{ len .Values.kafkaExporter.kafka.servers }}
       for: 5m
       labels:
         severity: critical
