@@ -55,7 +55,7 @@ spec:
       annotations:
         summary: {{`"Kafka brokers unavailable ingestion cluster "`}}
         message: "There are only {{`{{humanize $value}}`}} kafka brokers available; Expected count: {{ len .Values.ingestion_cluster_kafka_server_count }}"
-      expr: kafka_brokers{job="ingestion-kafka-exporter"} == {{ len .Values.ingestion_cluster_kafka_server_count }}
+      expr: kafka_brokers{job="ingestion-kafka-exporter"} == 1
       for: 5m
       labels:
         severity: critical
