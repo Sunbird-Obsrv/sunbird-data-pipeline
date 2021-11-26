@@ -1,3 +1,4 @@
+ingestion_cluster_kafka_server_count: "{{ groups['ingestion-cluster-kafka'] | length }}"
 ---
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
