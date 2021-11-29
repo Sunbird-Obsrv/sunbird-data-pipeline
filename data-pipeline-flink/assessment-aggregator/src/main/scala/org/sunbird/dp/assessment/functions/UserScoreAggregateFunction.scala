@@ -54,15 +54,9 @@ class UserScoreAggregateFunction(config: AssessmentAggregatorConfig,
     } else List()
   }
 
-  def getBestScore(event: Event): UserActivityAgg = {
-    val query = QueryBuilder.select().column("content_id").column("attempt_id").column("last_attempted_on").column("total_max_score").column("total_score").as("score").from(config.dbKeyspace, config.dbTable)
-      .where(QueryBuilder.eq("course_id", event.courseId)).and(QueryBuilder.eq("batch_id", event.batchId))
-      .and(QueryBuilder.eq("user_id", event.userId))
-    val rows = cassandraUtil.find(query.toString).asScala.toList
-    val aggDetailsList = getAggregateDetails(rows)
-
-    val aggMap = if (null != rows && !rows.isEmpty) {
-      val attemptGroupList = rows.groupBy(row => row.getString("content_id")).values
+  def getAggregates(assessAggRows: List[Row]): Map[String, Double] = {
+    if (null != assessAggRows && !assessAggRows.isEmpty) {
+      val attemptGroupList = assessAggRows.groupBy(row => row.getString("content_id")).values
       val topScores = attemptGroupList.map(row => row.maxBy(r => r.getDouble("score")))
 
       topScores.flatMap(row => {
@@ -70,7 +64,15 @@ class UserScoreAggregateFunction(config: AssessmentAggregatorConfig,
           s"max_score:${row.getString("content_id")}" -> row.getDouble("total_max_score"))
       }).toMap
     } else Map[String, Double]()
-    UserActivityAgg(aggregates = aggMap, aggDetails = aggDetailsList)
+  }
+
+  def getBestScore(event: Event): UserActivityAgg = {
+    val query = QueryBuilder.select().column("content_id").column("attempt_id").column("last_attempted_on").column("total_max_score").column("total_score").as("score").from(config.dbKeyspace, config.dbTable)
+      .where(QueryBuilder.eq("course_id", event.courseId)).and(QueryBuilder.eq("batch_id", event.batchId))
+      .and(QueryBuilder.eq("user_id", event.userId))
+    val rows = cassandraUtil.find(query.toString).asScala.toList
+
+    UserActivityAgg(aggregates = getAggregates(rows), aggDetails = getAggregateDetails(rows))
   }
 
   def updateUserActivity(event: Event, score: UserActivityAgg): Unit = {
