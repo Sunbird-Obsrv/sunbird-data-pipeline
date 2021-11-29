@@ -136,7 +136,8 @@ class DenormalizationStreamTaskTestSpec extends BaseTestSpec {
     val user2Data = event.getMap().get("userdata").asInstanceOf[util.Map[String, Any]]
     user2Data.get("userlogintype") should be("Student")
     user2Data.get("usersignintype") should be("Self-Signed-In")
-    user2Data.get("usertype") should be("TEACHER")
+    user2Data.get("usertype") should be("administrator")
+    user2Data.get("usersubtype") should be("deo,hm")
     user2Data.get("subject").asInstanceOf[util.List[String]].asScala should be(List("English"))
     user2Data.get("state") should be("Telangana")
     user2Data.get("cluster") should be("Cluster001")

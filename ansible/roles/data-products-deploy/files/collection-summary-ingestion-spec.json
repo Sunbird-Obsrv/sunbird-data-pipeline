@@ -114,6 +114,16 @@
                 "type": "root",
                 "name": "created_for",
                 "expr": "createdfor"
+              },
+              {
+                "type": "root",
+                "name": "user_type",
+                "expr": "usertype"
+              },
+              {
+                "type": "root",
+                "name": "user_subtype",
+                "expr": "usersubtype"
               }
             ]
           },
@@ -191,6 +201,14 @@
               },
               {
                 "name": "created_for"
+              },
+              {
+                "type": "string",
+                "name": "user_type"
+              },
+              {
+                "type": "string",
+                "name": "user_subtype"
               }
             ],
             "dimensionsExclusions": []

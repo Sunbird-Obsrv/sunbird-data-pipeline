@@ -117,27 +117,12 @@
   tags: create  
 
 - name: create {{ env }}_dataset_metadata
-  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "CREATE TABLE IF NOT EXISTS {{ env }}_dataset_metadata(dataset_id VARCHAR(50), dataset_config json, visibility VARCHAR(50), dataset_type VARCHAR(50), version VARCHAR(10), authorized_roles text[], available_from TIMESTAMP, sample_request text, sample_response text, PRIMARY KEY (dataset_id))"
-  run_once: true
-  tags: create
-
-- name: update {{ env }}_dataset_metadata
-  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "ALTER TABLE {{ env }}_dataset_metadata ALTER COLUMN sample_request TYPE text, ALTER COLUMN sample_response TYPE text"
+  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "CREATE TABLE IF NOT EXISTS {{ env }}_dataset_metadata(dataset_id VARCHAR(50), dataset_sub_id VARCHAR(150), dataset_config json, visibility VARCHAR(50), dataset_type VARCHAR(50), version VARCHAR(10), authorized_roles text[], available_from TIMESTAMP, sample_request text, sample_response text, validation_json json, druid_query json, limits json, supported_formats text[], exhaust_type VARCHAR(50), PRIMARY KEY (dataset_id, dataset_sub_id))"
   run_once: true
   tags: update
 
 - name: update {{ env }}_dataset_metadata
-  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "ALTER TABLE {{ env }}_dataset_metadata ADD COLUMN IF NOT EXISTS dataset_sub_id VARCHAR(50), ADD COLUMN IF NOT EXISTS validation_json json, ADD COLUMN IF NOT EXISTS druid_query json, ADD COLUMN IF NOT EXISTS limits json, ADD COLUMN IF NOT EXISTS supported_formats text[], ADD COLUMN IF NOT EXISTS exhaust_type VARCHAR(50)"
-  run_once: true
-  tags: update 
-
-- name: drop {{ env }}_dataset_metadata
-  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "DROP TABLE IF EXISTS {{ env }}_dataset_metadata"
-  run_once: true
-  tags: update
-
-- name: re-create {{ env }}_dataset_metadata
-  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "CREATE TABLE IF NOT EXISTS {{ env }}_dataset_metadata(dataset_id VARCHAR(50), dataset_sub_id VARCHAR(50), dataset_config json, visibility VARCHAR(50), dataset_type VARCHAR(50), version VARCHAR(10), authorized_roles text[], available_from TIMESTAMP, sample_request text, sample_response text, validation_json json, druid_query json, limits json, supported_formats text[], exhaust_type VARCHAR(50), PRIMARY KEY (dataset_id, dataset_sub_id))"
+  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "ALTER TABLE {{ env }}_dataset_metadata ALTER COLUMN dataset_sub_id TYPE VARCHAR(150)"
   run_once: true
   tags: update
 
