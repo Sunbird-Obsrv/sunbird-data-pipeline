@@ -44,6 +44,9 @@ config() {
 		"collection-summary-report")
 		echo '{"search":{"type":"none"},"model":"org.sunbird.analytics.job.report.CollectionSummaryJob","modelParams":{"searchFilter":{"request":{"filters":{"status":["Live"], "contentType": "Course"},"fields":["identifier","name","organisation","channel"],"limit":10000}},"store":"azure","sparkElasticsearchConnectionHost":"{{ sunbird_es_host }}","sparkRedisConnectionHost":"{{ metadata2_redis_host }}","sparkUserDbRedisIndex":"12","sparkUserDbRedisPort":"{{ user_port }}","sparkCassandraConnectionHost":"{{ core_cassandra_host }}","fromDate":"$(date --date yesterday '+%Y-%m-%d')","toDate":"$(date --date yesterday '+%Y-%m-%d')"},"parallelization":8,"appName":"Collection Summary Report"}'
 		;;
+		"score-metric-migration-job")
+		echo '{"search":{"type":"none"},"model":"org.sunbird.analytics.audit.ScoreMetricMigrationJob","modelParams":{"sparkCassandraConnectionHost":"{{ core_cassandra_host }}","fromDate":"$(date --date yesterday '+%Y-%m-%d')","toDate":"$(date --date yesterday '+%Y-%m-%d')"},"parallelization":8,"appName":"Score Metric Migration Job"}'
+		;;
 		"assessment-score-metric-correction")
 		echo '{"search":{"type":"none"},"model":"org.sunbird.analytics.audit.AssessmentScoreCorrectionJob","modelParams":{"assessment.score.correction.batches":"","cassandraReadConsistency":"QUORUM","cassandraWriteConsistency":"QUORUM","csvPath":"/mount/data/analytics/score_correction","isDryRunMode":true,"sparkCassandraConnectionHost":"{{ core_cassandra_host }}","fromDate":"$(date --date yesterday '+%Y-%m-%d')","toDate":"$(date --date yesterday '+%Y-%m-%d')"},"parallelization":30,"appName":"Assessment Score Correction Job"}'
 		;;

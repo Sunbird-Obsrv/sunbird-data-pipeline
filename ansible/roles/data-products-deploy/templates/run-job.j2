@@ -35,7 +35,7 @@ get_report_job_model_name(){
 		"progress-exhaust") echo 'org.sunbird.analytics.exhaust.collection.ProgressExhaustJob'
 		;;
 		"cassandra-migration") echo 'org.sunbird.analytics.updater.CassandraMigratorJob'
-        ;;
+    ;;
 		"collection-summary-report") echo 'org.sunbird.analytics.job.report.CollectionSummaryJob'
 		;;
 		"program-collection-summary-report") echo 'org.sunbird.analytics.job.report.CollectionSummaryJob'
@@ -49,15 +49,17 @@ get_report_job_model_name(){
 		"collection-reconciliation-job") echo 'org.sunbird.analytics.audit.CollectionReconciliationJob'
 		;;
 		"assessment-correction") echo 'org.sunbird.analytics.job.report.AssessmentCorrectionJob'
-        ;;
-        "assessment-archival") echo 'org.sunbird.analytics.job.report.AssessmentArchivalJob'
-        ;;
-        "assessment-archived-removal") echo 'org.sunbird.analytics.job.report.AssessmentArchivalJob'
+	  ;;
+	  "score-metric-migration-job") echo 'org.sunbird.analytics.audit.ScoreMetricMigrationJob'
+	  ;;
+    "assessment-archival") echo 'org.sunbird.analytics.job.report.AssessmentArchivalJob'
+    ;;
+    "assessment-archived-removal") echo 'org.sunbird.analytics.job.report.AssessmentArchivalJob'
 		;;
-        "uci-private-exhaust") echo 'org.sunbird.analytics.exhaust.uci.UCIPrivateExhaustJob'
-        ;;
-        "uci-response-exhaust") echo 'org.sunbird.analytics.exhaust.uci.UCIResponseExhaustJob'
-        ;;
+    "uci-private-exhaust") echo 'org.sunbird.analytics.exhaust.uci.UCIPrivateExhaustJob'
+    ;;
+    "uci-response-exhaust") echo 'org.sunbird.analytics.exhaust.uci.UCIResponseExhaustJob'
+    ;;
 		*) echo $1
 		;;
 	esac
