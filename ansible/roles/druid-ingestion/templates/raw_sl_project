@@ -1,0 +1,213 @@
+{
+    "type": "index",
+    "spec": {
+        "ioConfig": {
+            "type": "index",
+            "inputSource": {
+                "type": "azure",
+                "uris": [
+                    "azure://{{container_name}}/projects/sl_projects.json"
+                ]
+            },
+            "inputFormat": {
+                "type": "json"
+            }
+        },
+        "tuningConfig": {
+            "type": "index",
+            "partitionsSpec": {
+                "type": "dynamic"
+            }
+        },
+        "dataSchema": {
+            "dataSource": "sl-project",
+            "granularitySpec": {
+                "type": "uniform",
+                "queryGranularity": "DAY",
+                "rollup": false,
+                "segmentGranularity": "DAY"
+            },
+            "timestampSpec": {
+                "column": "project_updated_date",
+                "format": "auto"
+            },
+            "dimensionsSpec": {
+                "dimensions": [
+                    {
+                        "type":"string",
+                        "name":"project_title"
+                    },
+                    {
+                        "type":"string",
+                        "name":"project_goal"
+                    },
+                    {
+                        "type":"string",
+                        "name":"project_created_date"
+                    },
+                    {
+                        "type":"string",
+                        "name":"project_last_sync"
+                    },
+                    {
+                        "type":"string",
+                        "name":"area_of_improvement"
+                    },
+                    {
+                        "type":"string",
+                        "name":"status_of_project"
+                    },
+                    {
+                        "type":"string",
+                        "name":"tasks"
+                    },
+                    {
+                        "type":"string",
+                        "name":"tasks_date"
+                    },
+                    {
+                        "type":"string",
+                        "name":"tasks_status"
+                    },
+                    {
+                        "type":"string",
+                        "name":"sub_task"
+                    },
+                    {
+                        "type":"string",
+                        "name":"sub_task_status"
+                    },
+                    {
+                        "type":"string",
+                        "name":"sub_task_date"
+                    },
+                    {
+                        "type":"string",
+                        "name":"task_start_date"
+                    },
+                    {
+                        "type":"string",
+                        "name":"task_end_date"
+                    },
+                    {
+                        "type":"string",
+                        "name":"sub_task_start_date"
+                    },
+                    {
+                        "type":"string",
+                        "name":"sub_task_end_date"
+                    },
+                    {
+                        "type":"string",
+                        "name":"designation"
+                    },
+                    {
+                        "type":"string",
+                        "name":"project_deleted_flag"
+                    },
+                    {
+                        "type":"string",
+                        "name":"task_evidence"
+                    },
+                    {
+                        "type":"string",
+                        "name":"task_evidence_status"
+                    },
+                    {
+                        "type":"string",
+                        "name":"project_id"
+                    },
+                    {
+                        "type":"string",
+                        "name":"task_id"
+                    },
+                    {
+                        "type":"string",
+                        "name":"sub_task_id"
+                    },
+                    {
+                        "type":"string",
+                        "name":"project_created_type"
+                    },
+                    {
+                        "type":"string",
+                        "name":"task_assigned_to"
+                    },
+                    {
+                        "type":"string",
+                        "name":"channel"
+                    },
+                    {
+                        "type":"string",
+                        "name":"parent_channel"
+                    },
+                    {
+                        "type":"string",
+                        "name":"program_id"
+                    },
+                    {
+                        "type":"string",
+                        "name":"program_name"
+                    },
+                    {
+                        "type":"string",
+                        "name":"project_updated_date"
+                    },
+                    {
+                        "type":"string",
+                        "name":"createdBy"
+                    },
+                    {
+                        "type":"string",
+                        "name":"project_title_editable"
+                    },
+                    {
+                        "type":"string",
+                        "name":"project_duration"
+                    },
+                    {
+                        "type":"string",
+                        "name":"program_externalId"
+                    },
+                    {
+                        "type":"string",
+                        "name":"private_program"
+                    },
+                    {
+                        "type":"string",
+                        "name":"task_deleted_flag"
+                    },
+                    {
+                        "type":"string",
+                        "name":"sub_task_deleted_flag"
+                    },
+                    {
+                        "type":"string",
+                        "name":"project_terms_and_condition"
+                    },
+                    {
+                        "type":"string",
+                        "name":"task_remarks"
+                    },
+                    {
+                        "type":"string",
+                        "name":"organisation_name"
+                    },
+                    {
+                        "type":"string",
+                        "name":"project_description"
+                    },
+                    {
+                        "type":"string",
+                        "name":"project_completed_date"
+                    },
+                    {
+                        "type":"string",
+                        "name":"solution_id"
+                    }
+                ]
+            },
+            "metricsSpec": []
+        }
+    }
+}
