@@ -41,7 +41,7 @@ spec:
         severity: critical
         module: dp
 
-    - alert: kafka_broker_unavailable_processing_kafka
+    - alert: kafka_broker_unavailable
       annotations:
         summary: {{`"Kafka brokers unavailable processing cluster"`}}
         message: "There are only {{`{{humanize $value}}`}} kafka brokers available; Expected count: {{len .Values.kafkaExporter.kafka.servers}}"
