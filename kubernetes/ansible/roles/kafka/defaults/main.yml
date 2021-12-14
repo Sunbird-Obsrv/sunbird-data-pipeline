@@ -1,0 +1,19 @@
+kafka_namespace: "kafka"
+kafka_image_repository: "bitnami/kafka"
+kafka_image_tag: "2.8.1-debian-10-r31"
+
+kafka_delete_topic_enable: true
+
+kafka_replica_count: 3
+
+# Kubernetes Service type for external access. It can be NodePort or LoadBalancer
+service_type: "LoadBalancer"
+service_port: 9094
+
+# PV config
+kafka_persistence_size: 50Gi
+
+#Zookeeper configs
+zookeeper_enabled: true
+zookeeper_heapsize: 256
+zookeeper_replica_count: 3
