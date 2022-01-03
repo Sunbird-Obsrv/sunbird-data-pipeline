@@ -199,7 +199,8 @@ controller:
     externalTrafficPolicy: Local
 
     ## The annotations of the Ingress controller service.
-    annotations: {}
+    annotations:
+      service.beta.kubernetes.io/azure-load-balancer-internal: "true"
 
     ## The extra labels of the service.
     extraLabels: {}
