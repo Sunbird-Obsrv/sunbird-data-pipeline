@@ -130,12 +130,6 @@
             <version>3.11.2.0</version>
             <scope>test</scope>
         </dependency>
-        <!--  Latest Flink 1.14.2 dependencies not including typesafe config, so adding it -->
-        <dependency>
-            <groupId>com.typesafe</groupId>
-            <artifactId>config</artifactId>
-            <version>1.4.1</version>
-        </dependency>
     </dependencies>
 
     <build>
