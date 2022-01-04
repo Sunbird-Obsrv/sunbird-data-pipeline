@@ -424,7 +424,7 @@ spec:
       replicas: {{ .Values.druid_router_replicas }}
       services:
         - spec:
-            type: LoadBalancer
+            type: ClusterIP
             ports:
             - name: druidrouterport
               port: 80
