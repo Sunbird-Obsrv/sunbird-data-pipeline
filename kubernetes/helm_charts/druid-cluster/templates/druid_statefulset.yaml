@@ -147,7 +147,7 @@ spec:
 
         # HTTP server threads
         druid.broker.http.numConnections={{ .Values.druid_broker_http_numConnections }}
-        druid.server.http.numThreads={{ .Values.druid_server_http_numThreads }}
+        druid.server.http.numThreads={{ .Values.druid_broker_server_http_numThreads }}
 
         # Processing threads and buffers
         druid.processing.buffer.sizeBytes={{ .Values.druid_broker_processing_buffer_sizeBytes }}
@@ -276,7 +276,7 @@ spec:
         druid.service={{ .Values.druid_historical_service }}
 
         # HTTP server threads
-        druid.server.http.numThreads={{ .Values.druid_server_http_numThreads }}
+        druid.server.http.numThreads={{ .Values.druid_historical_server_http_numThreads }}
 
         # Processing threads and buffers
         druid.processing.buffer.sizeBytes={{ .Values.druid_historical_processing_buffer_sizeBytes }}
@@ -455,7 +455,7 @@ spec:
         druid.router.http.numConnections={{ .Values.druid_router_http_numConnections }}
         druid.router.http.readTimeout={{ .Values.druid_router_http_readTimeout }}
         druid.router.http.numMaxThreads={{ .Values.druid_router_http_numMaxThreads }}
-        druid.server.http.numThreads={{ .Values.druid_server_http_numThreads }}
+        druid.server.http.numThreads={{ .Values.druid_router_server_http_numThreads }}
 
         # Service discovery
         druid.router.defaultBrokerServiceName={{ .Values.druid_broker_service }}
