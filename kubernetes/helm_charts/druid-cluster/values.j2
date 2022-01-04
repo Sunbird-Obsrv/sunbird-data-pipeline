@@ -74,7 +74,7 @@ druid_broker_max_direct_size: {{ druid_configs[cluster_type].druid_broker_max_di
 
 # HTTP server threads
 druid_broker_http_numConnections: {{ druid_configs[cluster_type].druid_broker_http_numConnections }}
-druid_server_http_numThreads: {{ druid_configs[cluster_type].druid_broker_server_http_numThread }}
+druid_broker_server_http_numThreads: {{ druid_configs[cluster_type].druid_broker_server_http_numThread }}
 
 # Processing threads and buffers
 druid_broker_processing_buffer_sizeBytes: {{ druid_configs[cluster_type].druid_broker_processing_bufferBytes }}
@@ -122,7 +122,7 @@ druid_historical_max_heap_size: {{ druid_configs[cluster_type].druid_historical_
 druid_historical_max_direct_size: {{ druid_configs[cluster_type].druid_historical_max_direct_size }}
 
 # HTTP server threads
-druid_server_http_numThreads: {{ druid_configs[cluster_type].druid_historical_server_http_numThread }}
+druid_historical_server_http_numThreads: {{ druid_configs[cluster_type].druid_historical_server_http_numThread }}
 
 # Processing threads and buffers
 druid_historical_processing_buffer_sizeBytes: {{ druid_configs[cluster_type].druid_historical_processing_bufferBytes }}
@@ -188,7 +188,7 @@ druid_router_heap_size: {{ druid_configs[cluster_type].druid_router_heap_size }}
 druid_router_http_numConnections: {{ druid_configs[cluster_type].druid_router_http_numConnections }}
 druid_router_http_readTimeout: {{ druid_configs[cluster_type].druid_router_http_readTimeout }}
 druid_router_http_numMaxThreads: {{ druid_configs[cluster_type].druid_router_http_numMaxThreads }}
-druid_server_http_numThreads: {{ druid_configs[cluster_type].druid_server_http_numThreads }}
+druid_router_server_http_numThreads: {{ druid_configs[cluster_type].druid_router_server_http_numThreads }}
 
 # Service discovery
 druid_router_defaultBrokerServiceName: {{ druid_broker_service }}
