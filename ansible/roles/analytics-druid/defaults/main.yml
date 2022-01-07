@@ -5,7 +5,7 @@ zookeeper_group: "groups[{{ cluster }}-zookeeper]"
 
 druid_user: druid
 druid_directory: "/data"
-druid_version: "0.21.1"
+druid_version: "0.22.1"
 druid_url: "https://archive.apache.org/dist/druid/{{druid_version}}/apache-druid-{{druid_version}}-bin.tar.gz"
 druid_folder: "{{ druid_directory }}/apache-druid-{{ druid_version }}"
 druid_symlink: "{{ druid_directory }}/druid"
