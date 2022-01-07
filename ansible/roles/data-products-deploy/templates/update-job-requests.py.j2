@@ -102,6 +102,7 @@ def main(batchSize, jobId,jobType,table):
     column_names = get_columns_names(db, table)
     
     if jobType == 'exhaust':
+      jobId = jobId.split("-v2")[0] if "-v2" in jobId else jobId
       selectQuery = "select * from {0} where job_id = '{1}' and status IN ('SUBMITTED', 'FAILED') and iteration < 3;".format(table, jobId)
     else:
       selectQuery = "select * from {0} where status IN ('ACTIVE')".format(table)
