@@ -228,8 +228,8 @@ data_exhaust_batch_limit_per_request: 20
 uci_postgres_host: dev-pg11
 uci_bot_postgres_database: uci-botdb
 uci_fusionauth_postgres_database: uci-fusionauth
-uci_postgres_user: postgres
-uci_postgres_password: postgres
+uci_postgres_user: "{{postgres.db_username}}"
+uci_postgres_password: "{{postgres.db_password}}"
 
 uci_postgres:
   conversation_db_name: "{{ uci_bot_postgres_database }}"
