@@ -247,7 +247,7 @@ uci_postgres:
   user_registration_table_name: "user_registrations"
   user_identities_table_name: "identities"
 
-uci_encryption_secret_key: ""
+uci_encryption_secret_key: "{{uci_encryption_key_base64}}"
 uci_pdata_id: "{{ env }}.UCI.diksha"
 
 # End Of UCI Related Variables 
