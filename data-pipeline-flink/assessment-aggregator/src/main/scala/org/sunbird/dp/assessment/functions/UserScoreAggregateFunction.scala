@@ -57,12 +57,13 @@ class UserScoreAggregateFunction(config: AssessmentAggregatorConfig,
   def getAggregates(assessAggRows: List[Row]): Map[String, Double] = {
     if (null != assessAggRows && !assessAggRows.isEmpty) {
       val attemptGroupList = assessAggRows.groupBy(row => row.getString("content_id")).values
-      val topScores = attemptGroupList.map(row => row.maxBy(r => r.getDouble("score")))
+      attemptGroupList.map(row => {
+        val scoreRow = row.maxBy(r => r.getDouble("score"))
 
-      topScores.flatMap(row => {
-        Map(s"score:${row.getString("content_id")}" -> row.getDouble("score"),
-          s"max_score:${row.getString("content_id")}" -> row.getDouble("total_max_score"))
-      }).toMap
+        Map(s"score:${scoreRow.getString("content_id")}" -> scoreRow.getDouble("score"),
+          s"max_score:${scoreRow.getString("content_id")}" -> scoreRow.getDouble("total_max_score"),
+          s"attempts_count:${scoreRow.getString("content_id")}" -> row.length.toDouble)
+      }).flatten.toMap
     } else Map[String, Double]()
   }
 

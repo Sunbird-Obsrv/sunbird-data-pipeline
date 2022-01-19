@@ -118,6 +118,7 @@ class AssessmentAggregatorTaskTestSpec extends BaseTestSpec {
     assert(null != resultMap3)
     assert(2 == resultMap3.getOrDefault("score:do_2128373396098744321673", 0))
     assert(2 == resultMap3.getOrDefault("max_score:do_2128373396098744321673", 0))
+    assert(1 == resultMap3.getOrDefault("attempts_count:do_2128373396098744321673", 0))
 
     val test_row6 = cassandraUtil.findOne("select agg_details from sunbird_courses.user_activity_agg where activity_type='Course' and activity_id='do_2128415652377067521125' and  user_id='ff1c4bdf-27e2-49bc-a53f-6e304bb3a87f'")
     val aggDetail1 = new Gson().fromJson(test_row6.getList("agg_details", new TypeToken[String](){}).get(0), classOf[AggDetails])
@@ -141,12 +142,14 @@ class AssessmentAggregatorTaskTestSpec extends BaseTestSpec {
     assert(null != resultMap4)
     assert(2 == resultMap4.getOrDefault("score:do_212686723743318016173", 0))
     assert(3 == resultMap4.getOrDefault("max_score:do_212686723743318016173", 0))
+    assert(2 == resultMap4.getOrDefault("attempts_count:do_212686723743318016173", 0))
 
     val test_row5 = cassandraUtil.findOne("select aggregates from sunbird_courses.user_activity_agg where activity_type='Course' and activity_id='do_3129323995959541761169' and  user_id='50a9e3fc-d047-4fa5-a37b-67501b8933db'")
     val resultMap5 = test_row5.getMap("aggregates", new TypeToken[String]() {}, new TypeToken[java.lang.Double]() {})
     assert(null != resultMap5)
     assert(1 == resultMap5.getOrDefault("score:do_3129323935897108481169", 0))
     assert(1 == resultMap5.getOrDefault("max_score:do_3129323935897108481169", 0))
+    assert(1 == resultMap5.getOrDefault("attempts_count:do_3129323935897108481169", 0))
   }
 
   "AssessmentAggregator " should "Skip the missing records from the event" in {
