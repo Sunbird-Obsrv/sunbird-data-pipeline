@@ -1,6 +1,6 @@
 spark_folder: /usr/hdp/current/spark2-client
 guava_version: 19.0
-log4j_version: 2.5
+log4j_version: 2.16.0
 spark_redis_version: 2.5.0
 guava_default_jre_version: 28.0-jre
 guava_jre_version: 24.1.1-jre
