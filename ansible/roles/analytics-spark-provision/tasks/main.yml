@@ -30,6 +30,16 @@
   become_user: "{{ analytics_user }}"
   get_url: url={{ guava_url }} dest={{ analytics.home }}/spark-{{ spark_version }}-bin-hadoop2.7/jars/guava-19.0.jar timeout=1000 force=no owner={{ analytics_user }} group={{ analytics_group }}
 
+- name: Remove Spark SQL Kafka 2.12 2.4.4 from Spark jars folder
+  become: yes
+  become_user: "{{ analytics_user }}"
+  file: path={{ analytics.home }}/spark-{{ spark_version }}-bin-hadoop2.7/jars/spark-sql-kafka-0-10_2.12-2.4.4.jar state=absent
+
+- name: Download Spark SQL Kafka 2.11 2.4.8 and copy to Spark jars folder
+  become: yes
+  become_user: "{{ analytics_user }}"
+  get_url: url={{ guava_url }} dest={{ analytics.home }}/spark-{{ spark_version }}-bin-hadoop2.7/jars/spark-sql-kafka-0-10_2.11-2.4.8.jar timeout=1000 force=no owner={{ analytics_user }} group={{ analytics_group }}
+
 - name: Remove jets3t 0.9.3 from Spark jars folder
   become: yes
   become_user: "{{ analytics_user }}"

@@ -8,6 +8,8 @@ jedis_version: 3.2.0
 zip4j_version: 2.6.2
 guice_default_version: 4.0
 guice_version: 3.0
+spark_sql_kafka_version: 2.4.8
+scala_version: 2.11 
 guava_url: https://repo1.maven.org/maven2/com/google/guava/guava/{{guava_version}}/guava-{{guava_version}}.jar
 guava_jre_url: https://repo1.maven.org/maven2/com/google/guava/guava/{{guava_jre_version}}/guava-{{guava_jre_version}}.jar
 log4j_core_url: https://repo1.maven.org/maven2/org/apache/logging/log4j/log4j-core/{{log4j_version}}/log4j-core-{{log4j_version}}.jar
@@ -17,3 +19,4 @@ jedis_url: https://repo1.maven.org/maven2/redis/clients/jedis/{{jedis_version}}/
 zip4j_url: https://repo1.maven.org/maven2/net/lingala/zip4j/zip4j/{{zip4j_version}}/zip4j-{{zip4j_version}}.jar
 guice_url: https://repo1.maven.org/maven2/com/google/inject/guice/{{guice_version}}/guice-{{guice_version}}.jar
 guice_servlet_url: https://repo1.maven.org/maven2/com/google/inject/extensions/guice-servlet/{{guice_version}}/guice-servlet-{{guice_version}}.jar
+spark_sql_kafka: https://repo1.maven.org/maven2/org/apache/spark/spark-sql-kafka-0-10_{{scala_version}}/{{spark_sql_kafka_version}}/spark-sql-kafka-0-10_{{scala_version}}-{{spark_sql_kafka_version}}.jar
