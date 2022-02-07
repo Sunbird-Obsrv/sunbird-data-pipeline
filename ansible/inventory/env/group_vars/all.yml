@@ -171,5 +171,3 @@ processing_zookeeper_ip: "{{ groups['processing-cluster-zookeepers'][0] }}"
 imagepullsecrets: "{{env}}-registry-secret"
 dialcode_host: "http://{{private_ingressgateway_ip}}/dial"
 dialcode_endpoint: "dialcode/v3/read/"
-### UCI Config
-uci_encryption_key_base64: ""
