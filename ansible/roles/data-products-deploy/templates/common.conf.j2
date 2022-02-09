@@ -134,7 +134,7 @@ spark.sql.caseSensitive=true
 druid.sql.host="http://{{druid_broker_host}}:8082/druid/v2/sql/"
 druid.unique.content.query="{\"query\":\"SELECT DISTINCT \\\"object_id\\\" AS \\\"Id\\\"\\nFROM \\\"druid\\\".\\\"summary-events\\\" WHERE \\\"__time\\\"  BETWEEN TIMESTAMP '%s' AND TIMESTAMP '%s'\"}"
 druid.content.rating.query="{\"query\":\"SELECT \\\"object_id\\\" AS contentId, COUNT(*) AS \\\"totalRatingsCount\\\", SUM(edata_rating) AS \\\"Total Ratings\\\", SUM(edata_rating)/COUNT(*) AS \\\"averageRating\\\" FROM \\\"druid\\\".\\\"telemetry-feedback-events\\\" WHERE \\\"eid\\\" = 'FEEDBACK' AND \\\"edata_rating\\\">0 GROUP BY \\\"object_id\\\"\"}"
-druid.content.consumption.query="{\"query\":\"SELECT COUNT(*) as \\\"play_sessions_count\\\", object_id as \\\"contentId\\\", SUM(total_time_spent) as \\\"total_time_spent\\\", dimensions_pdata_id, object_id\\nFROM \\\"summary-events\\\"\\nWHERE \\\"dimensions_mode\\\" = 'play' AND \\\"dimensions_type\\\" ='content'\\nGROUP BY object_id, dimensions_pdata_id\"}"
+druid.content.consumption.query="{\"query\":\"SELECT COUNT(*) as \\\"play_sessions_count\\\", object_id as \\\"contentId\\\", SUM(total_time_spent) as \\\"total_time_spent\\\", dimensions_pdata_id, object_id\\nFROM \\\"summary-events\\\"\\nWHERE \\\"dimensions_mode\\\" = 'play' AND \\\"dimensions_type\\\" ='content' AND \\\"dimensions_pdata_pid\\\" != 'creation-portal' \\nGROUP BY object_id, dimensions_pdata_id\"}"
 lp.system.update.base.url="{{lp_url}}/system/v3/content/update"
 
 
