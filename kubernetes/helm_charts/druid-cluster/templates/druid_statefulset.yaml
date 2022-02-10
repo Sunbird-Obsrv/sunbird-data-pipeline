@@ -142,6 +142,15 @@ spec:
       druid.port: {{ .Values.druid_broker_port }}
       nodeConfigMountPath: "/opt/druid/conf/druid/cluster/query/broker"
       replicas: {{ .Values.druid_broker_replicas }}
+      services:
+        - spec:
+            type: NodePort
+            ports:
+            - name: druidbrokerport
+              port: 8082
+              targetPort: 8082
+              nodePort: 32000
+              protocol: TCP
       runtime.properties: |
         druid.service={{ .Values.druid_broker_service }}
 
