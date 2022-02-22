@@ -249,7 +249,7 @@ uci_postgres:
   user_identities_table_name: "identities"
 
 uci_encryption_secret_key: "{{uci_encryption_key_base64}}"
-uci_pdata_id: "{{ env }}.UCI.diksha"
+uci_pdata_id: "{{ env }}.uci.sunbird"
 
 # End Of UCI Related Variables 
 
