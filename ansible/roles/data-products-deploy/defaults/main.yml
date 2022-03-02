@@ -152,12 +152,12 @@ run_cassandra_migration:
     minute: 15
 
 run_uci_private_exhaust_job:
-  uci-private-exhaust-2AMIST:
+  uci-private-exhaust:
     hour: 02
     minute: 00 
 
 run_uci_response_exhaust_job:
-  uci-response-exhaust-2AMIST:
+  uci-response-exhaust:
     hour: 02
     minute: 00
     
