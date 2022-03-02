@@ -151,6 +151,16 @@ run_cassandra_migration:
     hour: 19
     minute: 15
 
+run_uci_private_exhaust_job:
+  uci-private-exhaust-2AMIST:
+    hour: 02
+    minute: 00 
+
+run_uci_response_exhaust_job:
+  uci-response-exhaust-2AMIST:
+    hour: 02
+    minute: 00
+    
 
 service:
   search:
