@@ -151,6 +151,16 @@ run_cassandra_migration:
     hour: 19
     minute: 15
 
+run_uci_private_exhaust_job:
+  uci-private-exhaust:
+    hour: 03
+    minute: 00 
+
+run_uci_response_exhaust_job:
+  uci-response-exhaust:
+    hour: 02
+    minute: 00
+    
 
 service:
   search:
@@ -249,7 +259,7 @@ uci_postgres:
   user_identities_table_name: "identities"
 
 uci_encryption_secret_key: "{{uci_encryption_key_base64}}"
-uci_pdata_id: "{{ env_name}}.uci.sunbird"
+uci_pdata_id: "{{env}}.uci.{{sunbird_instance}}"
 
 # End Of UCI Related Variables 
 
