@@ -153,7 +153,7 @@ run_cassandra_migration:
 
 run_uci_private_exhaust_job:
   uci-private-exhaust:
-    hour: 02
+    hour: 03
     minute: 00 
 
 run_uci_response_exhaust_job:
