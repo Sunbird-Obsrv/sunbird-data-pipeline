@@ -140,3 +140,8 @@
   shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "ALTER TABLE report ADD COLUMN IF NOT EXISTS report_type varchar(8) NOT NULL DEFAULT 'report'"
   run_once: true
   tags: update 
+
+- name: create {{ env }}_archival_metadata
+  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "CREATE TABLE IF NOT EXISTS {{ env }}_archival_metadata (request_id TEXT, batch_id TEXT, collection_id TEXT, resource_type TEXT, job_id TEXT, archival_date TIMESTAMP, completion_date TIMESTAMP, archival_status TEXT, deletion_status TEXT, blob_url TEXT[], iteration int, request_data json, err_message TEXT)"
+  run_once: true
+  tags: create
