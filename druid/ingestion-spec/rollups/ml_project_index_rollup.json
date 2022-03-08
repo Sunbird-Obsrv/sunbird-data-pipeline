@@ -2,7 +2,7 @@
     "type": "kafka",
     "spec": {
       "dataSchema": {
-        "dataSource": "sl-project-rollup",
+        "dataSource": "ml-project-rollup",
         "timestampSpec": {
           "column": "project_updated_date",
           "format": "iso",
