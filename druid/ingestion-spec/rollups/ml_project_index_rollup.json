@@ -1,0 +1,349 @@
+{
+    "type": "kafka",
+    "spec": {
+      "dataSchema": {
+        "dataSource": "sl_projects_rollup",
+        "timestampSpec": {
+          "column": "project_updated_date",
+          "format": "iso",
+          "missingValue": null
+        },
+        "dimensionsSpec": {
+          "dimensions": [
+            {
+              "type": "string",
+              "name": "project_title",
+              "multiValueHandling": "SORTED_ARRAY",
+              "createBitmapIndex": true
+            },
+            {
+              "type": "string",
+              "name": "area_of_improvement",
+              "multiValueHandling": "SORTED_ARRAY",
+              "createBitmapIndex": true
+            },
+            {
+              "type": "string",
+              "name": "tasks",
+              "multiValueHandling": "SORTED_ARRAY",
+              "createBitmapIndex": true
+            },
+            {
+              "type": "string",
+              "name": "tasks_status",
+              "multiValueHandling": "SORTED_ARRAY",
+              "createBitmapIndex": true
+            },
+            {
+              "type": "string",
+              "name": "designation",
+              "multiValueHandling": "SORTED_ARRAY",
+              "createBitmapIndex": true
+            },
+            {
+              "type": "string",
+              "name": "task_evidence",
+              "multiValueHandling": "SORTED_ARRAY",
+              "createBitmapIndex": true
+            },
+            {
+              "type": "string",
+              "name": "task_id",
+              "multiValueHandling": "SORTED_ARRAY",
+              "createBitmapIndex": true
+            },
+            {
+              "type": "string",
+              "name": "status_of_project",
+              "multiValueHandling": "SORTED_ARRAY",
+              "createBitmapIndex": true
+            },
+            {
+              "type": "string",
+              "name": "program_name",
+              "multiValueHandling": "SORTED_ARRAY",
+              "createBitmapIndex": true
+            },
+            {
+              "type": "string",
+              "name": "createdBy",
+              "multiValueHandling": "SORTED_ARRAY",
+              "createBitmapIndex": true
+            },
+            {
+              "type": "string",
+              "name": "program_externalId",
+              "multiValueHandling": "SORTED_ARRAY",
+              "createBitmapIndex": true
+            },
+            {
+              "type": "string",
+              "name": "private_program",
+              "multiValueHandling": "SORTED_ARRAY",
+              "createBitmapIndex": true
+            },
+            {
+              "type": "string",
+              "name": "project_terms_and_condition",
+              "multiValueHandling": "SORTED_ARRAY",
+              "createBitmapIndex": true
+            },
+            {
+              "type": "string",
+              "name": "state_externalId",
+              "multiValueHandling": "SORTED_ARRAY",
+              "createBitmapIndex": true
+            },
+            {
+              "type": "string",
+              "name": "block_externalId",
+              "multiValueHandling": "SORTED_ARRAY",
+              "createBitmapIndex": true
+            },
+            {
+              "type": "string",
+              "name": "district_externalId",
+              "multiValueHandling": "SORTED_ARRAY",
+              "createBitmapIndex": true
+            },
+            {
+              "type": "string",
+              "name": "cluster_externalId",
+              "multiValueHandling": "SORTED_ARRAY",
+              "createBitmapIndex": true
+            }
+          ],
+          "dimensionExclusions": []
+        },
+        "metricsSpec": [
+          {
+            "type": "HLLSketchBuild",
+            "name": "count_of_unique_programs",
+            "fieldName": "program_id"
+          },
+          {
+            "type": "HLLSketchBuild",
+            "name": "count_of_createdAt",
+            "fieldName": "createdAt"
+          },
+          {
+            "type": "HLLSketchBuild",
+            "name": "count_of_solution_id",
+            "fieldName": "solution_id"
+          }
+        ],
+        "granularitySpec": {
+          "type": "uniform",
+          "segmentGranularity": "HOUR",
+          "queryGranularity": "HOUR",
+          "rollup": true,
+          "intervals": []
+        },
+        "transformSpec": {
+          "filter": null,
+          "transforms": [
+            {
+              "type": "expression",
+              "name": "task_evidence_status",
+              "expression": "if(array_length(\"task_evidence\") > 0, 'true', 'false')"
+            },
+            {
+              "type": "expression",
+              "name": "parent_channel",
+              "expression": "upper('SHIKSHALOKAM')"
+            },
+            {
+              "type": "expression",
+              "name": "project_created_type",
+              "expression": "if((NULL != \"project_created_type\"), 'project imported from library', 'user created project')"
+            }
+          ]
+        }
+      },
+      "ioConfig": {
+        "topic": "sl_projects",
+        "inputFormat": {
+          "type": "json",
+          "flattenSpec": {
+            "useFieldDiscovery": true,
+            "fields": [
+              {
+                "type": "path",
+                "name": "project_title",
+                "expr": "$.solutionInformation.name"
+              },
+              {
+                "type": "path",
+                "name": "area_of_improvement",
+                "expr": "$.categories[*].name"
+              },
+              {
+                "type": "path",
+                "name": "tasks",
+                "expr": "$.tasks[*].name"
+              },
+              {
+                "type": "path",
+                "name": "tasks_status",
+                "expr": "$.tasks[*].status"
+              },
+              {
+                "type": "path",
+                "name": "designation",
+                "expr": "$.userRoleInformation.role"
+              },
+              {
+                "type": "path",
+                "name": "task_evidence",
+                "expr": "$.tasks[*].attachments[*].sourcePath"
+              },
+              {
+                "type": "path",
+                "name": "task_id",
+                "expr": "$.tasks[*]._id"
+              },
+              {
+                "type": "path",
+                "name": "program_id",
+                "expr": "$.programId"
+              },
+              {
+                "type": "path",
+                "name": "status_of_project",
+                "expr": "$.status"
+              },
+              {
+                "type": "path",
+                "name": "program_name",
+                "expr": "$.programInformation.name"
+              },
+              {
+                "type": "path",
+                "name": "project_updated_date",
+                "expr": "$.updatedAt"
+              },
+              {
+                "type": "path",
+                "name": "createdBy",
+                "expr": "$.userid"
+              },
+              {
+                "type": "path",
+                "name": "program_externalId",
+                "expr": "$.programExternalId"
+              },
+              {
+                "type": "path",
+                "name": "private_program",
+                "expr": "$.isAPrivateProgram"
+              },
+              {
+                "type": "path",
+                "name": "project_terms_and_condition",
+                "expr": "$.hasAcceptedTAndC"
+              },
+              {
+                "type": "path",
+                "name": "solution_id",
+                "expr": "$.solutionInformation._id"
+              },
+              {
+                "type": "path",
+                "name": "state_externalId",
+                "expr": "$.userRoleInformation.state"
+              },
+              {
+                "type": "path",
+                "name": "block_externalId",
+                "expr": "$.userRoleInformation.block"
+              },
+              {
+                "type": "path",
+                "name": "district_externalId",
+                "expr": "$.userRoleInformation.district"
+              },
+              {
+                "type": "path",
+                "name": "cluster_externalId",
+                "expr": "$.userRoleInformation.cluster"
+              },
+              {
+                "type": "path",
+                "name": "school_externalId",
+                "expr": "$.userRoleInformation.school"
+              }
+            ]
+          },
+          "featureSpec": {}
+        },
+        "replicas": 1,
+        "taskCount": 1,
+        "taskDuration": "PT3600S",
+        "consumerProperties": {
+          "bootstrap.servers": "localhost:9092"
+        },
+        "pollTimeout": 100,
+        "startDelay": "PT5S",
+        "period": "PT30S",
+        "useEarliestOffset": false,
+        "completionTimeout": "PT1800S",
+        "lateMessageRejectionPeriod": null,
+        "earlyMessageRejectionPeriod": null,
+        "lateMessageRejectionStartDateTime": null,
+        "stream": "sl_projects",
+        "useEarliestSequenceNumber": false,
+        "autoscalerConfig": null,
+        "type": "kafka"
+      },
+      "tuningConfig": {
+        "type": "kafka",
+        "appendableIndexSpec": {
+          "type": "onheap"
+        },
+        "maxRowsInMemory": 1000000,
+        "maxBytesInMemory": 0,
+        "skipBytesInMemoryOverheadCheck": false,
+        "maxRowsPerSegment": 5000000,
+        "maxTotalRows": null,
+        "intermediatePersistPeriod": "PT10M",
+        "basePersistDirectory": "/home/pradyumna/Documents/tools/apache-druid-0.22.1/var/tmp/druid-realtime-persist2402376951438975075",
+        "maxPendingPersists": 0,
+        "indexSpec": {
+          "bitmap": {
+            "type": "roaring",
+            "compressRunOnSerialization": true
+          },
+          "dimensionCompression": "lz4",
+          "metricCompression": "lz4",
+          "longEncoding": "longs",
+          "segmentLoader": null
+        },
+        "indexSpecForIntermediatePersists": {
+          "bitmap": {
+            "type": "roaring",
+            "compressRunOnSerialization": true
+          },
+          "dimensionCompression": "lz4",
+          "metricCompression": "lz4",
+          "longEncoding": "longs",
+          "segmentLoader": null
+        },
+        "reportParseExceptions": false,
+        "handoffConditionTimeout": 0,
+        "resetOffsetAutomatically": false,
+        "segmentWriteOutMediumFactory": null,
+        "workerThreads": null,
+        "chatThreads": null,
+        "chatRetries": 8,
+        "httpTimeout": "PT10S",
+        "shutdownTimeout": "PT80S",
+        "offsetFetchPeriod": "PT30S",
+        "intermediateHandoffPeriod": "P2147483647D",
+        "logParseExceptions": true,
+        "maxParseExceptions": 2147483647,
+        "maxSavedParseExceptions": 0,
+        "skipSequenceNumberAvailabilityCheck": false,
+        "repartitionTransitionDuration": "PT120S"
+      }
+    }
+  }
