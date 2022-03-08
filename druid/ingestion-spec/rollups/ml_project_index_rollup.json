@@ -2,7 +2,7 @@
     "type": "kafka",
     "spec": {
       "dataSchema": {
-        "dataSource": "sl_projects_rollup",
+        "dataSource": "sl-project-rollup",
         "timestampSpec": {
           "column": "project_updated_date",
           "format": "iso",
@@ -123,8 +123,8 @@
           },
           {
             "type": "HLLSketchBuild",
-            "name": "count_of_createdAt",
-            "fieldName": "createdAt"
+            "name": "count_of_createdBy",
+            "fieldName": "createdBy"
           },
           {
             "type": "HLLSketchBuild",
@@ -161,7 +161,7 @@
         }
       },
       "ioConfig": {
-        "topic": "sl_projects",
+        "topic": "{{env}}.ml.project",
         "inputFormat": {
           "type": "json",
           "flattenSpec": {
@@ -280,7 +280,7 @@
         "taskCount": 1,
         "taskDuration": "PT3600S",
         "consumerProperties": {
-          "bootstrap.servers": "localhost:9092"
+          "bootstrap.servers": "{{kafka_brokers}}"
         },
         "pollTimeout": 100,
         "startDelay": "PT5S",
@@ -347,3 +347,4 @@
       }
     }
   }
+
