@@ -106,7 +106,7 @@ object UserMetadataUpdater {
         config.email -> response.encEmail,
         config.userId -> response.userId)
 
-    } else if (config.userReadApiErrors.contains(userReadRes.responseCode.toUpperCase) && userReadRes.params.status.equalsIgnoreCase("USER_ACCOUNT_BLOCKED")) { //Skip the events for which response is 400 Bad request
+    } else if (config.userReadApiErrors.contains(userReadRes.responseCode.toUpperCase) && userReadRes.params.err.equalsIgnoreCase(config.userAccBlockedErrCode)) { //Skip the events for which response is 400 Bad request
       logger.info(s"User Read API has response as ${userReadRes.responseCode.toUpperCase} for user: ${userId}")
       metrics.incCounter(config.apiReadMissCount)
     } else {
