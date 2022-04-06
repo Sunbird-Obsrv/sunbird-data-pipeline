@@ -10,7 +10,7 @@ config() {
 	sunbirdPlatformCassandraHost="{{ core_cassandra_host }}"
 	reportPostContainer="{{ reports_container }}"
 	druidRollupHost="{{ druid_rollup_cluster_ingestion_task_url }}"
-	
+
 	if [ -z "$2" ]; then endDate=$(date --date yesterday "+%Y-%m-%d"); else endDate=$2; fi
 	if [ ! -z "$3" ]; then inputBucket=$3; fi
 	case "$1" in
