@@ -42,7 +42,7 @@ scale_properties:
     max_replica: {{ flink_job_names['assessment-aggregator'].max_replica | default(2) }}
   content-cache-updater:
     enabled: {{ flink_job_names['content-cache-updater'].scale_enabled | lower}}
-    scale_target_value: {{ flink_job_names['content-cache-updaterr'].scale_target_value | default(0) }}
+    scale_target_value: {{ flink_job_names['content-cache-updater'].scale_target_value | default(0) }}
     min_replica: {{ flink_job_names['content-cache-updater'].min_replica | default(1) }}
     max_replica: {{ flink_job_names['content-cache-updater'].max_replica | default(2) }}
   user-cache-updater-v2:
