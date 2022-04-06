@@ -3,6 +3,119 @@
     "spec": {
       "dataSchema": {
         "dataSource": "ml-project-rollup",
+        "parserSpec": {
+            "format": "json",
+            "flattenSpec": {
+                "useFieldDiscovery": true,
+                "fields": [
+                  {
+                    "type": "path",
+                    "name": "project_title",
+                    "expr": "$.solutionInformation.name"
+                  },
+                  {
+                    "type": "path",
+                    "name": "area_of_improvement",
+                    "expr": "$.categories[*].name"
+                  },
+                  {
+                    "type": "path",
+                    "name": "tasks",
+                    "expr": "$.tasks[*].name"
+                  },
+                  {
+                    "type": "path",
+                    "name": "tasks_status",
+                    "expr": "$.tasks[*].status"
+                  },
+                  {
+                    "type": "path",
+                    "name": "designation",
+                    "expr": "$.userRoleInformation.role"
+                  },
+                  {
+                    "type": "path",
+                    "name": "task_evidence",
+                    "expr": "$.tasks[*].attachments[*].sourcePath"
+                  },
+                  {
+                    "type": "path",
+                    "name": "task_id",
+                    "expr": "$.tasks[*]._id"
+                  },
+                  {
+                    "type": "path",
+                    "name": "program_id",
+                    "expr": "$.programId"
+                  },
+                  {
+                    "type": "path",
+                    "name": "status_of_project",
+                    "expr": "$.status"
+                  },
+                  {
+                    "type": "path",
+                    "name": "program_name",
+                    "expr": "$.programInformation.name"
+                  },
+                  {
+                    "type": "path",
+                    "name": "project_updated_date",
+                    "expr": "$.updatedAt"
+                  },
+                  {
+                    "type": "path",
+                    "name": "createdBy",
+                    "expr": "$.userid"
+                  },
+                  {
+                    "type": "path",
+                    "name": "program_externalId",
+                    "expr": "$.programExternalId"
+                  },
+                  {
+                    "type": "path",
+                    "name": "private_program",
+                    "expr": "$.isAPrivateProgram"
+                  },
+                  {
+                    "type": "path",
+                    "name": "project_terms_and_condition",
+                    "expr": "$.hasAcceptedTAndC"
+                  },
+                  {
+                    "type": "path",
+                    "name": "solution_id",
+                    "expr": "$.solutionInformation._id"
+                  },
+                  {
+                    "type": "path",
+                    "name": "state_externalId",
+                    "expr": "$.userRoleInformation.state"
+                  },
+                  {
+                    "type": "path",
+                    "name": "block_externalId",
+                    "expr": "$.userRoleInformation.block"
+                  },
+                  {
+                    "type": "path",
+                    "name": "district_externalId",
+                    "expr": "$.userRoleInformation.district"
+                  },
+                  {
+                    "type": "path",
+                    "name": "cluster_externalId",
+                    "expr": "$.userRoleInformation.cluster"
+                  },
+                  {
+                    "type": "path",
+                    "name": "school_externalId",
+                    "expr": "$.userRoleInformation.school"
+                  }
+                ]
+              }
+        },
         "timestampSpec": {
           "column": "project_updated_date",
           "format": "iso",
@@ -12,105 +125,71 @@
           "dimensions": [
             {
               "type": "string",
-              "name": "project_title",
-              "multiValueHandling": "SORTED_ARRAY",
-              "createBitmapIndex": true
+              "name": "project_title"
             },
             {
               "type": "string",
-              "name": "area_of_improvement",
-              "multiValueHandling": "SORTED_ARRAY",
-              "createBitmapIndex": true
+              "name": "area_of_improvement"
             },
             {
               "type": "string",
-              "name": "tasks",
-              "multiValueHandling": "SORTED_ARRAY",
-              "createBitmapIndex": true
+              "name": "tasks"
             },
             {
               "type": "string",
-              "name": "tasks_status",
-              "multiValueHandling": "SORTED_ARRAY",
-              "createBitmapIndex": true
+              "name": "tasks_status"
             },
             {
               "type": "string",
-              "name": "designation",
-              "multiValueHandling": "SORTED_ARRAY",
-              "createBitmapIndex": true
+              "name": "designation"
             },
             {
               "type": "string",
-              "name": "task_evidence",
-              "multiValueHandling": "SORTED_ARRAY",
-              "createBitmapIndex": true
+              "name": "task_evidence"
             },
             {
               "type": "string",
-              "name": "task_id",
-              "multiValueHandling": "SORTED_ARRAY",
-              "createBitmapIndex": true
+              "name": "task_id"
             },
             {
               "type": "string",
-              "name": "status_of_project",
-              "multiValueHandling": "SORTED_ARRAY",
-              "createBitmapIndex": true
+              "name": "status_of_project"
             },
             {
               "type": "string",
-              "name": "program_name",
-              "multiValueHandling": "SORTED_ARRAY",
-              "createBitmapIndex": true
+              "name": "program_name"
             },
             {
               "type": "string",
-              "name": "createdBy",
-              "multiValueHandling": "SORTED_ARRAY",
-              "createBitmapIndex": true
+              "name": "createdBy"
             },
             {
               "type": "string",
-              "name": "program_externalId",
-              "multiValueHandling": "SORTED_ARRAY",
-              "createBitmapIndex": true
+              "name": "program_externalId"
             },
             {
               "type": "string",
-              "name": "private_program",
-              "multiValueHandling": "SORTED_ARRAY",
-              "createBitmapIndex": true
+              "name": "private_program"
             },
             {
               "type": "string",
-              "name": "project_terms_and_condition",
-              "multiValueHandling": "SORTED_ARRAY",
-              "createBitmapIndex": true
+              "name": "project_terms_and_condition"
             },
             {
               "type": "string",
-              "name": "state_externalId",
-              "multiValueHandling": "SORTED_ARRAY",
-              "createBitmapIndex": true
+              "name": "state_externalId"
             },
             {
               "type": "string",
-              "name": "block_externalId",
-              "multiValueHandling": "SORTED_ARRAY",
-              "createBitmapIndex": true
+              "name": "block_externalId"
             },
             {
               "type": "string",
-              "name": "district_externalId",
-              "multiValueHandling": "SORTED_ARRAY",
-              "createBitmapIndex": true
+              "name": "district_externalId"
             },
             {
               "type": "string",
-              "name": "cluster_externalId",
-              "multiValueHandling": "SORTED_ARRAY",
-              "createBitmapIndex": true
+              "name": "cluster_externalId"
             }
           ],
           "dimensionExclusions": []
@@ -134,10 +213,9 @@
         ],
         "granularitySpec": {
           "type": "uniform",
-          "segmentGranularity": "HOUR",
-          "queryGranularity": "HOUR",
-          "rollup": true,
-          "intervals": []
+          "segmentGranularity": "DAY",
+          "queryGranularity": "DAY",
+          "rollup": true
         },
         "transformSpec": {
           "filter": null,
@@ -162,189 +240,19 @@
       },
       "ioConfig": {
         "topic": "{{env}}.ml.project",
-        "inputFormat": {
-          "type": "json",
-          "flattenSpec": {
-            "useFieldDiscovery": true,
-            "fields": [
-              {
-                "type": "path",
-                "name": "project_title",
-                "expr": "$.solutionInformation.name"
-              },
-              {
-                "type": "path",
-                "name": "area_of_improvement",
-                "expr": "$.categories[*].name"
-              },
-              {
-                "type": "path",
-                "name": "tasks",
-                "expr": "$.tasks[*].name"
-              },
-              {
-                "type": "path",
-                "name": "tasks_status",
-                "expr": "$.tasks[*].status"
-              },
-              {
-                "type": "path",
-                "name": "designation",
-                "expr": "$.userRoleInformation.role"
-              },
-              {
-                "type": "path",
-                "name": "task_evidence",
-                "expr": "$.tasks[*].attachments[*].sourcePath"
-              },
-              {
-                "type": "path",
-                "name": "task_id",
-                "expr": "$.tasks[*]._id"
-              },
-              {
-                "type": "path",
-                "name": "program_id",
-                "expr": "$.programId"
-              },
-              {
-                "type": "path",
-                "name": "status_of_project",
-                "expr": "$.status"
-              },
-              {
-                "type": "path",
-                "name": "program_name",
-                "expr": "$.programInformation.name"
-              },
-              {
-                "type": "path",
-                "name": "project_updated_date",
-                "expr": "$.updatedAt"
-              },
-              {
-                "type": "path",
-                "name": "createdBy",
-                "expr": "$.userid"
-              },
-              {
-                "type": "path",
-                "name": "program_externalId",
-                "expr": "$.programExternalId"
-              },
-              {
-                "type": "path",
-                "name": "private_program",
-                "expr": "$.isAPrivateProgram"
-              },
-              {
-                "type": "path",
-                "name": "project_terms_and_condition",
-                "expr": "$.hasAcceptedTAndC"
-              },
-              {
-                "type": "path",
-                "name": "solution_id",
-                "expr": "$.solutionInformation._id"
-              },
-              {
-                "type": "path",
-                "name": "state_externalId",
-                "expr": "$.userRoleInformation.state"
-              },
-              {
-                "type": "path",
-                "name": "block_externalId",
-                "expr": "$.userRoleInformation.block"
-              },
-              {
-                "type": "path",
-                "name": "district_externalId",
-                "expr": "$.userRoleInformation.district"
-              },
-              {
-                "type": "path",
-                "name": "cluster_externalId",
-                "expr": "$.userRoleInformation.cluster"
-              },
-              {
-                "type": "path",
-                "name": "school_externalId",
-                "expr": "$.userRoleInformation.school"
-              }
-            ]
-          },
-          "featureSpec": {}
-        },
         "replicas": 1,
-        "taskCount": 1,
+        "taskCount": "{{rollup_ml_project_taskcount}}",
         "taskDuration": "PT3600S",
         "consumerProperties": {
           "bootstrap.servers": "{{kafka_brokers}}"
         },
-        "pollTimeout": 100,
-        "startDelay": "PT5S",
-        "period": "PT30S",
-        "useEarliestOffset": false,
-        "completionTimeout": "PT1800S",
-        "lateMessageRejectionPeriod": null,
-        "earlyMessageRejectionPeriod": null,
-        "lateMessageRejectionStartDateTime": null,
-        "stream": "sl_projects",
-        "useEarliestSequenceNumber": false,
-        "autoscalerConfig": null,
-        "type": "kafka"
+        "useEarliestOffset": true,
+        "completionTimeout": "PT1800S"
       },
       "tuningConfig": {
         "type": "kafka",
-        "appendableIndexSpec": {
-          "type": "onheap"
-        },
-        "maxRowsInMemory": 1000000,
-        "maxBytesInMemory": 0,
-        "skipBytesInMemoryOverheadCheck": false,
-        "maxRowsPerSegment": 5000000,
-        "maxTotalRows": null,
-        "intermediatePersistPeriod": "PT10M",
-        "basePersistDirectory": "/home/pradyumna/Documents/tools/apache-druid-0.22.1/var/tmp/druid-realtime-persist2402376951438975075",
-        "maxPendingPersists": 0,
-        "indexSpec": {
-          "bitmap": {
-            "type": "roaring",
-            "compressRunOnSerialization": true
-          },
-          "dimensionCompression": "lz4",
-          "metricCompression": "lz4",
-          "longEncoding": "longs",
-          "segmentLoader": null
-        },
-        "indexSpecForIntermediatePersists": {
-          "bitmap": {
-            "type": "roaring",
-            "compressRunOnSerialization": true
-          },
-          "dimensionCompression": "lz4",
-          "metricCompression": "lz4",
-          "longEncoding": "longs",
-          "segmentLoader": null
-        },
         "reportParseExceptions": false,
-        "handoffConditionTimeout": 0,
-        "resetOffsetAutomatically": false,
-        "segmentWriteOutMediumFactory": null,
-        "workerThreads": null,
-        "chatThreads": null,
-        "chatRetries": 8,
-        "httpTimeout": "PT10S",
-        "shutdownTimeout": "PT80S",
-        "offsetFetchPeriod": "PT30S",
-        "intermediateHandoffPeriod": "P2147483647D",
-        "logParseExceptions": true,
-        "maxParseExceptions": 2147483647,
-        "maxSavedParseExceptions": 0,
-        "skipSequenceNumberAvailabilityCheck": false,
-        "repartitionTransitionDuration": "PT120S"
+        "maxRowsPerSegment": 5000000
       }
     }
   }
-
