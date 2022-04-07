@@ -11,8 +11,8 @@
 
 - name: Updating java jdk to system path
   shell: |
-    update-alternatives --install /usr/bin/java java /opt/jdk-11.0.14/bin/java 9999
-    update-alternatives --install /usr/bin/javac javac /opt/jdk-11.0.14/bin/java 9999
+    update-alternatives --install /usr/bin/java java /opt/jdk-11.0.14/bin/java 9998
+    update-alternatives --install /usr/bin/javac javac /opt/jdk-11.0.14/bin/java 9998
 
 - name: Checking java version
   shell: java -version
