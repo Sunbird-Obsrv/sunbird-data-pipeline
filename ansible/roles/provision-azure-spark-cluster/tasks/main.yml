@@ -8,7 +8,7 @@
     - {var: 'azure_storage_secret', value: '{{ sunbird_private_storage_account_key }}'}
   no_log: true
 
-- name: Remove guava-jre, guice default jars
+- name: Remove guava-jre, guice, xbean-asm6 & spark_sql_kafka default jars
   become: yes
   file:
     path: "{{ spark_folder }}/jars/{{item.var}}-{{item.value}}.jar"
@@ -17,6 +17,8 @@
     - {var: 'guava', value: '{{ guava_default_jre_version }}'}
     - {var: 'guice', value: '{{ guice_default_version }}'}
     - {var: 'guice-servlet', value: '{{ guice_default_version }}'} 
+    - {var: 'spark_sql_kafka', value: '{{ spark_sql_kafka }}'} 
+    - {var: 'xbean-asm6', value: '{{ xbean-asm6_rul }}'} 
    
 - name: Download guava_jre_url and copy to Spark jars folder
   become: yes
@@ -49,6 +51,14 @@
 - name: Download guice-servlet and copy to Spark jars folder
   become: yes
   get_url: url={{ guice_servlet_url }} dest={{ spark_folder }}/jars/guice-servlet-{{guice_version}}.jar timeout=1000 force=no
+
+- name: Download spark_sql_kafka and copy to Spark jars folder
+  become: yes
+  get_url: url={{ spark_sql_kafka }} dest={{ spark_folder }}/jars/spark-sql-kafka-0-10_{{scala_version}}-{{spark_sql_kafka_version}}.jar timeout=1000 force=no
+
+- name: Download xbean-asm6 and copy to Spark jars folder
+  become: yes
+  get_url: url={{ xbean-asm6_rul }} dest={{ spark_folder }}/jars/xbean-asm6-shaded-{{xbean_asm6_version}}.jar timeout=1000 force=no  
 
 - name: Update log4j.properties
   become: yes
