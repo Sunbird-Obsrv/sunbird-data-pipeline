@@ -242,7 +242,7 @@
         "topic": "{{env}}.ml.project",
         "replicas": 1,
         "taskCount": "{{rollup_ml_project_taskcount}}",
-        "taskDuration": "PT3600S",
+        "taskDuration": "PT14400S",
         "consumerProperties": {
           "bootstrap.servers": "{{kafka_brokers}}"
         },
