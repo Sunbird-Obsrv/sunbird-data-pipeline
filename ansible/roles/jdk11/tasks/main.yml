@@ -9,11 +9,11 @@
     keep_newer: yes
   register: tar
 
-- name: Updating java jdk to system path
+- name: Updating java jdk-11 to system path
   shell: |
-    update-alternatives --install /usr/bin/java java /opt/jdk-11.0.14/bin/java 9998
-    update-alternatives --install /usr/bin/javac javac /opt/jdk-11.0.14/bin/java 9998
-    sudo update-alternatives --set java /opt/jdk-11.0.14/bin/java
+    update-alternatives --install /usr/bin/java java /opt/jdk-11/bin/java 9998
+    update-alternatives --install /usr/bin/javac javac /opt/jdk-11/bin/java 9998
+    sudo update-alternatives --set java /opt/jdk-11/bin/java
 
 - name: Checking java version
   shell: java -version
