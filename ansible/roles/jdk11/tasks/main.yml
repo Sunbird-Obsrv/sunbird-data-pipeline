@@ -3,7 +3,7 @@
 
 - name: Uncompressing and copying to system path
   unarchive:
-    src: https://download.java.net/openjdk/jdk11/ri/openjdk-11+28_linux-x64_bin.tar.gz
+    src: https://download.java.net/java/GA/jdk11/9/GPL/openjdk-11.0.2_linux-x64_bin.tar.gz
     dest: /opt/
     remote_src: yes
     keep_newer: yes
@@ -11,9 +11,9 @@
 
 - name: Updating java jdk-11 to system path
   shell: |
-    update-alternatives --install /usr/bin/java java /opt/jdk-11/bin/java 9998
-    update-alternatives --install /usr/bin/javac javac /opt/jdk-11/bin/java 9998
-    sudo update-alternatives --set java /opt/jdk-11/bin/java
+    update-alternatives --install /usr/bin/java java /opt/jdk-11.0.2/bin/java 9998
+    update-alternatives --install /usr/bin/javac javac /opt/jdk-11.0.2/bin/java 9998
+    sudo update-alternatives --set java /opt/jdk-11.0.2/bin/java
 
 - name: Checking java version
   shell: java -version
