@@ -48,7 +48,7 @@
 - name: Download xbean 4.10 and copy to Spark jars folder
   become: yes
   become_user: "{{ analytics_user }}"
-  get_url: url={{ xbean-asm6_rul }} dest={{ analytics.home }}/spark-{{ spark_version }}-bin-hadoop2.7/jars/xbean-asm6-shaded-4.10.jar timeout=1000 force=no owner={{ analytics_user }} group={{ analytics_group }}
+  get_url: url={{ xbean_asm6_url }} dest={{ analytics.home }}/spark-{{ spark_version }}-bin-hadoop2.7/jars/xbean-asm6-shaded-4.10.jar timeout=1000 force=no owner={{ analytics_user }} group={{ analytics_group }}
 
 - name: Remove jets3t 0.9.3 from Spark jars folder
   become: yes

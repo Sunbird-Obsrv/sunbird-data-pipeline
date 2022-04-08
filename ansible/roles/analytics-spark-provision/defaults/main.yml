@@ -33,4 +33,4 @@ java_xmlbuilder_url: https://repo1.maven.org/maven2/com/jamesmurty/utils/java-xm
 hadoop_azure_url: https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-azure/2.7.3/hadoop-azure-2.7.3.jar
 azure_storage: https://repo1.maven.org/maven2/com/microsoft/azure/azure-storage/3.0.0/azure-storage-3.0.0.jar
 spark_sql_kafka_url: https://repo1.maven.org/maven2/org/apache/spark/spark-sql-kafka-0-10_2.11/2.4.8/spark-sql-kafka-0-10_2.11-2.4.8.jar
-xbean-asm6_rul: https://repo1.maven.org/maven2/org/apache/xbean/xbean-asm6-shaded/4.10/xbean-asm6-shaded-4.10.jar
+xbean_asm6_rul: https://repo1.maven.org/maven2/org/apache/xbean/xbean-asm6-shaded/4.10/xbean-asm6-shaded-4.10.jar
