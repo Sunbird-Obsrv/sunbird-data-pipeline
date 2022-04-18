@@ -1,0 +1,258 @@
+{
+    "type": "kafka",
+    "spec": {
+      "dataSchema": {
+        "dataSource": "ml-project-rollup",
+        "parserSpec": {
+            "format": "json",
+            "flattenSpec": {
+                "useFieldDiscovery": true,
+                "fields": [
+                  {
+                    "type": "path",
+                    "name": "project_title",
+                    "expr": "$.solutionInformation.name"
+                  },
+                  {
+                    "type": "path",
+                    "name": "area_of_improvement",
+                    "expr": "$.categories[*].name"
+                  },
+                  {
+                    "type": "path",
+                    "name": "tasks",
+                    "expr": "$.tasks[*].name"
+                  },
+                  {
+                    "type": "path",
+                    "name": "tasks_status",
+                    "expr": "$.tasks[*].status"
+                  },
+                  {
+                    "type": "path",
+                    "name": "designation",
+                    "expr": "$.userRoleInformation.role"
+                  },
+                  {
+                    "type": "path",
+                    "name": "task_evidence",
+                    "expr": "$.tasks[*].attachments[*].sourcePath"
+                  },
+                  {
+                    "type": "path",
+                    "name": "task_id",
+                    "expr": "$.tasks[*]._id"
+                  },
+                  {
+                    "type": "path",
+                    "name": "program_id",
+                    "expr": "$.programId"
+                  },
+                  {
+                    "type": "path",
+                    "name": "status_of_project",
+                    "expr": "$.status"
+                  },
+                  {
+                    "type": "path",
+                    "name": "program_name",
+                    "expr": "$.programInformation.name"
+                  },
+                  {
+                    "type": "path",
+                    "name": "project_updated_date",
+                    "expr": "$.updatedAt"
+                  },
+                  {
+                    "type": "path",
+                    "name": "createdBy",
+                    "expr": "$.userid"
+                  },
+                  {
+                    "type": "path",
+                    "name": "program_externalId",
+                    "expr": "$.programExternalId"
+                  },
+                  {
+                    "type": "path",
+                    "name": "private_program",
+                    "expr": "$.isAPrivateProgram"
+                  },
+                  {
+                    "type": "path",
+                    "name": "project_terms_and_condition",
+                    "expr": "$.hasAcceptedTAndC"
+                  },
+                  {
+                    "type": "path",
+                    "name": "solution_id",
+                    "expr": "$.solutionInformation._id"
+                  },
+                  {
+                    "type": "path",
+                    "name": "state_externalId",
+                    "expr": "$.userRoleInformation.state"
+                  },
+                  {
+                    "type": "path",
+                    "name": "block_externalId",
+                    "expr": "$.userRoleInformation.block"
+                  },
+                  {
+                    "type": "path",
+                    "name": "district_externalId",
+                    "expr": "$.userRoleInformation.district"
+                  },
+                  {
+                    "type": "path",
+                    "name": "cluster_externalId",
+                    "expr": "$.userRoleInformation.cluster"
+                  },
+                  {
+                    "type": "path",
+                    "name": "school_externalId",
+                    "expr": "$.userRoleInformation.school"
+                  }
+                ]
+              }
+        },
+        "timestampSpec": {
+          "column": "project_updated_date",
+          "format": "iso",
+          "missingValue": null
+        },
+        "dimensionsSpec": {
+          "dimensions": [
+            {
+              "type": "string",
+              "name": "project_title"
+            },
+            {
+              "type": "string",
+              "name": "area_of_improvement"
+            },
+            {
+              "type": "string",
+              "name": "tasks"
+            },
+            {
+              "type": "string",
+              "name": "tasks_status"
+            },
+            {
+              "type": "string",
+              "name": "designation"
+            },
+            {
+              "type": "string",
+              "name": "task_evidence"
+            },
+            {
+              "type": "string",
+              "name": "task_id"
+            },
+            {
+              "type": "string",
+              "name": "status_of_project"
+            },
+            {
+              "type": "string",
+              "name": "program_name"
+            },
+            {
+              "type": "string",
+              "name": "createdBy"
+            },
+            {
+              "type": "string",
+              "name": "program_externalId"
+            },
+            {
+              "type": "string",
+              "name": "private_program"
+            },
+            {
+              "type": "string",
+              "name": "project_terms_and_condition"
+            },
+            {
+              "type": "string",
+              "name": "state_externalId"
+            },
+            {
+              "type": "string",
+              "name": "block_externalId"
+            },
+            {
+              "type": "string",
+              "name": "district_externalId"
+            },
+            {
+              "type": "string",
+              "name": "cluster_externalId"
+            }
+          ],
+          "dimensionExclusions": []
+        },
+        "metricsSpec": [
+          {
+            "type": "HLLSketchBuild",
+            "name": "count_of_unique_programs",
+            "fieldName": "program_id"
+          },
+          {
+            "type": "HLLSketchBuild",
+            "name": "count_of_createdBy",
+            "fieldName": "createdBy"
+          },
+          {
+            "type": "HLLSketchBuild",
+            "name": "count_of_solution_id",
+            "fieldName": "solution_id"
+          }
+        ],
+        "granularitySpec": {
+          "type": "uniform",
+          "segmentGranularity": "DAY",
+          "queryGranularity": "HOUR",
+          "rollup": true
+        },
+        "transformSpec": {
+          "filter": null,
+          "transforms": [
+            {
+              "type": "expression",
+              "name": "task_evidence_status",
+              "expression": "if(array_length(\"task_evidence\") > 0, 'true', 'false')"
+            },
+            {
+              "type": "expression",
+              "name": "parent_channel",
+              "expression": "upper('SHIKSHALOKAM')"
+            },
+            {
+              "type": "expression",
+              "name": "project_created_type",
+              "expression": "if((NULL != \"project_created_type\"), 'project imported from library', 'user created project')"
+            }
+          ]
+        }
+      },
+      "ioConfig": {
+        "topic": "{{env}}.ml.project",
+        "replicas": 1,
+        "taskCount": "{{rollup_ml_project_taskcount}}",
+        "taskDuration": "PT14400S",
+        "consumerProperties": {
+          "bootstrap.servers": "{{kafka_brokers}}"
+        },
+        "useEarliestOffset": true,
+        "completionTimeout": "PT1800S"
+      },
+      "tuningConfig": {
+        "type": "kafka",
+        "reportParseExceptions": false,
+        "maxRowsPerSegment": 5000000
+      }
+    }
+  }
