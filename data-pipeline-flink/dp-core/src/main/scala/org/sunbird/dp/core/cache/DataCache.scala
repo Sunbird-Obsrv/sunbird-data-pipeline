@@ -131,7 +131,7 @@ class DataCache(val config: BaseJobConfig, val redisConnect: RedisConnect, val d
     try {
       set(key, value);
     } catch {
-      case ex@(_: JedisConnectionException | _: JedisException) =>
+      case ex: JedisException =>
         logger.error("Exception when update data to redis cache", ex)
         this.redisConnection.close()
         this.redisConnection = redisConnect.getConnection(dbIndex);
