@@ -1,0 +1,41 @@
+{
+  "type": "object",
+  "required": [
+    "state",
+    "props",
+    "cb_object",
+    "cb_data"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "type": {
+      "id": "http://api.ekstep.org/telemetry/cb-wat-edata/type",
+      "type": "string"
+    },
+    "props": {
+      "id": "http://api.ekstep.org/telemetry/cb-wat-edata/props",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "state": {
+      "id": "http://api.ekstep.org/telemetry/cb-wat-edata/state",
+      "type": "string"
+    },
+    "prevstate": {
+      "id": "http://api.ekstep.org/telemetry/cb-wat-edata/prevstate",
+      "type": "string"
+    },
+    "duration": {
+      "id": "http://api.ekstep.org/telemetry/cb-wat-edata/duration",
+      "type": "number"
+    },
+    "cb_object": {
+      "$ref": "resource:/schemas/telemetry/3.0/cb_wat_object.json"
+    },
+    "cb_data": {
+      "$ref": "resource:/schemas/telemetry/3.0/cb_data.json"
+    }
+  }
+}

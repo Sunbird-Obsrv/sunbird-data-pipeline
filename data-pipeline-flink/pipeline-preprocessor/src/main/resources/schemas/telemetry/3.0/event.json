@@ -52,6 +52,9 @@
     },
     {
       "$ref": "resource:/schemas/telemetry/3.0/metrics.json"
+    },
+    {
+      "$ref": "resource:/schemas/telemetry/3.0/cb_audit.json"
     }
   ]
 }

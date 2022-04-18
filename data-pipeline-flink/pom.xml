@@ -30,6 +30,7 @@
 		<module>content-cache-updater</module>
 		<module>assessment-aggregator</module>
 		<module>user-cache-updater-2.0</module>
+		<module>cb-preprocessor</module>
 	</modules>
 
 	<properties>

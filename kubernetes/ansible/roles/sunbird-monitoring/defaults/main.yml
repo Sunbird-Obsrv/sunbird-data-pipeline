@@ -31,6 +31,7 @@ default_mailing_list: kaliraja.ramasamy@tarento.com, anandp@ilimi.in, manjunathd
 # flink Jobs lag vars critical 
 telemetry_extractor_threshold_critical: 50000
 pipeline_preprocessor_threshold_critical: 50000
+cb_preprocessor_threshold_critical: 50000
 de_normalization_threshold_critical: 50000   ### this var being used for de-normalization-primary and secondary jobs
 druid_validator_threshold_critical: 50000
 assessment_aggregator_threshold_critical: 50000
@@ -48,6 +49,7 @@ telemetry_extractor_failed_events_percentage_threshold_warning: 0.5
 # Flink jobs lag warning
 telemetry_extractor_threshold_warning: 30000
 pipeline_preprocessor_threshold_warning: 30000
+cb_preprocessor_threshold_warning: 30000
 de_normalization_threshold_warning: 30000 ### this var being used for de-normalization-primary and secondary jobs
 druid_validator_threshold_warning: 30000
 assessment_aggregator_threshold_warning: 30000
@@ -72,6 +74,7 @@ post_publish_processor_threshold_warning: 40
 # Flink jobmanager Checkpoint failure vars
 telemetry_extractor_checkpointfailure_threshold_critical: 5 
 pipeline_preprocessor_checkpointfailure_threshold_critical: 5
+cb_preprocessor_checkpointfailure_threshold_critical: 5
 de_normalization_checkpointfailure_threshold_critical: 5
 druid_validator_checkpointfailure_threshold_critical: 5
 assessment_aggregator_checkpointfailure_threshold_critical: 5

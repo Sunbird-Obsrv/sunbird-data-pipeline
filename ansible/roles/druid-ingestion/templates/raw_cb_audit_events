@@ -1,0 +1,401 @@
+{
+  "type": "kafka",
+  "dataSchema": {
+    "dataSource": "cb-audit-events",
+    "parser": {
+      "type": "string",
+      "parseSpec": {
+        "format": "json",
+        "flattenSpec": {
+          "useFieldDiscovery": false,
+          "fields": [
+            {
+              "type": "root",
+              "name": "eid"
+            },
+            {
+              "type": "root",
+              "name": "mid"
+            },
+            {
+              "type": "root",
+              "name": "ets"
+            },
+            {
+              "type": "root",
+              "name": "@timestamp"
+            },
+            {
+              "type": "path",
+              "name": "actor_id",
+              "expr": "$.actor.id"
+            },
+            {
+              "type": "path",
+              "name": "actor_type",
+              "expr": "$.actor.type"
+            },
+            {
+              "type": "path",
+              "name": "context_channel",
+              "expr": "$.context.channel"
+            },
+            {
+              "type": "path",
+              "name": "context_pdata_id",
+              "expr": "$.context.pdata.id"
+            },
+            {
+              "type": "path",
+              "name": "context_pdata_pid",
+              "expr": "$.context.pdata.pid"
+            },
+            {
+              "type": "path",
+              "name": "context_pdata_ver",
+              "expr": "$.context.pdata.ver"
+            },
+            {
+              "type": "path",
+              "name": "context_env",
+              "expr": "$.context.env"
+            },
+            {
+              "type": "path",
+              "name": "context_sid",
+              "expr": "$.context.sid"
+            },
+            {
+              "type": "path",
+              "name": "context_did",
+              "expr": "$.context.did"
+            },
+            {
+              "type": "path",
+              "name": "context_rollup_l1",
+              "expr": "$.context.rollup.l1"
+            },
+            {
+              "type": "path",
+              "name": "context_rollup_l2",
+              "expr": "$.context.rollup.l2"
+            },
+            {
+              "type": "path",
+              "name": "context_rollup_l3",
+              "expr": "$.context.rollup.l3"
+            },
+            {
+              "type": "path",
+              "name": "context_rollup_l4",
+              "expr": "$.context.rollup.l4"
+            },
+            {
+              "type": "path",
+              "name": "object_id",
+              "expr": "$.object.id"
+            },
+            {
+              "type": "path",
+              "name": "object_type",
+              "expr": "$.object.type"
+            },
+            {
+              "type": "path",
+              "name": "object_version",
+              "expr": "$.object.ver"
+            },
+            {
+              "type": "path",
+              "name": "object_rollup_l1",
+              "expr": "$.object.rollup.l1"
+            },
+            {
+              "type": "path",
+              "name": "object_rollup_l2",
+              "expr": "$.object.rollup.l2"
+            },
+            {
+              "type": "path",
+              "name": "object_rollup_l3",
+              "expr": "$.object.rollup.l3"
+            },
+            {
+              "type": "path",
+              "name": "object_rollup_l4",
+              "expr": "$.object.rollup.l4"
+            },
+            {
+              "type": "root",
+              "name": "tags"
+            },
+            {
+              "type": "path",
+              "name": "edata_type",
+              "expr": "$.edata.type"
+            },
+            {
+              "type": "path",
+              "name": "edata_props",
+              "expr": "$.edata.props[*]"
+            },
+            {
+              "type": "path",
+              "name": "edata_state",
+              "expr": "$.edata.state"
+            },
+            {
+              "type": "path",
+              "name": "edata_prevstate",
+              "expr": "$.edata.prevstate"
+            },
+            {
+              "type": "path",
+              "name": "edata_duration",
+              "expr": "$.edata.duration"
+            },
+            {
+              "type": "path",
+              "name": "edata_cb_object_id",
+              "expr": "$.edata.cb_object.id"
+            },
+            {
+              "type": "path",
+              "name": "edata_cb_object_type",
+              "expr": "$.edata.cb_object.type"
+            },
+            {
+              "type": "path",
+              "name": "edata_cb_object_ver",
+              "expr": "$.edata.cb_object.ver"
+            },
+            {
+              "type": "path",
+              "name": "edata_cb_object_name",
+              "expr": "$.edata.cb_object.name"
+            },
+            {
+              "type": "path",
+              "name": "edata_cb_object_org",
+              "expr": "$.edata.cb_object.org"
+            },
+            {
+              "type": "path",
+              "name": "edata_cb_object_sub_type",
+              "expr": "$.edata.cb_object.sub_type"
+            },
+            {
+              "type": "path",
+              "name": "edata_cb_object_rollup_l1",
+              "expr": "$.edata.cb_object.rollup.l1"
+            },
+            {
+              "type": "path",
+              "name": "edata_cb_object_rollup_l2",
+              "expr": "$.edata.cb_object.rollup.l2"
+            },
+            {
+              "type": "path",
+              "name": "edata_cb_object_rollup_l3",
+              "expr": "$.edata.cb_object.rollup.l3"
+            },
+            {
+              "type": "path",
+              "name": "edata_cb_object_rollup_l4",
+              "expr": "$.edata.cb_object.rollup.l4"
+            }
+          ]
+        },
+        "dimensionsSpec": {
+          "dimensions": [
+            {
+              "type": "string",
+              "name": "eid"
+            },
+            {
+              "type": "string",
+              "name": "mid"
+            },
+            {
+              "type": "long",
+              "name": "ets"
+            },
+            {
+              "type": "string",
+              "name": "@timestamp"
+            },
+            {
+              "type": "string",
+              "name": "actor_id"
+            },
+            {
+              "type": "string",
+              "name": "actor_type"
+            },
+            {
+              "type": "string",
+              "name": "context_channel"
+            },
+            {
+              "type": "string",
+              "name": "context_pdata_id"
+            },
+            {
+              "type": "string",
+              "name": "context_pdata_pid"
+            },
+            {
+              "type": "string",
+              "name": "context_pdata_ver"
+            },
+            {
+              "type": "string",
+              "name": "context_env"
+            },
+            {
+              "type": "string",
+              "name": "context_sid"
+            },
+            {
+              "type": "string",
+              "name": "context_did"
+            },
+            {
+              "type": "string",
+              "name": "context_rollup_l1"
+            },
+            {
+              "type": "string",
+              "name": "context_rollup_l2"
+            },
+            {
+              "type": "string",
+              "name": "context_rollup_l3"
+            },
+            {
+              "type": "string",
+              "name": "context_rollup_l4"
+            },
+            {
+              "type": "string",
+              "name": "object_id"
+            },
+            {
+              "type": "string",
+              "name": "object_type"
+            },
+            {
+              "type": "string",
+              "name": "object_version"
+            },
+            {
+              "type": "string",
+              "name": "object_rollup_l1"
+            },
+            {
+              "type": "string",
+              "name": "object_rollup_l2"
+            },
+            {
+              "type": "string",
+              "name": "object_rollup_l3"
+            },
+            {
+              "type": "string",
+              "name": "object_rollup_l4"
+            },
+            {
+              "name": "tags"
+            },
+            {
+              "type": "string",
+              "name": "edata_type"
+            },
+            {
+              "name": "edata_props"
+            },
+            {
+              "type": "string",
+              "name": "edata_state"
+            },
+            {
+              "type": "string",
+              "name": "edata_prevstate"
+            },
+            {
+              "type": "double",
+              "name": "edata_duration"
+            },
+            {
+              "type": "string",
+              "name": "edata_cb_object_id"
+            },
+            {
+              "type": "string",
+              "name": "edata_cb_object_type"
+            },
+            {
+              "type": "string",
+              "name": "edata_cb_object_ver"
+            },
+            {
+              "type": "string",
+              "name": "edata_cb_object_name"
+            },
+            {
+              "type": "string",
+              "name": "edata_cb_object_org"
+            },
+            {
+              "type": "string",
+              "name": "edata_cb_object_sub_type"
+            },
+            {
+              "type": "string",
+              "name": "edata_cb_object_rollup_l1"
+            },
+            {
+              "type": "string",
+              "name": "edata_cb_object_rollup_l2"
+            },
+            {
+              "type": "string",
+              "name": "edata_cb_object_rollup_l3"
+            },
+            {
+              "type": "string",
+              "name": "edata_cb_object_rollup_l4"
+            }
+          ],
+          "dimensionsExclusions": []
+        },
+        "timestampSpec": {
+          "column": "syncts",
+          "format": "auto"
+        }
+      }
+    },
+    "metricsSpec": [],
+    "granularitySpec": {
+      "type": "uniform",
+      "segmentGranularity": "day",
+      "rollup": false
+    }
+  },
+  "ioConfig": {
+    "topic": "{{env}}.druid.cb.audit",
+    "consumerProperties": {
+      "bootstrap.servers": "{{kafka_brokers}}"
+    },
+    "taskCount": "{{raw_cb_audit_events_taskcount}}",
+    "replicas": 1,
+    "taskDuration": "PT7200S",
+    "useEarliestOffset": true,
+    "completionTimeout" : "PT7200S"
+  },
+  "tuningConfig": {
+    "type": "kafka",
+    "reportParseExceptions": false,
+    "maxRowsPerSegment": "2000000"
+  }
+}

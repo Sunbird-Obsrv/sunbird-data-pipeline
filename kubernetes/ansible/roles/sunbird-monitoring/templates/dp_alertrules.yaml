@@ -21,6 +21,7 @@ node_disk_usage_percentage_threshold_Fatal: 95
 # DP Jobs lag vars critical
 telemetry_extractor_threshold_critical: {{ telemetry_extractor_threshold_critical }}
 pipeline_preprocessor_threshold_critical: {{ pipeline_preprocessor_threshold_critical }}
+cb_preprocessor_threshold_critical: {{ cb_preprocessor_threshold_critical }}
 de_normalization_threshold_critical: {{ de_normalization_threshold_critical }}
 druid_validator_threshold_critical: {{ druid_validator_threshold_critical }}
 assessment_aggregator_threshold_critical: {{ assessment_aggregator_threshold_critical }}
@@ -35,6 +36,7 @@ ingest_router_threshold_critical: {{ ingest_router_threshold_critical }}
 # DP Jobs lag vars warning
 telemetry_extractor_threshold_warning: {{ telemetry_extractor_threshold_warning }}
 pipeline_preprocessor_threshold_warning: {{ pipeline_preprocessor_threshold_warning }}
+cb_preprocessor_threshold_warning: {{ cb_preprocessor_threshold_warning }}
 de_normalization_threshold_warning: {{ de_normalization_threshold_warning }}
 druid_validator_threshold_warning: {{ druid_validator_threshold_warning }}
 assessment_aggregator_threshold_warning: {{ assessment_aggregator_threshold_warning }}
@@ -58,6 +60,7 @@ post_publish_processor_threshold_warning: {{ post_publish_processor_threshold_wa
 # Checkpoint failure vars
 telemetry_extractor_checkpointfailure_threshold_critical: {{ telemetry_extractor_checkpointfailure_threshold_critical }} 
 pipeline_preprocessor_checkpointfailure_threshold_critical: {{ pipeline_preprocessor_checkpointfailure_threshold_critical }}
+cb_preprocessor_checkpointfailure_threshold_critical: {{ cb_preprocessor_checkpointfailure_threshold_critical }}
 de_normalization_checkpointfailure_threshold_critical: {{ de_normalization_checkpointfailure_threshold_critical }}
 druid_validator_checkpointfailure_threshold_critical: {{ druid_validator_checkpointfailure_threshold_critical }}
 assessment_aggregator_checkpointfailure_threshold_critical: {{ assessment_aggregator_checkpointfailure_threshold_critical }}
@@ -83,6 +86,7 @@ flink_job_names:
   summary-denormalization: {{ summary_denormalization_threshold_critical }}
   telemetry-extractor: {{ telemetry_extractor_threshold_critical }}       
   user-cache-updater-v2: {{ user_cache_updater_threshold_critical }}
+  cb-preprocessor: {{ cb_preprocessor_threshold_critical }}
 ## KP flink jobs
   activity-aggregate-updater: {{ activity_aggregater_updater_threshold_critical }}
   relation-cache-updater: {{ relation_cache_updater_threshold_critical }}

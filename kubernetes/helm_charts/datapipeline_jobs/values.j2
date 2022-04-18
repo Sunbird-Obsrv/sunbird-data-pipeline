@@ -20,6 +20,11 @@ scale_properties:
     scale_target_value: {{ flink_job_names['pipeline-preprocessor'].scale_target_value }}
     min_replica: {{ flink_job_names['pipeline-preprocessor'].min_replica | default(1) }}
     max_replica: {{ flink_job_names['pipeline-preprocessor'].max_replica | default(2) }}
+  cb-preprocessor:
+    enabled: {{ flink_job_names['cb-preprocessor'].scale_enabled | lower}}
+    scale_target_value: {{ flink_job_names['cb-preprocessor'].scale_target_value }}
+    min_replica: {{ flink_job_names['cb-preprocessor'].min_replica | default(1) }}
+    max_replica: {{ flink_job_names['cb-preprocessor'].max_replica | default(2) }}
   de-normalization-secondary:
     enabled: {{ flink_job_names['de-normalization-secondary'].scale_enabled | lower}}
     scale_target_value: {{ flink_job_names['de-normalization-secondary'].scale_target_value }} 
@@ -289,6 +294,7 @@ pipeline-preprocessor:
       output.duplicate.topic = {{ env_name }}.telemetry.duplicate
       output.denorm.secondary.route.topic = {{ env_name }}.telemetry.unique.secondary
       output.denorm.primary.route.topic = {{ env_name }}.telemetry.unique.primary
+      output.cb.audit.route.topic = {{ env_name }}.telemetry.cb.audit
       groupId = {{ env_name }}-pipeline-preprocessor-group
     }
     task {
@@ -297,7 +303,7 @@ pipeline-preprocessor:
     }
     telemetry.schema.path="schemas/telemetry/3.0"
     default.channel="b00bc992ef25f1a9a8d63291e20efc8d"
-    dedup.producer.included.ids = ["{{ portal_id }}", "{{ desktop_id }}"]
+    dedup.producer.included.ids = ["{{ portal_id }}", "{{ desktop_id }}", "{{ frac_id }}", "{{ mdo_id }}"]
     secondary.events = ["INTERACT", "IMPRESSION", "SHARE_ITEM"]
     redis {
       database {
@@ -318,6 +324,44 @@ pipeline-preprocessor:
     heartbeat.interval: 5000
     taskmanager.memory.process.size: {{ flink_job_names['pipeline-preprocessor'].taskmanager_process_memory }}
     jobmanager.memory.process.size: {{ flink_job_names['pipeline-preprocessor'].jobmanager_process_memory }}
+
+cb-preprocessor:
+  cb-preprocessor: |+
+    include file("/data/flink/conf/base-config.conf")
+    kafka {
+      input.topic = {{ env_name }}.telemetry.cb.audit
+      output.failed.topic = {{ env_name }}.telemetry.failed
+      output.duplicate.topic = {{ env_name }}.telemetry.duplicate
+      output.cb.audit.topic = {{ env_name }}.druid.cb.audit
+      output.cb.work.order.row.topic = {{ env_name }}.druid.cb.work.order.row
+      output.cb.work.order.officer.topic = {{ env_name }}.druid.cb.work.order.officer
+      groupId = {{ env_name }}-cb-preprocessor-group
+    }
+    task {
+      consumer.parallelism = {{ cb_preprocessor_consumer_parallelism }}
+      downstream.operators.parallelism = {{ cb_preprocessor_operators_parallelism }}
+    }
+
+    default.channel="b00bc992ef25f1a9a8d63291e20efc8d"
+    redis {
+      database {
+        duplicationstore.id = 7
+        key.expiry.seconds = {{ cb_preprocessor_key_expiry_seconds }}
+      }
+    }
+
+  flink-conf: |+
+    jobmanager.memory.flink.size: {{ flink_job_names['cb-preprocessor'].jobmanager_memory }}
+    taskmanager.memory.flink.size: {{ flink_job_names['cb-preprocessor'].taskmanager_memory }}
+    taskmanager.numberOfTaskSlots: {{ flink_job_names['cb-preprocessor'].taskslots }}
+    parallelism.default: 1
+    jobmanager.execution.failover-strategy: region
+    taskmanager.memory.network.fraction: 0.1
+    scheduler-mode: reactive
+    heartbeat.timeout: 8000
+    heartbeat.interval: 5000
+    taskmanager.memory.process.size: {{ flink_job_names['cb-preprocessor'].taskmanager_process_memory }}
+    jobmanager.memory.process.size: {{ flink_job_names['cb-preprocessor'].jobmanager_process_memory }}
 
 de-normalization-secondary:
   de-normalization-secondary: |+
@@ -655,6 +699,7 @@ user-cache-updater-v2:
     user.valid.key = "Validated"
     user.read.url.fields = "locations,organisations"
     user.read.api.error = ["CLIENT_ERROR"]
+    user.redis.registration-count.path = "mdo_registered_officer_count"
 
   flink-conf: |+
     jobmanager.memory.flink.size: {{ flink_job_names['user-cache-updater-v2'].jobmanager_memory }}

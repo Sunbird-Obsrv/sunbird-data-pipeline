@@ -1,0 +1,35 @@
+{
+  "id": "http://api.ekstep.org/telemetry/audit",
+  "type": "object",
+  "required": [
+    "eid",
+    "ets",
+    "ver",
+    "mid",
+    "actor",
+    "context",
+    "object",
+    "edata"
+  ],
+  "allOf": [
+    {
+      "$ref": "resource:/schemas/telemetry/3.0/common.json"
+    },
+    {
+      "properties": {
+        "eid": {
+          "id": "http://api.ekstep.org/telemetry/eid",
+          "enum": [
+            "CB_AUDIT"
+          ]
+        },
+        "edata": {
+          "oneOf": [
+            {"$ref": "resource:/schemas/telemetry/3.0/cb_wat_edata.json"},
+            {"$ref": "resource:/schemas/telemetry/3.0/cb_frac_edata.json"}
+          ]
+        }
+      }
+    }
+  ]
+}

@@ -61,9 +61,16 @@ raw_router_downstream_parallelism: 1
 ### Pipeline-preprocessor related vars
 pipeline_preprocessor_consumer_parallelism: 1
 pipeline_preprocessor_operators_parallelism: 1
-portal_id: dev.sunbird.portal
-desktop_id: dev.sunbird.desktop
+portal_id: "{{env}}.sunbird.portal"
+desktop_id: "{{env}}.sunbird.desktop"
+frac_id: "{{env}}.FRac.portal"
+mdo_id: "{{env}}.mdo.portal"
 pipeline_preprocessor_key_expiry_seconds: 3600
+
+### cb-preprocessor related vars
+cb_preprocessor_consumer_parallelism: 1
+cb_preprocessor_operators_parallelism: 1
+cb_preprocessor_key_expiry_seconds: 3600
 
 ### De-normalization related vars
 denorm_consumer_parallelism: 1
@@ -190,6 +197,19 @@ flink_job_names:
     cpu_requests: 0.3
     scale_enabled: true
     scale_target_value: 1000000
+    min_replica: 1
+    max_replica: 2
+  cb-preprocessor:
+    job_class_name: 'org.sunbird.dp.cbpreprocessor.task.CBPreprocessorStreamTask'
+    replica: 1
+    jobmanager_memory: 1024m
+    taskmanager_memory: 1024m
+    taskmanager_process_memory: 1700m
+    jobmanager_process_memory: 1600m
+    taskslots: 1
+    cpu_requests: 0.3
+    scale_enabled: true
+    scale_target_value: 500000
     min_replica: 1
     max_replica: 2
   de-normalization:

@@ -28,6 +28,7 @@ class PipelinePreprocessorConfig(override val config: Config) extends BaseJobCon
   val kafkaLogRouteTopic: String = config.getString("kafka.output.log.route.topic")
   val kafkaErrorRouteTopic: String = config.getString("kafka.output.error.route.topic")
   val kafkaAuditRouteTopic: String = config.getString("kafka.output.audit.route.topic")
+  val kafkaCbAuditRouteTopic: String = config.getString("kafka.output.cb.audit.route.topic")
 
   val kafkaFailedTopic: String = config.getString("kafka.output.failed.topic")
   val kafkaDuplicateTopic: String = config.getString("kafka.output.duplicate.topic")
@@ -53,6 +54,7 @@ class PipelinePreprocessorConfig(override val config: Config) extends BaseJobCon
 
   // Audit, Log & Error Events output tag
   val auditRouteEventsOutputTag: OutputTag[Event] = OutputTag[Event]("audit-route-events")
+  val cbAuditRouteEventsOutputTag: OutputTag[Event] = OutputTag[Event]("cb-audit-route-events")
   val logEventsOutputTag: OutputTag[Event] = OutputTag[Event]("log-route-events")
   val errorEventOutputTag: OutputTag[Event] = OutputTag[Event]("error-route-events")
 
@@ -76,6 +78,7 @@ class PipelinePreprocessorConfig(override val config: Config) extends BaseJobCon
   val errorEventsRouterMetricsCount = "error-route-success-count"
   val denormSecondaryEventsRouterMetricsCount = "denorm-secondary-route-success-count"
   val denormPrimaryEventsRouterMetricsCount = "denorm-primary-route-success-count"
+  val cbAuditEventRouterMetricCount = "cb-audit-route-success-count"
 
   // Validation job metrics
   val validationSuccessMetricsCount = "validation-success-event-count"
@@ -104,6 +107,7 @@ class PipelinePreprocessorConfig(override val config: Config) extends BaseJobCon
   val logRouterProducer = "log-route-sink"
   val errorRouterProducer = "error-route-sink"
   val auditRouterProducer = "audit-route-sink"
+  val cbAuditRouterProducer = "cb-audit-route-sink"
   val invalidEventProducer = "invalid-events-sink"
   val duplicateEventProducer = "duplicate-events-sink"
   val denormSecondaryEventProducer = "denorm-secondary-events-sink"

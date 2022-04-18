@@ -11,6 +11,7 @@ ingestion_spec_configs:
 raw_offline_desktop_taskcount: 1
 raw_summary_events_taskcount: 1
 raw_telemetry_events_taskcount: 1
+raw_cb_audit_events_taskcount: 1
 raw_telemetry_feedback_events_taskcount: 1
 rollup_error_hourly_syncts_taskcount: 1
 rollup_summary_distinct_counts_taskcount: 1

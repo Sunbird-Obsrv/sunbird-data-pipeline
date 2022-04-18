@@ -126,6 +126,15 @@ class PipelinePreprocessorStreamTask(config: PipelinePreprocessorConfig, kafkaCo
      */
     eventStream.getSideOutput(config.shareItemEventOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaPrimaryRouteTopic)).name(config.shareItemsPrimaryRouterProducer).uid(config.shareItemsPrimaryRouterProducer).setParallelism(config.downstreamOperatorsParallelism)
 
+    /**
+    * pushing cbAudit events into cbAudit topic
+    */
+
+    eventStream.getSideOutput(config.cbAuditRouteEventsOutputTag)
+      .addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaCbAuditRouteTopic))
+      .name(config.cbAuditRouterProducer).uid(config.cbAuditRouterProducer)
+      .setParallelism(config.downstreamOperatorsParallelism)
+
     env.execute(config.jobName)
   }
 }

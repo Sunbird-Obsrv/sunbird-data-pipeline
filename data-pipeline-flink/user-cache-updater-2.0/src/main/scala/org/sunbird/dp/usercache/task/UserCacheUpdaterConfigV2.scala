@@ -78,5 +78,7 @@ class UserCacheUpdaterConfigV2(override val config: Config) extends BaseJobConfi
   val userReadApiFields = config.getString("user.read.url.fields")
   val userReadApiErrors: JList[String] = config.getStringList("user.read.api.error")
 
+  val userRegistrationCountPath = config.getString("user.redis.registration-count.path")
+
   val userAccBlockedErrCode = "UOS_USRRED0006"
 }

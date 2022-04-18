@@ -37,7 +37,20 @@ spec:
         lag: {{`({{ humanize $value }})`}}
         job_id: pipeline-preprocessor
         alertname: FlinkJobsLag
-   
+
+    - alert: cb-preprocessor lag critical
+      expr: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "cb-preprocessor-taskmanager-prometheus" }) > {{ .Values.cb_preprocessor_threshold_critical }}
+      for: 5m
+      labels:
+        severity: critical
+        alerttype: lag
+      annotations:
+        message: The lag for cb-preprocessor job is more than threshold {{ .Values.cb_preprocessor_threshold_critical | int }}
+        summary: cb-preprocessor lag is critical
+        lag: {{`({{ humanize $value }})`}}
+        job_id: cb-preprocessor
+        alertname: FlinkJobsLag
+
     - alert:  de-normalization-primary lag critical
       expr: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "de-normalization-primary-taskmanager-prometheus" }) > {{ .Values.de_normalization_threshold_critical }}
       for: 5m
@@ -195,7 +208,20 @@ spec:
         lag: {{`({{ humanize $value }})`}}
         job_id: pipeline-preprocessor
         alertname: FlinkJobsLag
-   
+
+    - alert: cb-preprocessor lag warning
+      expr: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "cb-preprocessor-taskmanager-prometheus" }) > {{ .Values.cb_preprocessor_threshold_warning }} and sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "cb-preprocessor-taskmanager-prometheus" }) < {{ .Values.cb_preprocessor_threshold_critical }}
+      for: 5m
+      labels:
+        severity: warning
+        alerttype: lag
+      annotations:
+        message: The lag for cb-preprocessor job is more than threshold {{ .Values.cb_preprocessor_threshold_warning | int }}
+        summary: cb-preprocessor lag is warning
+        lag: {{`({{ humanize $value }})`}}
+        job_id: cb-preprocessor
+        alertname: FlinkJobsLag
+
     - alert:  de-normalization-secondary lag warning
       expr: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "de-normalization-secondary-taskmanager-prometheus" }) > {{ .Values.de_normalization_threshold_warning }} and sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "de-normalization-secondary-taskmanager-prometheus" }) < {{ .Values.de_normalization_threshold_critical }}
       for: 5m
@@ -433,6 +459,19 @@ spec:
         summary: pipeline-preprocessor checkpoint failure critical
         lag: {{`({{ humanize $value }})`}}
         job_id: pipeline-preprocessor
+        alertname: Flink jobs checkpoint commit failure
+
+    - alert: cb-preprocessor checkpoint failure critical
+      expr: sum(flink_jobmanager_job_numberOfFailedCheckpoints { job = "cb-preprocessor-jobmanager" }) > {{ .Values.cb_preprocessor_checkpointfailure_threshold_critical }}
+      for: 5m
+      labels:
+        severity: critical
+        alerttype: lag
+      annotations:
+        message: The checkpoint failure count for cb-preprocessor job is more than threshold {{ .Values.cb_preprocessor_checkpointfailure_threshold_critical }}
+        summary: cb-preprocessor checkpoint failure critical
+        lag: {{`({{ humanize $value }})`}}
+        job_id: cb-preprocessor
         alertname: Flink jobs checkpoint commit failure
 
     - alert: de-normalization-primary checkpoint failure critical

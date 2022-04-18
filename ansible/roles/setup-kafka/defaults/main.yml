@@ -107,6 +107,19 @@ processing_kafka_overriden_topics:
   - name: ml.observation.druid
     retention_time: 172800000
     replication_factor: 1
+  - name: telemetry.cb.audit
+    retention_time: 172800000
+    replication_factor: 1
+  - name: druid.cb.audit
+    retention_time: 172800000
+    replication_factor: 1
+  - name: druid.cb.work.order.row
+    retention_time: 172800000
+    replication_factor: 1
+  - name: druid.cb.work.order.officer
+    retention_time: 172800000
+    replication_factor: 1
+
 
 processing_kafka_topics:
   - name: analytics.job_queue
@@ -203,5 +216,17 @@ processing_kafka_topics:
     num_of_partitions: 1
     replication_factor: 1
   - name: ml.observation.druid
+    num_of_partitions: 1
+    replication_factor: 1
+  - name: telemetry.cb.audit
+    num_of_partitions: 1
+    replication_factor: 1
+  - name: druid.cb.audit
+    num_of_partitions: 1
+    replication_factor: 1
+  - name: druid.cb.work.order.row
+    num_of_partitions: 1
+    replication_factor: 1
+  - name: druid.cb.work.order.officer
     num_of_partitions: 1
     replication_factor: 1

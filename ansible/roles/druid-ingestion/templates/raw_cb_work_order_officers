@@ -1,0 +1,671 @@
+{
+  "type": "kafka",
+  "dataSchema": {
+    "dataSource": "cb-work-order-officers",
+    "parser": {
+      "type": "string",
+      "parseSpec": {
+        "format": "json",
+        "flattenSpec": {
+          "useFieldDiscovery": false,
+          "fields": [
+            {
+              "type": "root",
+              "name": "eid"
+            },
+            {
+              "type": "root",
+              "name": "mid"
+            },
+            {
+              "type": "root",
+              "name": "ets"
+            },
+            {
+              "type": "root",
+              "name": "@timestamp"
+            },
+            {
+              "type": "path",
+              "name": "actor_id",
+              "expr": "$.actor.id"
+            },
+            {
+              "type": "path",
+              "name": "actor_type",
+              "expr": "$.actor.type"
+            },
+            {
+              "type": "path",
+              "name": "context_channel",
+              "expr": "$.context.channel"
+            },
+            {
+              "type": "path",
+              "name": "context_pdata_id",
+              "expr": "$.context.pdata.id"
+            },
+            {
+              "type": "path",
+              "name": "context_pdata_pid",
+              "expr": "$.context.pdata.pid"
+            },
+            {
+              "type": "path",
+              "name": "context_pdata_ver",
+              "expr": "$.context.pdata.ver"
+            },
+            {
+              "type": "path",
+              "name": "context_env",
+              "expr": "$.context.env"
+            },
+            {
+              "type": "path",
+              "name": "context_sid",
+              "expr": "$.context.sid"
+            },
+            {
+              "type": "path",
+              "name": "context_did",
+              "expr": "$.context.did"
+            },
+            {
+              "type": "path",
+              "name": "context_rollup_l1",
+              "expr": "$.context.rollup.l1"
+            },
+            {
+              "type": "path",
+              "name": "context_rollup_l2",
+              "expr": "$.context.rollup.l2"
+            },
+            {
+              "type": "path",
+              "name": "context_rollup_l3",
+              "expr": "$.context.rollup.l3"
+            },
+            {
+              "type": "path",
+              "name": "context_rollup_l4",
+              "expr": "$.context.rollup.l4"
+            },
+            {
+              "type": "path",
+              "name": "object_id",
+              "expr": "$.object.id"
+            },
+            {
+              "type": "path",
+              "name": "object_type",
+              "expr": "$.object.type"
+            },
+            {
+              "type": "path",
+              "name": "object_version",
+              "expr": "$.object.ver"
+            },
+            {
+              "type": "path",
+              "name": "object_rollup_l1",
+              "expr": "$.object.rollup.l1"
+            },
+            {
+              "type": "path",
+              "name": "object_rollup_l2",
+              "expr": "$.object.rollup.l2"
+            },
+            {
+              "type": "path",
+              "name": "object_rollup_l3",
+              "expr": "$.object.rollup.l3"
+            },
+            {
+              "type": "path",
+              "name": "object_rollup_l4",
+              "expr": "$.object.rollup.l4"
+            },
+            {
+              "type": "root",
+              "name": "tags"
+            },
+            {
+              "type": "path",
+              "name": "edata_type",
+              "expr": "$.edata.type"
+            },
+            {
+              "type": "path",
+              "name": "edata_props",
+              "expr": "$.edata.props[*]"
+            },
+            {
+              "type": "path",
+              "name": "edata_state",
+              "expr": "$.edata.state"
+            },
+            {
+              "type": "path",
+              "name": "edata_prevstate",
+              "expr": "$.edata.prevstate"
+            },
+            {
+              "type": "path",
+              "name": "edata_duration",
+              "expr": "$.edata.duration"
+            },
+            {
+              "type": "path",
+              "name": "edata_cb_object_id",
+              "expr": "$.edata.cb_object.id"
+            },
+            {
+              "type": "path",
+              "name": "edata_cb_object_type",
+              "expr": "$.edata.cb_object.type"
+            },
+            {
+              "type": "path",
+              "name": "edata_cb_object_ver",
+              "expr": "$.edata.cb_object.ver"
+            },
+            {
+              "type": "path",
+              "name": "edata_cb_object_name",
+              "expr": "$.edata.cb_object.name"
+            },
+            {
+              "type": "path",
+              "name": "edata_cb_object_org",
+              "expr": "$.edata.cb_object.org"
+            },
+            {
+              "type": "path",
+              "name": "edata_cb_object_sub_type",
+              "expr": "$.edata.cb_object.sub_type"
+            },
+            {
+              "type": "path",
+              "name": "edata_cb_object_rollup_l1",
+              "expr": "$.edata.cb_object.rollup.l1"
+            },
+            {
+              "type": "path",
+              "name": "edata_cb_object_rollup_l2",
+              "expr": "$.edata.cb_object.rollup.l2"
+            },
+            {
+              "type": "path",
+              "name": "edata_cb_object_rollup_l3",
+              "expr": "$.edata.cb_object.rollup.l3"
+            },
+            {
+              "type": "path",
+              "name": "edata_cb_object_rollup_l4",
+              "expr": "$.edata.cb_object.rollup.l4"
+            },
+            {
+              "name": "edata_cb_data_id",
+              "type": "path",
+              "expr": "$.edata.cb_data.id"
+            },
+            {
+              "name": "edata_cb_data_name",
+              "type": "path",
+              "expr": "$.edata.cb_data.name"
+            },
+            {
+              "name": "edata_cb_data_deptId",
+              "type": "path",
+              "expr": "$.edata.cb_data.deptId"
+            },
+            {
+              "name": "edata_cb_data_deptName",
+              "type": "path",
+              "expr": "$.edata.cb_data.deptName"
+            },
+            {
+              "name": "edata_cb_data_status",
+              "type": "path",
+              "expr": "$.edata.cb_data.status"
+            },
+            {
+              "name": "edata_cb_data_userIds",
+              "type": "path",
+              "expr": "$.edata.cb_data.userIds"
+            },
+            {
+              "name": "edata_cb_data_createdBy",
+              "type": "path",
+              "expr": "$.edata.cb_data.createdBy"
+            },
+            {
+              "name": "edata_cb_data_createdAt",
+              "type": "path",
+              "expr": "$.edata.cb_data.createdAt"
+            },
+            {
+              "name": "edata_cb_data_updatedBy",
+              "type": "path",
+              "expr": "$.edata.cb_data.updatedBy"
+            },
+            {
+              "name": "edata_cb_data_updatedAt",
+              "type": "path",
+              "expr": "$.edata.cb_data.updatedAt"
+            },
+            {
+              "name": "edata_cb_data_progress",
+              "type": "path",
+              "expr": "$.edata.cb_data.progress"
+            },
+            {
+              "name": "edata_cb_data_errorCount",
+              "type": "path",
+              "expr": "$.edata.cb_data.errorCount"
+            },
+            {
+              "name": "edata_cb_data_rolesCount",
+              "type": "path",
+              "expr": "$.edata.cb_data.rolesCount"
+            },
+            {
+              "name": "edata_cb_data_activitiesCount",
+              "type": "path",
+              "expr": "$.edata.cb_data.activitiesCount"
+            },
+            {
+              "name": "edata_cb_data_competenciesCount",
+              "type": "path",
+              "expr": "$.edata.cb_data.competenciesCount"
+            },
+            {
+              "name": "edata_cb_data_publishedPdfLink",
+              "type": "path",
+              "expr": "$.edata.cb_data.publishedPdfLink"
+            },
+            {
+              "name": "edata_cb_data_signedPdfLink",
+              "type": "path",
+              "expr": "$.edata.cb_data.signedPdfLink"
+            },
+            {
+              "name": "edata_cb_data_mdo_name",
+              "type": "path",
+              "expr": "$.edata.cb_data.mdo_name"
+            },
+            {
+              "name": "edata_cb_data_wa_id",
+              "type": "path",
+              "expr": "$.edata.cb_data.wa_id"
+            },
+            {
+              "name": "edata_cb_data_wa_userId",
+              "type": "path",
+              "expr": "$.edata.cb_data.wa_userId"
+            },
+            {
+              "name": "edata_cb_data_wa_userPosition",
+              "type": "path",
+              "expr": "$.edata.cb_data.wa_userPosition"
+            },
+            {
+              "name": "edata_cb_data_wa_positionId",
+              "type": "path",
+              "expr": "$.edata.cb_data.wa_positionId"
+            },
+            {
+              "name": "edata_cb_data_wa_positionDescription",
+              "type": "path",
+              "expr": "$.edata.cb_data.wa_positionDescription"
+            },
+            {
+              "name": "edata_cb_data_wa_workOrderId",
+              "type": "path",
+              "expr": "$.edata.cb_data.wa_workOrderId"
+            },
+            {
+              "name": "edata_cb_data_wa_updatedAt",
+              "type": "path",
+              "expr": "$.edata.cb_data.wa_updatedAt"
+            },
+            {
+              "name": "edata_cb_data_wa_updatedBy",
+              "type": "path",
+              "expr": "$.edata.cb_data.wa_updatedBy"
+            },
+            {
+              "name": "edata_cb_data_wa_errorCount",
+              "type": "path",
+              "expr": "$.edata.cb_data.wa_errorCount"
+            },
+            {
+              "name": "edata_cb_data_wa_progress",
+              "type": "path",
+              "expr": "$.edata.cb_data.wa_progress"
+            },
+            {
+              "name": "edata_cb_data_wa_createdAt",
+              "type": "path",
+              "expr": "$.edata.cb_data.wa_createdAt"
+            },
+            {
+              "name": "edata_cb_data_wa_createdBy",
+              "type": "path",
+              "expr": "$.edata.cb_data.wa_createdBy"
+            }
+          ]
+        },
+        "dimensionsSpec": {
+          "dimensions": [
+            {
+              "type": "string",
+              "name": "eid"
+            },
+            {
+              "type": "string",
+              "name": "mid"
+            },
+            {
+              "type": "long",
+              "name": "ets"
+            },
+            {
+              "type": "string",
+              "name": "@timestamp"
+            },
+            {
+              "type": "string",
+              "name": "actor_id"
+            },
+            {
+              "type": "string",
+              "name": "actor_type"
+            },
+            {
+              "type": "string",
+              "name": "context_channel"
+            },
+            {
+              "type": "string",
+              "name": "context_pdata_id"
+            },
+            {
+              "type": "string",
+              "name": "context_pdata_pid"
+            },
+            {
+              "type": "string",
+              "name": "context_pdata_ver"
+            },
+            {
+              "type": "string",
+              "name": "context_env"
+            },
+            {
+              "type": "string",
+              "name": "context_sid"
+            },
+            {
+              "type": "string",
+              "name": "context_did"
+            },
+            {
+              "type": "string",
+              "name": "context_rollup_l1"
+            },
+            {
+              "type": "string",
+              "name": "context_rollup_l2"
+            },
+            {
+              "type": "string",
+              "name": "context_rollup_l3"
+            },
+            {
+              "type": "string",
+              "name": "context_rollup_l4"
+            },
+            {
+              "type": "string",
+              "name": "object_id"
+            },
+            {
+              "type": "string",
+              "name": "object_type"
+            },
+            {
+              "type": "string",
+              "name": "object_version"
+            },
+            {
+              "type": "string",
+              "name": "object_rollup_l1"
+            },
+            {
+              "type": "string",
+              "name": "object_rollup_l2"
+            },
+            {
+              "type": "string",
+              "name": "object_rollup_l3"
+            },
+            {
+              "type": "string",
+              "name": "object_rollup_l4"
+            },
+            {
+              "name": "tags"
+            },
+            {
+              "type": "string",
+              "name": "edata_type"
+            },
+            {
+              "name": "edata_props"
+            },
+            {
+              "type": "string",
+              "name": "edata_state"
+            },
+            {
+              "type": "string",
+              "name": "edata_prevstate"
+            },
+            {
+              "type": "double",
+              "name": "edata_duration"
+            },
+            {
+              "type": "string",
+              "name": "edata_cb_object_id"
+            },
+            {
+              "type": "string",
+              "name": "edata_cb_object_type"
+            },
+            {
+              "type": "string",
+              "name": "edata_cb_object_ver"
+            },
+            {
+              "type": "string",
+              "name": "edata_cb_object_name"
+            },
+            {
+              "type": "string",
+              "name": "edata_cb_object_org"
+            },
+            {
+              "type": "string",
+              "name": "edata_cb_object_sub_type"
+            },
+            {
+              "type": "string",
+              "name": "edata_cb_object_rollup_l1"
+            },
+            {
+              "type": "string",
+              "name": "edata_cb_object_rollup_l2"
+            },
+            {
+              "type": "string",
+              "name": "edata_cb_object_rollup_l3"
+            },
+            {
+              "type": "string",
+              "name": "edata_cb_object_rollup_l4"
+            },
+            {
+              "type": "string",
+              "name": "edata_cb_data_id"
+            },
+            {
+              "type": "string",
+              "name": "edata_cb_data_name"
+            },
+            {
+              "type": "string",
+              "name": "edata_cb_data_deptId"
+            },
+            {
+              "type": "string",
+              "name": "edata_cb_data_deptName"
+            },
+            {
+              "type": "string",
+              "name": "edata_cb_data_status"
+            },
+            {
+              "type": "string",
+              "name": "edata_cb_data_userIds"
+            },
+            {
+              "type": "string",
+              "name": "edata_cb_data_createdBy"
+            },
+            {
+              "type": "long",
+              "name": "edata_cb_data_createdAt"
+            },
+            {
+              "type": "string",
+              "name": "edata_cb_data_updatedBy"
+            },
+            {
+              "type": "long",
+              "name": "edata_cb_data_updatedAt"
+            },
+            {
+              "type": "long",
+              "name": "edata_cb_data_progress"
+            },
+            {
+              "type": "long",
+              "name": "edata_cb_data_errorCount"
+            },
+            {
+              "type": "long",
+              "name": "edata_cb_data_rolesCount"
+            },
+            {
+              "type": "long",
+              "name": "edata_cb_data_activitiesCount"
+            },
+            {
+              "type": "long",
+              "name": "edata_cb_data_competenciesCount"
+            },
+            {
+              "type": "string",
+              "name": "edata_cb_data_publishedPdfLink"
+            },
+            {
+              "type": "string",
+              "name": "edata_cb_data_signedPdfLink"
+            },
+            {
+              "type": "string",
+              "name": "edata_cb_data_mdo_name"
+            },
+            {
+              "type": "string",
+              "name": "edata_cb_data_wa_id"
+            },
+            {
+              "type": "string",
+              "name": "edata_cb_data_wa_userId"
+            },
+            {
+              "type": "string",
+              "name": "edata_cb_data_wa_userPosition"
+            },
+            {
+              "type": "string",
+              "name": "edata_cb_data_wa_positionId"
+            },
+            {
+              "type": "string",
+              "name": "edata_cb_data_wa_positionDescription"
+            },
+            {
+              "type": "string",
+              "name": "edata_cb_data_wa_workOrderId"
+            },
+            {
+              "type": "long",
+              "name": "edata_cb_data_wa_updatedAt"
+            },
+            {
+              "type": "string",
+              "name": "edata_cb_data_wa_updatedBy"
+            },
+            {
+              "type": "long",
+              "name": "edata_cb_data_wa_errorCount"
+            },
+            {
+              "type": "long",
+              "name": "edata_cb_data_wa_progress"
+            },
+            {
+              "type": "long",
+              "name": "edata_cb_data_wa_createdAt"
+            },
+            {
+              "type": "string",
+              "name": "edata_cb_data_wa_createdBy"
+            }
+          ],
+          "dimensionsExclusions": []
+        },
+        "timestampSpec": {
+          "column": "syncts",
+          "format": "auto"
+        }
+      }
+    },
+    "metricsSpec": [],
+    "granularitySpec": {
+      "type": "uniform",
+      "segmentGranularity": "day",
+      "rollup": false
+    }
+  },
+  "ioConfig": {
+    "topic": "{{env}}.druid.cb.work.order.officer",
+    "consumerProperties": {
+      "bootstrap.servers": "{{kafka_brokers}}"
+    },
+    "taskCount": "{{raw_cb_audit_events_taskcount}}",
+    "replicas": 1,
+    "taskDuration": "PT7200S",
+    "useEarliestOffset": true,
+    "completionTimeout": "PT7200S"
+  },
+  "tuningConfig": {
+    "type": "kafka",
+    "reportParseExceptions": false,
+    "maxRowsPerSegment": "2000000"
+  }
+}

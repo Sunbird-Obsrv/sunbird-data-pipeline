@@ -86,5 +86,8 @@ class Event(eventMap: util.Map[String, Any]) extends Events(eventMap) {
 
   def rollup: util.Map[String, AnyRef] = telemetry.read[util.Map[String, AnyRef]](EventsPath.CONTEXT_ROLLUP_PATH).orNull
 
+  def updateHub(hub: String): Unit = {
+    telemetry.add("context.hub", hub)
+  }
 
 }

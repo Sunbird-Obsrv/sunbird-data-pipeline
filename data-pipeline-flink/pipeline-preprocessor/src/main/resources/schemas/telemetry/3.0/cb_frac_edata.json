@@ -1,0 +1,37 @@
+{
+  "type": "object",
+  "required": [
+    "state",
+    "props",
+    "cb_object"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "type": {
+      "id": "http://api.ekstep.org/telemetry/cb-frac-edata/type",
+      "type": "string"
+    },
+    "props": {
+      "id": "http://api.ekstep.org/telemetry/cb-frac-edata/props",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "state": {
+      "id": "http://api.ekstep.org/telemetry/cb-frac-edata/state",
+      "type": "string"
+    },
+    "prevstate": {
+      "id": "http://api.ekstep.org/telemetry/cb-frac-edata/prevstate",
+      "type": "string"
+    },
+    "duration": {
+      "id": "http://api.ekstep.org/telemetry/cb-frac-edata/duration",
+      "type": "number"
+    },
+    "cb_object": {
+      "$ref": "resource:/schemas/telemetry/3.0/cb_frac_object.json"
+    }
+  }
+}
