@@ -266,3 +266,4 @@ uci_pdata_id: "{{uci_env}}.uci.{{sunbird_instance}}"
 # Exhaust sanity check vars
 cassandra_migrator_job_name: "Cassandra Migrator"
 
+assessment_metric_primary_category: "{{ exhaust_job_assessment_primary_category }}"
