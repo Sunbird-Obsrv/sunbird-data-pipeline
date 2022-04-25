@@ -33,6 +33,8 @@ postgres_max_connections: 2
 azure_account: "{{ sunbird_private_storage_account_name }}"
 azure_secret: "{{ sunbird_private_storage_account_key }}"
 flink_container_name: dev-data-store
+flink_dp_storage_container: ""
+checkpoint_store_type: azure
 checkpoint_interval: 60000
 checkpoint_pause_between_seconds: 5000
 checkpoint_compression_enabled: true
@@ -41,6 +43,7 @@ restart_delay: 30000 # in milli-seconds
 producer_max_request_size: 1572864
 producer_batch_size: 98304
 producer_linger_ms: 10
+producer_compression: snappy
 
 redis_timeout: 30000
 device_profile_table: "{{ env }}_device_profile"
@@ -61,8 +64,8 @@ raw_router_downstream_parallelism: 1
 ### Pipeline-preprocessor related vars
 pipeline_preprocessor_consumer_parallelism: 1
 pipeline_preprocessor_operators_parallelism: 1
-portal_id: dev.sunbird.portal
-desktop_id: dev.sunbird.desktop
+portal_id: "{{ env }}.sunbird.portal"
+desktop_id: "{{ env }}.sunbird.desktop"
 pipeline_preprocessor_key_expiry_seconds: 3600
 
 ### De-normalization related vars

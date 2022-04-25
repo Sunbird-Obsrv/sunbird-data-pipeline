@@ -91,5 +91,6 @@
     - {role: analytics-druid, when: "'druid-rollup-broker' in group_names", druid_role: 'broker', service: 'broker'}
     - {role: analytics-druid, when: "'druid-rollup-historical' in group_names", druid_role: 'historical', service: 'historical'}
     - {role: analytics-druid, when: "'druid-rollup-middlemanager' in group_names", druid_role: 'middlemanager', service: 'middleManager' }
+    - {role: analytics-druid, when: "'druid-rollup-router' in group_names", druid_role: 'router', service: 'router' }
   vars:
     druid_postgres_db: "druid-rollup"

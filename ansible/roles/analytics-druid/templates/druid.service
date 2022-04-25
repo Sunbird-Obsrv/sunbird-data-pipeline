@@ -5,6 +5,8 @@ After=network.target
 [Service]
 WorkingDirectory={{ druid_path }}
 ExecStart=/bin/sh -c "/usr/bin/java $(/bin/cat {{ druid_path }}conf/druid/{{ service }}/jvm.config | /usr/bin/xargs) -cp {{ druid_path }}conf/druid/{{ service }}:{{ druid_path }}conf/druid/_common:{{ druid_path }}lib/* org.apache.druid.cli.Main server {{ service }}"
+LimitNOFILE={{ druid_open_file_limit }}
+LimitNPROC={{ druid_process_limit }}
 Restart=always
 
 [Install]

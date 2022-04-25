@@ -1,6 +1,7 @@
 ## Data products deployment ##
 - name: Ensure azure blob storage container exists
   command: az storage container create --name {{ bucket }}
+  when: dp_object_store_type == "azure"
   tags:
     - always
 
