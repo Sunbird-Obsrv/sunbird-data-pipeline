@@ -35,7 +35,7 @@ class TelemetryExtractorConfig(override val config: Config) extends BaseJobConfi
   val redactEventsList: List[String] = config.getStringList("redact.events.list").asScala.toList
   val contentStore: Int = config.getInt("redis-meta.database.contentstore.id")
 
-  val UNIQUE_EVENTS_OUTPUT_TAG = "unique-events"
+  val UNIQUE_EVENTS_OUTPUT_TAG = "unique-batch-events"
   val RAW_EVENTS_OUTPUT_TAG = "raw-events"
   val LOG_EVENTS_OUTPUT_TAG = "log-events"
   val ERROR_EVENTS_OUTPUT_TAG = "error-events"
@@ -44,7 +44,7 @@ class TelemetryExtractorConfig(override val config: Config) extends BaseJobConfi
   val FAILED_EVENTS_OUTPUT_TAG = "failed-events"
   val FAILED_BATCH_EVENTS_OUTPUT_TAG = "failed-batch-events"
   val AUDIT_EVENTS_OUTPUT_TAG = "audit-events"
-  val DUPLICATE_EVENTS_OUTPUT_TAG = "duplicate-events"
+  val DUPLICATE_EVENTS_OUTPUT_TAG = "duplicate-batch-events"
 
   // Metric List
   val successEventCount = "success-event-count"
