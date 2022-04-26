@@ -3,11 +3,15 @@
   "spec": {
     "ioConfig": {
       "type": "index",
-      "inputSource": {
-        "type": "azure",
-        "uris": [
-          "azure://<container_name>/observation/status/sl_observation_status.json"
-        ]
+      "firehose": {
+        "type": "static-azure-blobstore",
+        "blobs": [
+          {
+            "container": "{{container_name}}",
+            "path": "/observation/status/sl_observation_status.json"
+          }
+        ],
+        "fetchTimeout": 300000
       },
       "inputFormat": {
         "type": "json"

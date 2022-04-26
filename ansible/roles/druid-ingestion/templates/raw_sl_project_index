@@ -3,11 +3,15 @@
   "spec": {
     "ioConfig": {
       "type": "index",
-      "inputSource": {
-        "type": "azure",
-        "uris": [
-          "azure://<container_name>/projects/sl_projects.json"
-        ]
+      "firehose": {
+        "type": "static-azure-blobstore",
+        "blobs": [
+          {
+            "container": "{{container_name}}",
+            "path": "/projects/sl_projects.json"
+          }
+        ],
+        "fetchTimeout": 300000
       },
       "inputFormat": {
         "type": "json"

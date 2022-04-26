@@ -1,61 +1,105 @@
 {
-   "type":"kafka",
-   "dataSchema":{
-      "dataSource":"sl-survey-evidence",
-      "parser":{
-         "type":"string",
-         "parseSpec":{
-            "format":"json",
-            "timestampSpec":{
-               "column":"completedDate",
-               "format":"auto"
+  "type": "kafka",
+  "dataSchema": {
+    "dataSource": "sl-survey-evidence",
+    "parser": {
+      "type": "string",
+      "parseSpec": {
+        "format": "json",
+        "timestampSpec": {
+          "column": "completedDate",
+          "format": "auto"
+        },
+        "dimensionsSpec": {
+          "dimensions": [
+            {
+              "type": "string",
+              "name": "total_evidences"
             },
-            "dimensionsSpec":{
-               "dimensions":[
-                  "total_evidences",
-                  "surveySubmissionId",
-                  "createdBy",
-                  "solutionExternalId",
-                  "solutionId",
-                  "surveyId",
-                  "remarks",
-                  "questionId",
-                  "questionExternalId",
-                  "questionResponseType",
-                  "questionName",
-                  "evidence_count",
-                  "fileName",
-                  "fileSourcePath",
-                  "completedDate",
-                  "appName"
-               ]
+            {
+              "type": "string",
+              "name": "surveySubmissionId"
+            },
+            {
+              "type": "string",
+              "name": "createdBy"
+            },
+            {
+              "type": "string",
+              "name": "solutionExternalId"
+            },
+            {
+              "type": "string",
+              "name": "solutionId"
+            },
+            {
+              "type": "string",
+              "name": "surveyId"
+            },
+            {
+              "type": "string",
+              "name": "remarks"
+            },
+            {
+              "type": "string",
+              "name": "questionId"
+            },
+            {
+              "type": "string",
+              "name": "questionExternalId"
+            },
+            {
+              "type": "string",
+              "name": "questionResponseType"
+            },
+            {
+              "type": "string",
+              "name": "questionName"
+            },
+            {
+              "type": "string",
+              "name": "evidence_count"
+            },
+            {
+              "type": "string",
+              "name": "fileName"
+            },
+            {
+              "type": "string",
+              "name": "fileSourcePath"
+            },
+            {
+              "type": "string",
+              "name": "completedDate"
+            },
+            {
+              "type": "string",
+              "name": "appName"
             }
-         }
-      },
-      "metricsSpec":[
-         
-      ],
-      "granularitySpec":{
-         "type":"uniform",
-         "segmentGranularity":"day",
-         "queryGranularity":"day",
-         "rollup": true
+          ]
+        }
       }
-   },
-   "tuningConfig":{
-      "type":"kafka",
-      "reportParseExceptions":false
-      "maxRowsPerSegment": 5000000
-   },
-   "ioConfig":{
-      "topic":"{{env}}.sl.survey.evidence.druid",
-      "consumerProperties":{
-         "bootstrap.servers":"{{kafka_brokers}}"
-      },
-      "taskCount":"{{sl_survey_evidence_task_count}}",
-      "replicas":1,
-      "taskDuration":"PT14400S",
-      "useEarliestOffset": true,
-      "completionTimeout": "PT1800S"
-   }
+    },
+    "metricsSpec": [],
+    "granularitySpec": {
+      "type": "uniform",
+      "segmentGranularity": "DAY",
+      "queryGranularity": "none",
+      "rollup": false
+    }
+  },
+  "tuningConfig": {
+    "type": "kafka",
+    "reportParseExceptions": false
+  },
+  "ioConfig": {
+    "topic": "{{env}}.ml.survey.evidence.druid",
+    "consumerProperties": {
+      "bootstrap.servers": "{{kafka_brokers}}"
+    },
+    "taskCount": "{{ml_survey_evidence_task_count}}",
+    "replicas": 1,
+    "taskDuration": "PT14400S",
+    "useEarliestOffset": true
+  }
 }
