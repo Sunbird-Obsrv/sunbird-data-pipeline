@@ -23,5 +23,6 @@ ml_observation_task_count: 1
 ml_observation_evidence_task_count: 1
 ml_survey_task_count: 1
 ml_survey_evidence_task_count: 1
+rollup_ml_project_taskcount: 1
 rollup_course_completion_audit_syncts_taskcount: 1 
 container_name: "telemetry-data-store"
