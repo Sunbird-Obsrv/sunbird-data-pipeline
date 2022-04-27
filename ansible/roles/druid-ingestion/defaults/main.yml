@@ -19,8 +19,9 @@ rollup_telemetry_audit_syncts_taskcount: 1
 rollup_telemetry_hourly_syncts_taskcount: 1
 rollup_telemetry_syncts_taskcount: 1
 rollup_tpd_hourly_taskcount: 1
-sl_survey_evidence_task_count: 1
-sl_observation_task_count: 1
-sl_observation_evidence_task_count: 1
-sl_survey_task_count: 1
+ml_observation_task_count: 1
+ml_observation_evidence_task_count: 1
+ml_survey_task_count: 1
+ml_survey_evidence_task_count: 1
 rollup_course_completion_audit_syncts_taskcount: 1 
+container_name: "telemetry-data-store"
