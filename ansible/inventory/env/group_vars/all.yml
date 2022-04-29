@@ -173,3 +173,4 @@ dialcode_host: "http://{{private_ingressgateway_ip}}/dial"
 dialcode_endpoint: "dialcode/v3/read/"
 
 exhaust_job_assessment_primary_category: "Practice Question Set"
+etb_dialcode_list_druid_length: 70
