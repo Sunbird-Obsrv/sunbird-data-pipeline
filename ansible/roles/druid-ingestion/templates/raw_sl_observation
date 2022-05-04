@@ -439,6 +439,26 @@
             {
               "type": "string",
               "name": "user_boardName"
+            },
+            {
+              "type": "string",
+              "name": "district_externalId"
+            },
+            {
+              "type": "string",
+              "name": "state_externalId"
+            },
+            {
+              "type": "string",
+              "name": "block_externalId"
+            },
+            {
+              "type": "string",
+              "name": "cluster_externalId"
+            },
+            {
+              "type": "string",
+              "name": "organisation_id"
             }
           ]
         }

@@ -280,6 +280,10 @@
           {
             "type": "string",
             "name": "board_name"
+          },
+          {
+            "type": "string",
+            "name": "organisation_id"
           }
         ]
       },
