@@ -1,7 +1,6 @@
 package org.sunbird.dp.core.cache
 
 import java.util
-
 import com.google.gson.Gson
 import org.slf4j.LoggerFactory
 import org.sunbird.dp.core.job.BaseJobConfig
@@ -174,6 +173,22 @@ class DataCache(val config: BaseJobConfig, val redisConnect: RedisConnect, val d
     }
   }
 
+  def hIncBy(key: String, field: String, value: Long): Unit = {
+    this.redisConnection.hincrBy(key, field, value)
+  }
+
+  def hIncByWithRetry(key: String, field: String, value: Long): Unit = {
+    try {
+      hIncBy(key, field, value)
+    } catch {
+      case ex: JedisException => {
+        logger.error(s"Exception while incrementing count key=${key}, field=${field}, value=${value}", ex)
+        this.redisConnection.close()
+        this.redisConnection = redisConnect.getConnection(dbIndex)
+        hIncBy(key, field, value)
+      }
+    }
+  }
 
 }
 

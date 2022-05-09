@@ -23,3 +23,4 @@
     - {role: analytics-druid,when: "'broker' in group_names",druid_role: 'broker', service: 'broker'}
     - {role: analytics-druid,when: "'historical' in group_names",druid_role: 'historical', service: 'historical'}
     - {role: analytics-druid,when: "'middlemanager' in group_names",druid_role: 'middlemanager',service: 'middleManager' }
+    - {role: analytics-druid,when: "'router' in group_names",druid_role: 'router',service: 'router' }

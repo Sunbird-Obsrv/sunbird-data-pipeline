@@ -40,6 +40,7 @@ object EventFixture {
       |     max-request-size = 102400
       |     batch.size = 8192
       |     linger.ms = 1
+      |     compression = "snappy"
       |  }
       |}
       |
