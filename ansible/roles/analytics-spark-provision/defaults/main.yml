@@ -37,7 +37,6 @@ azure_storage: https://repo1.maven.org/maven2/com/microsoft/azure/azure-storage/
 # jets3t s3 config, allows us to configure for s3-like object stores
 jets3t_s3_request_signature_version: "{{ s3_request_signature_version }}"
 jets3t_s3_endpoint_host: "{% if s3_storage_endpoint %}{{ s3_storage_endpoint | regex_replace('^[a-z]+://(.*)$', '\\1') }}{% endif %}"
-jets3t_s3_disable_dns_buckets: {{ s3_path_style_access }}
-jets3t_s3_https_only: {{ s3_https_only }}
+jets3t_s3_disable_dns_buckets: "{{ s3_path_style_access }}"
+jets3t_s3_https_only: "{{ s3_https_only }}"
 jets3t_s3_default_bucket_location: "{{ s3_default_bucket_location }}"
-
