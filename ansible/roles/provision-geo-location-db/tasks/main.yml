@@ -42,9 +42,18 @@
 
 - name: install psycopg2
   become: yes
-  package:
-    name: python-psycopg2
+  apt:
     state: present
+    name: python-psycopg2
+  when: ansible_distribution_version | float < 18
+
+- name: install psycopg2
+  become: yes
+  apt:
+    state: present
+    name: python3-psycopg2
+  when: ansible_distribution_version | float > 18
+
 
 - name: Install postgres client to create schema from file
   become: yes
