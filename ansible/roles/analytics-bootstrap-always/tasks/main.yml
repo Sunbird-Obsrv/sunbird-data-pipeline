@@ -27,7 +27,20 @@
   with_items:
     - rsync
     - zip
-    - python3-pip
+
+- name: install python-pip
+  become: yes
+  apt:
+    state: present
+    name: python-pip
+  when: ansible_distribution_version | float < 18
+
+- name: install python-pip
+  become: yes
+  apt:
+    state: present
+    name: python3-pip
+  when: ansible_distribution_version | float > 18
 
 - name: Set locale LC_ALL=en_US.UTF-8
   become: yes
