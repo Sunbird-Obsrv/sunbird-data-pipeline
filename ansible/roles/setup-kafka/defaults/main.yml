@@ -205,3 +205,12 @@ processing_kafka_topics:
   - name: ml.observation.druid
     num_of_partitions: 1
     replication_factor: 1
+  - name: qrimage.request
+    num_of_partitions: 1
+    replication_factor: 1
+  - name: events.telemetry
+    num_of_partitions: 1
+    replication_factor: 1
+  - name: events.summary
+    num_of_partitions: 1
+    replication_factor: 1
