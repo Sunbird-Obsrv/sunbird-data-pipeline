@@ -126,8 +126,8 @@ druid_configs:
    druid_postgres_port: "{{ postgres.db_port }}"
    druid_postgres_user: "druid@{{ postgres.db_url }}"
    druid_postgres_pass: "{{ dp_vault_druid_postgress_pass }}"
-   #Druid Azure Details 
-   druid_storge_type: "azure"
+   #Druid Azure Details
+   druid_storage_type: "azure"
    azure_account_name: "{{ sunbird_druid_storage_account_name }}"
    azure_storage_secret: "{{ sunbird_druid_storage_account_key }}"
    azure_container: "{{ druid_azure_container_name }}"
