@@ -31,7 +31,7 @@ druid_request_logging_type: "file"
 
 #Druid Extensions
 
-druid_storge_type: "azure"
+druid_storage_type: "azure"
 
 druid_extensions_list : '"druid-azure-extensions", "graphite-emitter", "postgresql-metadata-storage", "druid-kafka-indexing-service"'
 
