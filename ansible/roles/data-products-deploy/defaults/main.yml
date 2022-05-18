@@ -187,7 +187,7 @@ analytics:
 # artifact versions
 analytics_core_artifact_ver: "2.0"
 analytics_ed_dataporducts_artifact_ver: "1.0"
-scruid_artifact_ver: "2.4.0"
+scruid_artifact_ver: "2.5.0"
 
 producer_env: "dev.sunbird"
 analytics_job_manager_artifact: "job-manager-{{ analytics_core_artifact_ver }}.jar"
