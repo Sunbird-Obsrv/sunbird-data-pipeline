@@ -10,12 +10,12 @@
   become_user: "{{ analytics_user }}"
   unarchive: src={{ analytics.home }}/spark-{{ spark_version }}-bin-hadoop2.7.tgz dest={{ analytics.home }}/ copy=no owner={{ analytics_user }} group={{ analytics_group }} creates={{ analytics.home }}/spark-{{ spark_version }}-bin-hadoop2.7
 
-- name: Download Scala 2.11.8
+- name: Download Scala 2.12.10
   become: yes
   become_user: "{{ analytics_user }}"
   shell: wget -O {{ analytics.soft_path }}/scala-{{ scala_version }}.tgz https://downloads.lightbend.com/scala/{{ scala_version }}/scala-{{ scala_version }}.tgz
 
-- name: Unarchive Scala 2.11.8
+- name: Unarchive Scala 2.12.10
   become: yes
   become_user: "{{ analytics_user }}"
   unarchive: src={{ analytics.soft_path }}/scala-{{ scala_version }}.tgz dest={{ analytics.soft_path }}/ copy=no owner={{ analytics_user }} group={{ analytics_group }} creates={{ analytics.soft_path }}/scala-{{ scala_version }}
