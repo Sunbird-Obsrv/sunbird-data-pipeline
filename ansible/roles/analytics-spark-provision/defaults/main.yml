@@ -32,8 +32,6 @@ hadoop_aws_url: https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/2.7.
 java_xmlbuilder_url: https://repo1.maven.org/maven2/com/jamesmurty/utils/java-xmlbuilder/1.1/java-xmlbuilder-1.1.jar
 hadoop_azure_url: https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-azure/2.7.3/hadoop-azure-2.7.3.jar
 azure_storage: https://repo1.maven.org/maven2/com/microsoft/azure/azure-storage/3.0.0/azure-storage-3.0.0.jar
-spark_sql_kafka_url: https://repo1.maven.org/maven2/org/apache/spark/spark-sql-kafka-0-10_2.11/2.4.8/spark-sql-kafka-0-10_2.11-2.4.8.jar
-xbean_asm6_url: https://repo1.maven.org/maven2/org/apache/xbean/xbean-asm6-shaded/4.10/xbean-asm6-shaded-4.10.jar
 
 # jets3t s3 config, allows us to configure for s3-like object stores
 jets3t_s3_request_signature_version: "{{ s3_request_signature_version }}"
