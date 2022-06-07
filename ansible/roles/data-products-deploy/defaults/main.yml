@@ -276,3 +276,7 @@ uci_pdata_id: "{{uci_env}}.uci.{{sunbird_instance}}"
 cassandra_migrator_job_name: "Cassandra Migrator"
 
 assessment_metric_primary_category: "{{ exhaust_job_assessment_primary_category }}"
+
+# Default s3 variables
+sunbird_private_s3_storage_key: ""
+sunbird_private_s3_storage_secret: ""
