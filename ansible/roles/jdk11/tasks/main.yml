@@ -1,0 +1,24 @@
+---
+# You can use JAVA_HOME=/opt/jdk-11 in your applications / exports if you want to use JDK11
+
+- name: Uncompressing and copying to system path
+  unarchive:
+    src: https://download.java.net/java/GA/jdk11/9/GPL/openjdk-11.0.2_linux-x64_bin.tar.gz
+    dest: /opt/
+    remote_src: yes
+    keep_newer: yes
+  register: tar
+
+- name: Updating java jdk-11 to system path
+  shell: |
+    update-alternatives --install /usr/bin/java java /opt/jdk-11.0.2/bin/java 9998
+    update-alternatives --install /usr/bin/javac javac /opt/jdk-11.0.2/bin/java 9998
+    sudo update-alternatives --set java /opt/jdk-11.0.2/bin/java
+- name: Checking java version
+  shell: java -version
+  register: java
+  changed_when: false
+
+- name: Java version
+  debug:
+    var: java.stderr

@@ -32,7 +32,7 @@
 
 - name: Download spark-redis and copy to Spark jars folder
   become: yes
-  get_url: url={{ spark_redis_url }} dest={{ spark_folder }}/jars/spark-redis_2.11-{{spark_redis_version}}.jar timeout=1000 force=no
+  get_url: url={{ spark_redis_url }} dest={{ spark_folder }}/jars/spark-redis_2.12-{{spark_redis_version}}.jar timeout=1000 force=no
 
 - name: Download jedis and copy to Spark jars folder
   become: yes

@@ -44,7 +44,7 @@ analytics_jobs_count: 3
 cassandra_keyspace_prefix: '{{ env }}_'
 report_cassandra_cluster_host: "{{ report_cassandra_host | default(core_cassandra_host) }}"
 cassandra_hierarchy_store_keyspace: "{{ env_name}}_hierarchy_store"
-spark_version: 2.4.4
+spark_version: 3.1.3
 
 heap_memory: "-Xmx5120m"
 
@@ -187,12 +187,12 @@ analytics:
 # artifact versions
 analytics_core_artifact_ver: "2.0"
 analytics_ed_dataporducts_artifact_ver: "1.0"
-scruid_artifact_ver: "2.4.0"
+scruid_artifact_ver: "2.5.0"
 
 producer_env: "dev.sunbird"
 analytics_job_manager_artifact: "job-manager-{{ analytics_core_artifact_ver }}.jar"
 analytics_core_artifact: "analytics-framework-{{ analytics_core_artifact_ver }}.jar"
-scruid_artifact: "scruid_2.11-{{ scruid_artifact_ver }}.jar"
+scruid_artifact: "scruid_2.12-{{ scruid_artifact_ver }}.jar"
 analytics_batch_module_artifact: "batch-models-{{ analytics_core_artifact_ver }}.jar"
 analytics_ed_dataporducts_artifact: "data-products-{{ analytics_ed_dataporducts_artifact_ver }}-distribution.tar.gz"
 model_version: "2.0" 
@@ -276,3 +276,7 @@ uci_pdata_id: "{{uci_env}}.uci.{{sunbird_instance}}"
 cassandra_migrator_job_name: "Cassandra Migrator"
 
 assessment_metric_primary_category: "{{ exhaust_job_assessment_primary_category }}"
+
+# Default s3 variables
+sunbird_private_s3_storage_key: ""
+sunbird_private_s3_storage_secret: ""
