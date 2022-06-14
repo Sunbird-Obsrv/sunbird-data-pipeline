@@ -160,3 +160,8 @@
   shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "ALTER TABLE report ADD CONSTRAINT report_type_check CHECK (type in ('public', 'private', 'protected'))"
   run_once: true
   tags: update
+
+- name: update report
+  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "ALTER TABLE report ALTER COLUMN type TYPE varchar(10)"
+  run_once: true
+  tags: update
