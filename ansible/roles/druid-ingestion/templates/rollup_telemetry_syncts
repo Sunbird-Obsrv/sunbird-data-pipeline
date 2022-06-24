@@ -135,6 +135,21 @@
             },
             {
               "type": "path",
+              "name": "user_loc_block",
+              "expr": "$.userdata.block"
+            },
+            {
+              "type": "path",
+              "name": "user_loc_cluster",
+              "expr": "$.userdata.cluster"
+            },
+            {
+              "type": "path",
+              "name": "user_school_name",
+              "expr": "$.userdata.schoolname"
+            },
+            {
+              "type": "path",
               "name": "user_signin_type",
               "expr": "$.userdata.usersignintype"
             },
@@ -300,6 +315,18 @@
             {
               "type": "string",
               "name": "user_type"
+            },
+            {
+              "type": "string",
+              "name": "user_loc_block"
+            },
+            {
+              "type": "string",
+              "name": "user_loc_cluster"
+            },
+            {
+              "type": "string",
+              "name": "user_school_name"
             },
             {
               "type": "string",
