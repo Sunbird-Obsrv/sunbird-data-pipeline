@@ -7,7 +7,7 @@
       "parseSpec": {
         "format": "json",
         "flattenSpec": {
-          "useFieldDiscovery": false,
+          "useFieldDiscovery":false,
           "fields": [
             {
               "type": "root",
