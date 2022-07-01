@@ -459,6 +459,10 @@
             {
               "type": "string",
               "name": "organisation_id"
+            },
+            {
+              "type": "string",
+              "name": "user_type"
             }
           ]
         }
