@@ -7,4 +7,4 @@
   shell: helm dependency update {{ chart_base_path }}/kafka
 
 - name: Install kafka cluster
-  shell: helm upgrade --install -n {{ kafka_namespace }} kafka-cluster {{ chart_base_path }}/kafka
+  shell: helm upgrade --install -n {{ kafka_namespace }} kafka-cluster {{ chart_base_path }}/kafka --create-namespace
