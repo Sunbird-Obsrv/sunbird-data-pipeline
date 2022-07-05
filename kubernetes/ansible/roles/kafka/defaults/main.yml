@@ -8,7 +8,7 @@ kafka_replica_count: 3
 
 # Kubernetes Service type for external access. It can be NodePort or LoadBalancer
 service_type: "LoadBalancer"
-service_port: 9094
+service_port: 9092
 
 # PV config
 kafka_persistence_size: 50Gi
