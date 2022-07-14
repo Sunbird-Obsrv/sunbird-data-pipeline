@@ -1,0 +1,117 @@
+{
+  "type": "index",
+  "spec": {
+    "ioConfig": {
+      "type": "index",
+      "firehose": {
+        "type": "static-azure-blobstore",
+        "blobs": [
+          {
+            "container": "{{container_name}}",
+            "path": "/projects/ml_projects.json"
+          }
+        ],
+        "fetchTimeout": 300000
+      },
+      "inputFormat": {
+        "type": "json"
+      }
+    },
+    "tuningConfig": {
+      "type": "index",
+      "partitionsSpec": {
+        "type": "dynamic"
+      }
+    },
+    "dataSchema": {
+      "dataSource": "ml-project-status",
+      "granularitySpec": {
+        "type": "uniform",
+        "queryGranularity": "none",
+        "rollup": false,
+        "segmentGranularity": "DAY"
+      },
+      "timestampSpec": {
+        "column": "time_stamp",
+        "format": "auto"
+      },
+      "dimensionsSpec": {
+        "dimensions": [
+          {
+            "type": "string",
+            "name": "program_name"
+          },
+          {
+            "type": "string",
+            "name": "program_id"
+          },
+          {
+            "type": "string",
+            "name": "project_title"
+          },
+          {
+            "type": "string",
+            "name": "solution_id"
+          },
+          {
+            "type": "string",
+            "name": "status_of_project"
+          },
+          {
+            "type": "string",
+            "name": "state_name"
+          },
+          {
+            "type": "string",
+            "name": "state_externalId"
+          },
+          {
+            "type": "string",
+            "name": "district_name"
+          },
+          {
+            "type": "string",
+            "name": "district_externalId"
+          },
+          {
+            "type": "string",
+            "name": "organisation_name"
+          },
+          {
+            "type": "string",
+            "name": "organisation_id"
+          },
+          {
+            "type": "string",
+            "name": "private_program"
+          },
+          {
+            "type": "string",
+            "name": "project_created_type"
+          },
+          {
+            "type": "string",
+            "name": "parent_channel"
+          },
+          {
+            "type": "long",
+            "name": "unique_projects"
+          },
+          {
+            "type": "long",
+            "name": "unique_users"
+          },
+          {
+            "type": "long",
+            "name": "no_of_imp_with_evidence"
+          },
+          {
+            "type": "string",
+            "name": "time_stamp"
+          }
+        ]
+      },
+      "metricsSpec": []
+    }
+  }
+}
