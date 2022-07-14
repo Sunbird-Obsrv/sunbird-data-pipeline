@@ -207,7 +207,84 @@
             {
               "type": "string",
               "name": "organisation_name"
-            }
+            },
+            ,
+              {
+                "type": "string",
+                "name": "user_subtype"
+              },
+              {
+                "type": "string",
+                "name": "user_type"
+              },
+              {
+                "type": "string",
+                "name": "board_name"
+              },
+              {
+                "type": "string",
+                "name": "district_id"
+              },
+              {
+                "type": "string",
+                "name": "district_name"
+              },
+              {
+                "type": "string",
+                "name": "district_externalId"
+              },
+              {
+                "type": "string",
+                "name": "block_id"
+              },
+              {
+                "type": "string",
+                "name": "block_name"
+              },
+              {
+                "type": "string",
+                "name": "block_externalId"
+              },
+              {
+                "type": "string",
+                "name": "school_id"
+              },
+              {
+                "type": "string",
+                "name": "school_name"
+              },
+              {
+                "type": "string",
+                "name": "school_externalId"
+              },
+              {
+                "type": "string",
+                "name": "cluster_id"
+              },
+              {
+                "type": "string",
+                "name": "cluster_name"
+              },
+              {
+                "type": "string",
+                "name": "cluster_externalId"
+              },
+              {
+                "type": "string",
+                "name": "state_id"
+              },
+              {
+                "type": "string",
+                "name": "state_name"
+              },
+              {
+                "type": "string",
+                "name": "state_externalId"
+              },
+              {
+                "type": "string",
+                "name": "organisation_id"
+              }
           ]
         }
       }
