@@ -1,0 +1,291 @@
+{
+    "type": "kafka",
+    "spec": {
+      "ioConfig": {
+        "type": "kafka",
+        "completionTimeout": "PT1800S",
+        "consumerProperties": {
+          "bootstrap.servers": "{{kafka_brokers}}"
+        },
+        "replicas": 1,
+        "taskCount": "{{ml-project-status-rollup_taskcount}}",
+        "topic": "{{env}}.ml.projects.submissions",
+        "taskDuration":"PT14400S",
+        "inputFormat": {
+          "type": "json",
+          "flattenSpec": {
+            "fields": [
+              {
+                "type": "jq",
+                "name": "project_id",
+                "expr": "._id"
+              },
+              {
+                "type": "jq",
+                "name": "status_of_project",
+                "expr": ".status"
+              },
+              {
+                "type": "jq",
+                "name": "project_title",
+                "expr": ".solutionInformation? | .name"
+              },
+              {
+                "type": "jq",
+                "name": "tasks_name",
+                "expr": "[.tasks[]? | .name] | join(\",\")"
+              },
+              {
+                "type": "jq",
+                "name": "tasks_status",
+                "expr": "[.tasks[]? | .status]"
+              },
+              {
+                "expr": ".userRoleInformation? | .role",
+                "name": "designation",
+                "type": "jq"
+              },
+              {
+                "expr": "[.tasks[]? | ._id]",
+                "name": "task_id",
+                "type": "jq"
+              },
+              {
+                "expr": "if .programId then .programId else null end",
+                "name": "program_id",
+                "type": "jq"
+              },
+              {
+                "expr": ".programInformation? | .name",
+                "name": "program_name",
+                "type": "jq"
+              },
+              {
+                "expr": ".updatedAt",
+                "name": "project_updated_date",
+                "type": "jq"
+              },
+              {
+                "expr": ".userId",
+                "name": "createdBy",
+                "type": "jq"
+              },
+              {
+                "expr": "if .programExternalId then .programExternalId else null end",
+                "name": "program_externalId",
+                "type": "jq"
+              },
+              {
+                "expr": "if .isAPrivateProgram == true then \"true\" elif .isAPrivateProgram == false then \"false\" else \"true\" end",
+                "name": "private_program",
+                "type": "jq"
+              },
+              {
+                "expr": "if .hasAcceptedTAndC == true then \"true\" elif .hasAcceptedTAndC == false then \"false\" else \"false\" end",
+                "name": "project_terms_and_condition",
+                "type": "jq"
+              },
+              {
+                "expr": "if [.userProfile? | .organisations[]? | select (.isSchool == false)] | length > 0 then .userProfile? | .organisations[]? | select(.isSchool == false) | .organisationId else null end",
+                "name": "organisation_id",
+                "type": "jq"
+              },
+              {
+                "expr": "if [.userProfile? | .organisations[]? | select (.isSchool == false)] | length > 0 then .userProfile? | .organisations[]? | select(.isSchool == false) | .orgName else null end",
+                "name": "organisation_name",
+                "type": "jq"
+              },
+              {
+                "expr": ".solutionInformation? | ._id",
+                "name": "solution_id",
+                "type": "jq"
+              },
+              {
+                "expr": ".userRoleInformation? | .state",
+                "name": "state_externalId",
+                "type": "jq"
+              },
+              {
+                "expr": ".userRoleInformation? | .block",
+                "name": "block_externalId",
+                "type": "jq"
+              },
+              {
+                "expr": ".userRoleInformation? | .district",
+                "name": "district_externalId",
+                "type": "jq"
+              },
+              {
+                "expr": ".userRoleInformation? | .cluster",
+                "name": "cluster_externalId",
+                "type": "jq"
+              },
+              {
+                "expr": ".userRoleInformation? | .school",
+                "name": "school_externalId",
+                "type": "jq"
+              },
+              {
+                "expr": "if [.tasks[]? | .attachments[]?| select(.source | . != \"\" and . != null)]|length > 0 then \"true\" else \"false\" end",
+                "name": "task_evidence_status",
+                "type": "jq"
+              },
+              {
+                "expr": "[.categories[]? | .name] | join(\",\")",
+                "name": "area_of_improvement",
+                "type": "jq"
+              },
+              {
+                "expr": "if .projectTemplateId then \"project imported from library\" else \"user created project\" end",
+                "name": "project_created_type",
+                "type": "jq"
+              },
+              {
+                "type": "jq",
+                "name": "state_name",
+                "expr": "if [.userProfile ? |.userLocations [] ? | select(.type | contains(\"state\"))] | length > 0 then .userProfile ? |.userLocations [] ? | select(.type | contains(\"state\")) | .name else null end"
+              },
+              {
+                "type": "jq",
+                "name": "block_name",
+                "expr": "if [.userProfile ? |.userLocations [] ? | select(.type | contains(\"block\"))] | length > 0 then .userProfile ? |.userLocations [] ? | select(.type | contains(\"block\")) | .name else null end"
+              },
+              {
+                "type": "jq",
+                "name": "district_name",
+                "expr": "if [.userProfile ? |.userLocations [] ? | select(.type | contains(\"district\"))] | length > 0 then .userProfile ? |.userLocations [] ? | select(.type | contains(\"district\")) | .name else null end"
+              },
+              {
+                "type": "jq",
+                "name": "cluster_name",
+                "expr": "if [.userProfile ? |.userLocations [] ? | select(.type | contains(\"cluster\"))] | length > 0 then .userProfile ? |.userLocations [] ? | select(.type | contains(\"cluster\")) | .name else null end"
+              },
+              {
+                "expr": "if [.userProfile ? |.userLocations [] ? | select(.type | contains(\"school\"))] | length > 0 then .userProfile ? |.userLocations [] ? | select(.type | contains(\"school\")) | .name else null end",
+                "name": "school_name",
+                "type": "jq"
+              },
+              {
+                "expr": "if .userProfile? | .framework ? | .board | length > 0 then [.userProfile? | .framework ? | .board[]] | join(\",\") else null end",
+                "name": "board_name",
+                "type": "jq"
+              },
+              {
+                "expr": "if ([[.tasks[]? |.attachments[]?]|length] + [.attachments?|length])|add > 0 then \"true\" else \"false\" end",
+                "name": "evidence_status",
+                "type": "jq"
+              }
+            ]
+          }
+        },
+        "useEarliestOffset": true
+      },
+      "tuningConfig": {
+        "type": "kafka",
+        "maxRowsPerSegment": 5000000,
+        "reportParseExceptions": false
+      },
+      "dataSchema": {
+        "dataSource": "ml-project-status-rollup",
+        "timestampSpec": {
+          "column": "project_updated_date",
+          "format": "iso"
+        },
+        "transformSpec": {
+          "transforms": [
+            {
+              "type": "expression",
+              "name": "parent_channel",
+              "expression": "nvl(\"parent_channel\", 'SHIKSHALOKAM')"
+            },
+            {
+              "type": "expression",
+              "name": "status_code",
+              "expression": "case_simple(\"status_of_project\",'started',1,'inProgress',3,'submitted',5,0)"
+            }
+          ]
+        },
+        "dimensionsSpec": {
+          "dimensions": [
+            "project_id",
+            "status_of_project",
+            "project_title",
+            "tasks_name",
+            "tasks_status",
+            "designation",
+            "task_id",
+            "program_id",
+            "program_name",
+            "createdBy",
+            "program_externalId",
+            "private_program",
+            "project_terms_and_condition",
+            "organisation_id",
+            "organisation_name",
+            "solution_id",
+            "state_externalId",
+            "block_externalId",
+            "district_externalId",
+            "cluster_externalId",
+            "school_externalId",
+            "task_evidence_status",
+            "area_of_improvement",
+            "project_created_type",
+            "state_name",
+            "block_name",
+            "district_name",
+            "cluster_name",
+            "school_name",
+            "board_name",
+            "parent_channel",
+            {
+              "type": "long",
+              "name": "status_code"
+            }
+          ]
+        },
+        "granularitySpec": {
+          "queryGranularity": "day",
+          "rollup": true,
+          "segmentGranularity": "day",
+          "type": "uniform"
+        },
+        "metricsSpec": [
+          {
+            "name": "count",
+            "type": "count"
+          },
+          {
+            "name": "sum___v",
+            "type": "longSum",
+            "fieldName": "__v"
+          },
+          {
+            "name": "sum_status_code",
+            "type": "longMax",
+            "fieldName": "status_code"
+          },
+          {
+            "type": "HLLSketchBuild",
+            "name": "count_of_createBy",
+            "fieldName": "createdBy"
+          },
+          {
+            "type": "HLLSketchBuild",
+            "name": "count_of_project_id",
+            "fieldName": "project_id"
+          },
+          {
+            "type": "HLLSketchBuild",
+            "name": "count_of_solution_id",
+            "fieldName": "solution_id"
+          },
+          {
+            "type": "HLLSketchBuild",
+            "name": "count_of_program_id",
+            "fieldName": "program_id"
+          }
+        ]
+      }
+    }
+  }
