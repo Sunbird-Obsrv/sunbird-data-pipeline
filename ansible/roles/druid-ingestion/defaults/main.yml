@@ -35,6 +35,3 @@ sl_observation_evidence_task_count: 1
 sl_survey_task_count: 1
 rollup_course_completion_audit_syncts_taskcount: 1
 rollup_ml_project_taskcount: 1
-ml-observation-status-rollup_taskcount: 1
-ml-project-status-rollup_taskcount: 1
-ml-survey-status-rollup_taskcount: 1
