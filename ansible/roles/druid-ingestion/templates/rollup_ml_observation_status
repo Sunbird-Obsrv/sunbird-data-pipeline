@@ -103,7 +103,7 @@
     },
     "ioConfig": {
       "topic": "{{env}}.ml.survey.raw",
-      "taskCount":"{{ml-observation-status-rollup_taskcount}}",
+      "taskCount":"{{rollup_ml_observation_status_taskcount}}",
       "replicas":1,
       "taskDuration":"PT14400S",
       "completionTimeout":"PT1800S",

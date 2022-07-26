@@ -7,7 +7,7 @@
         "bootstrap.servers": "{{kafka_brokers}}"
       },      
       "topic": "{{env}}.ml.survey.raw",
-      "taskCount":"{{ml-survey-status-rollup_taskcount}}",
+      "taskCount":"{{rollup_ml_survey_status_taskcount}}",
       "replicas":1,
       "taskDuration":"PT14400S",
       "completionTimeout":"PT1800S",

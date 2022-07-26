@@ -8,7 +8,7 @@
           "bootstrap.servers": "{{kafka_brokers}}"
         },
         "replicas": 1,
-        "taskCount": "{{ml-project-status-rollup_taskcount}}",
+        "taskCount": "{{rollup_ml_project_status_taskcount}}",
         "topic": "{{env}}.ml.projects.submissions",
         "taskDuration":"PT14400S",
         "inputFormat": {
@@ -267,7 +267,7 @@
           },
           {
             "type": "HLLSketchBuild",
-            "name": "count_of_createBy",
+            "name": "count_of_createdBy",
             "fieldName": "createdBy"
           },
           {
