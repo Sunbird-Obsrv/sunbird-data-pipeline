@@ -1,0 +1,266 @@
+{
+  "type": "kafka",
+  "spec": {
+    "dataSchema": {
+      "dataSource": "ml-observation-status-rollup",
+      "timestampSpec": {
+        "column": "updatedAt",
+        "format": "iso"
+      },
+      "dimensionsSpec": {
+        "dimensions": [
+          "solution_id",
+          "submission_id",
+          "entity_name",
+          "solution_name",
+          "role_title",
+          "state_externalId",
+          "block_externalId",
+          "district_externalId",
+          "cluster_externalId",
+          "school_externalId",
+          "state_name",
+          "block_name",
+          "district_name",
+          "cluster_name",
+          "school_name",
+          "board_name",
+          "completedDate",
+          "channel",
+          "program_id",
+          "program_name",
+          "private_program",
+          "organisation_id",
+          "organisation_name",
+          "user_id",
+          "solution_type",
+          "status",
+          "parent_channel",
+          "updatedAt",
+          {
+            "type": "long",
+            "name": "status_code"
+          }
+        ]
+      },
+      "metricsSpec": [
+        {
+          "type": "count",
+          "name": "count"
+        },
+        {
+          "type": "longSum",
+          "name": "sum___v",
+          "fieldName": "__v",
+          "expression": null
+        },
+        {
+          "type": "HLLSketchBuild",
+          "name": "count_distinct_solution",
+          "fieldName": "solution_id",
+          "lgK": 12,
+          "tgtHllType": "HLL_4",
+          "round": false
+        },
+        {
+          "type": "HLLSketchBuild",
+          "name": "count_distinct_submission_id",
+          "fieldName": "submission_id",
+          "lgK": 12,
+          "tgtHllType": "HLL_4",
+          "round": false
+        },
+        {
+          "type": "HLLSketchBuild",
+          "name": "count_distinct_user_id",
+          "fieldName": "user_id",
+          "lgK": 12,
+          "tgtHllType": "HLL_4",
+          "round": false
+        }
+      ],
+      "granularitySpec": {
+        "type": "uniform",
+        "segmentGranularity": "DAY",
+        "queryGranularity": "DAY",
+        "rollup": true
+      },
+      "transformSpec": {
+        "filter": null,
+        "transforms": [
+          {
+            "type": "expression",
+            "name": "parent_channel",
+            "expression": "nvl(\"parent_channel\", 'SHIKSHALOKAM')"
+          },
+          {
+            "type": "expression",
+            "name": "status_code",
+            "expression": "case_simple(\"status\",'started',1,'inprogress',3,'ratingPending',5,'completed',7,0)"
+          }
+        ]
+      }
+    },
+    "ioConfig": {
+      "topic": "{{env}}.ml.survey.raw",
+      "taskCount":"{{ml-observation-status-rollup_taskcount}}",
+      "replicas":1,
+      "taskDuration":"PT14400S",
+      "completionTimeout":"PT1800S",
+      "inputFormat": {
+        "type": "json",
+        "flattenSpec": {
+          "useFieldDiscovery": true,
+          "fields": [
+            {
+              "type": "jq",
+              "name": "solution_id",
+              "expr": ".solutionId"
+            },
+            {
+              "type": "jq",
+              "name": "submission_id",
+              "expr": "._id"
+            },
+            {
+              "type": "jq",
+              "name": "entity_name",
+              "expr": ".entity_name"
+            },
+            {
+              "type": "jq",
+              "name": "solution_name",
+              "expr": ".solutionInfo ? | .name"
+            },
+            {
+              "type": "jq",
+              "name": "role_title",
+              "expr": ".role_title"
+            },
+            {
+              "type": "jq",
+              "name": "state_externalId",
+              "expr": ".userRoleInformation? | .state"
+            },
+            {
+              "type": "jq",
+              "name": "block_externalId",
+              "expr": ".userRoleInformation? | .block"
+            },
+            {
+              "type": "jq",
+              "name": "district_externalId",
+              "expr": ".userRoleInformation? | .district"
+            },
+            {
+              "type": "jq",
+              "name": "cluster_externalId",
+              "expr": ".userRoleInformation? | .cluster"
+            },
+            {
+              "type": "jq",
+              "name": "school_externalId",
+              "expr": ".userRoleInformation? | .school"
+            },
+            {
+              "type": "jq",
+              "name": "state_name",
+              "expr": "if [.userProfile ? |.userLocations [] ? | select(.type | contains(\"state\"))] | length > 0 then .userProfile ? |.userLocations [] ? | select(.type | contains(\"state\")) | .name else null end"
+            },
+            {
+              "type": "jq",
+              "name": "block_name",
+              "expr": "if [.userProfile ? |.userLocations [] ? | select(.type | contains(\"block\"))] | length > 0 then .userProfile ? |.userLocations [] ? | select(.type | contains(\"block\")) | .name else null end"
+            },
+            {
+              "type": "jq",
+              "name": "district_name",
+              "expr": "if [.userProfile ? |.userLocations [] ? | select(.type | contains(\"district\"))] | length > 0 then .userProfile ? |.userLocations [] ? | select(.type | contains(\"district\")) | .name else null end"
+            },
+            {
+              "type": "jq",
+              "name": "cluster_name",
+              "expr": "if [.userProfile ? |.userLocations [] ? | select(.type | contains(\"cluster\"))] | length > 0 then .userProfile ? |.userLocations [] ? | select(.type | contains(\"cluster\")) | .name else null end"
+            },
+            {
+              "type": "jq",
+              "name": "school_name",
+              "expr": "if [.userProfile ? |.userLocations [] ? | select(.type | contains(\"school\"))] | length > 0 then .userProfile ? |.userLocations [] ? | select(.type | contains(\"school\")) | .name else null end"
+            },
+            {
+              "type": "jq",
+              "name": "board_name",
+              "expr": "if .userProfile? | .framework ? | .board | length > 0 then [.userProfile? | .framework ? | .board[]] | join(\",\") else null end"
+            },
+            {
+              "type": "jq",
+              "name": "completedDate",
+              "expr": ".completedDate"
+            },
+            {
+              "type": "jq",
+              "name": "channel",
+              "expr": ".userProfile ? | .rootOrgId"
+            },
+            {
+              "type": "jq",
+              "name": "program_id",
+              "expr": "if .programId then .programId else null end"
+            },
+            {
+              "type": "jq",
+              "name": "program_name",
+              "expr": ".programInformation? | .name"
+            },
+            {
+              "type": "jq",
+              "name": "private_program",
+              "expr": "if .isAPrivateProgram == true then \"true\" elif .isAPrivateProgram == false then \"false\" else \"true\" end"
+            },
+            {
+              "type": "jq",
+              "name": "organisation_id",
+              "expr": "if [.userProfile? | .organisations[]? | select (.isSchool == false)] | length > 0 then .userProfile? | .organisations[]? | select(.isSchool == false) | .organisationId else null end"
+            },
+            {
+              "type": "jq",
+              "name": "organisation_name",
+              "expr": "if [.userProfile? | .organisations[]? | select (.isSchool == false)] | length > 0 then .userProfile? | .organisations[]? | select(.isSchool == false) | .orgName else null end"
+            },
+            {
+              "type": "jq",
+              "name": "user_id",
+              "expr": ".createdBy"
+            },
+            {
+              "type": "jq",
+              "name": "solution_type",
+              "expr": "if (.isRubricDriven ? and .criteriaLevelReport ?) then \"observation_with_rubric\" elif (.isRubricDriven ? | not) then  \"observation_without_rubric\" elif (.isRubricDriven ? and (.criteriaLevelReport ? | not)) then  \"observation_without_rubric\"  else \"observation_without_rubric\" end"
+            },
+            {
+              "type": "jq",
+              "name": "updatedAt",
+              "expr": ".updatedAt"
+            },
+            {
+              "type": "jq",
+              "name": "status",
+              "expr": ".status"
+            }
+          ]
+        },
+        "featureSpec": {}
+      },
+      "consumerProperties": {
+        "bootstrap.servers": "{{kafka_brokers}}"
+      },
+      "useEarliestOffset": true,
+      "type": "kafka"
+    },
+    "tuningConfig": {
+      "type": "kafka",
+      "reportParseExceptions":false,
+      "maxRowsPerSegment":5000000
+    }
+  }
+}
