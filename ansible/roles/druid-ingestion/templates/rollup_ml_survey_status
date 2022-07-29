@@ -1,0 +1,242 @@
+{
+  "type": "kafka",
+  "spec": {
+    "ioConfig": {
+      "type": "kafka",
+      "consumerProperties": {
+        "bootstrap.servers": "{{kafka_brokers}}"
+      },      
+      "topic": "{{env}}.ml.survey.raw",
+      "taskCount":"{{rollup_ml_survey_status_taskcount}}",
+      "replicas":1,
+      "taskDuration":"PT14400S",
+      "completionTimeout":"PT1800S",
+      "inputFormat": {
+        "type": "json",
+        "flattenSpec": {
+          "fields": [
+            {
+              "type": "jq",
+              "name": "survey_submission_id",
+              "expr": "._id"
+            },
+            {
+              "type": "jq",
+              "name": "submission_status",
+              "expr": ".status"
+            },
+            {
+              "type": "jq",
+              "name": "user_id",
+              "expr": ".createdBy"
+            },
+            {
+              "type": "jq",
+              "name": "user_sub_tye",
+              "expr": ".userRoleInformation? | .role"
+            },
+            {
+              "type": "jq",
+              "name": "user_type",
+              "expr": "[.userProfile? | .profileUserTypes[] ?| .type?] | unique | join(\",\")"
+            },
+            {
+              "expr": ".userRoleInformation? | .state",
+              "name": "state_externalId",
+              "type": "jq"
+            },
+            {
+              "expr": ".userRoleInformation? | .block",
+              "name": "block_externalId",
+              "type": "jq"
+            },
+            {
+              "expr": ".userRoleInformation? | .district",
+              "name": "district_externalId",
+              "type": "jq"
+            },
+            {
+              "expr": ".userRoleInformation? | .cluster",
+              "name": "cluster_externalId",
+              "type": "jq"
+            },
+            {
+              "expr": ".userRoleInformation? | .school",
+              "name": "school_externalId",
+              "type": "jq"
+            },
+            {
+              "type": "jq",
+              "name": "state_name",
+              "expr": "if [.userProfile ? |.userLocations [] ? | select(.type | contains(\"state\"))] | length > 0 then .userProfile ? |.userLocations [] ? | select(.type | contains(\"state\")) | .name else null end"
+            },
+            {
+              "type": "jq",
+              "name": "block_name",
+              "expr": "if [.userProfile ? |.userLocations [] ? | select(.type | contains(\"block\"))] | length > 0 then .userProfile ? |.userLocations [] ? | select(.type | contains(\"block\")) | .name else null end"
+            },
+            {
+              "type": "jq",
+              "name": "district_name",
+              "expr": "if [.userProfile ? |.userLocations [] ? | select(.type | contains(\"district\"))] | length > 0 then .userProfile ? |.userLocations [] ? | select(.type | contains(\"district\")) | .name else null end"
+            },
+            {
+              "type": "jq",
+              "name": "cluster_name",
+              "expr": "if [.userProfile ? |.userLocations [] ? | select(.type | contains(\"cluster\"))] | length > 0 then .userProfile ? |.userLocations [] ? | select(.type | contains(\"cluster\")) | .name else null end"
+            },
+            {
+              "expr": "if [.userProfile ? |.userLocations [] ? | select(.type | contains(\"school\"))] | length > 0 then .userProfile ? |.userLocations [] ? | select(.type | contains(\"school\")) | .name else null end",
+              "name": "school_name",
+              "type": "jq"
+            },
+            {
+              "expr": "if .userProfile? | .framework ? | .board | length > 0 then [.userProfile? | .framework ? | .board[]] | join(\",\") else null end",
+              "name": "board_name",
+              "type": "jq"
+            },
+            {
+              "expr": "if [.userProfile? | .organisations[]? | select (.isSchool == false)] | length > 0 then .userProfile? | .organisations[]? | select(.isSchool == false) | .organisationId else null end",
+              "name": "organisation_id",
+              "type": "jq"
+            },
+            {
+              "expr": "if [.userProfile? | .organisations[]? | select (.isSchool == false)] | length > 0 then .userProfile? | .organisations[]? | select(.isSchool == false) | .orgName else null end",
+              "name": "organisation_name",
+              "type": "jq"
+            },
+            {
+              "expr": "if .programExternalId then .programExternalId else null end",
+              "name": "program_externalId",
+              "type": "jq"
+            },
+            {
+              "expr": "if .programId then .programId else null end",
+              "name": "program_id",
+              "type": "jq"
+            },
+            {
+              "expr": "if (.programInformation? | .name) then .programInformation? | .name else null end",
+              "name": "program_name",
+              "type": "jq"
+            },
+            {
+              "expr": "if (.surveyInformation? | .name) then .surveyInformation? | .name else null end",
+              "name": "survey_name",
+              "type": "jq"
+            },
+            {
+              "expr": "if .surveyId then .surveyId else null end",
+              "name": "survey_id",
+              "type": "jq"
+            },
+            {
+              "expr": "if (.surveyInformation? | .solutionExternalId) then .surveyInformation? | .solutionExternalId else null end",
+              "name": "survey_externalId",
+              "type": "jq"
+            },
+            {
+              "type": "jq",
+              "name": "created_date",
+              "expr": ".createdAt"
+            },
+            {
+              "type": "jq",
+              "name": "submission_date",
+              "expr": "if .completedDate then .completedDate else null end"
+            },
+            {
+              "type": "jq",
+              "name": "project_updated_date",
+              "expr": "if .updatedAt then .updatedAt else null end"
+            },
+            {
+              "type": "jq",
+              "name": "solution_name",
+              "expr": "if (.solutionInformation? | .name) then .solutionInformation? | .name else null end"
+            },
+            {
+              "type": "jq",
+              "name": "solution_id",
+              "expr": "if .solutionId then .solutionId else null end"
+            }
+          ]
+        }
+      },
+      "useEarliestOffset": true
+    },
+    "tuningConfig": {
+      "type": "kafka",
+      "reportParseExceptions": false,
+      "maxRowsPerSegment": 5000000
+    },
+    "dataSchema": {
+      "dataSource": "ml-survey-status-rollup",
+      "timestampSpec": {
+        "column": "project_updated_date",
+        "format": "iso"
+      },
+      "transformSpec": {
+        "transforms": [
+          {
+            "type": "expression",
+            "name": "parent_channel",
+            "expression": "nvl(\"parent_channel\", 'SHIKSHALOKAM')"
+          },
+          {
+            "type": "expression",
+            "name": "status_code",
+            "expression": "case_simple(\"status\",'started',1,'inprogress',3,'ratingPending',5,'completed',7,0)"
+          }
+        ]
+      },
+      "dimensionsSpec": {
+        "dimensions": [
+          "survey_submission_id","submission_status","user_id","user_sub_tye","user_type","state_externalId","block_externalId","district_externalId","cluster_externalId","school_externalId","state_name","block_name","district_name","cluster_name","school_name","board_name","organisation_id","organisation_name","program_externalId","program_id","program_name","survey_name","survey_id","survey_externalId","created_date","submission_date","project_updated_date","parent_channel",{"type":"long","name":"status_code"},"solution_name","solution_id"
+        ]
+      },
+      "granularitySpec": {
+        "type": "uniform",
+        "queryGranularity": "day",
+        "rollup": true,
+        "segmentGranularity": "day"
+      },
+      "metricsSpec": [
+        {
+          "name": "count",
+          "type": "count"
+        },
+        {
+          "name": "sum___v",
+          "type": "longSum",
+          "fieldName": "__v"
+        },
+        {
+          "name": "sum_status_code",
+          "type": "longMax",
+          "fieldName": "status_code"
+        },
+        {
+          "type": "HLLSketchBuild",
+          "name": "count_of_user_id",
+          "fieldName": "user_id"
+        },
+        {
+          "type": "HLLSketchBuild",
+          "name": "count_of_survey_submission_id",
+          "fieldName": "survey_submission_id"
+        },
+        {
+          "type": "HLLSketchBuild",
+          "name": "count_of_solution_id",
+          "fieldName": "solution_id"
+        },
+        {
+          "type": "HLLSketchBuild",
+          "name": "count_of_program_id",
+          "fieldName": "program_id"
+        }
+      ]
+    }
+  }
+}
