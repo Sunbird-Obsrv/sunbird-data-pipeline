@@ -43,7 +43,7 @@
           },
           {
             "type": "string",
-            "name": "school_id"
+            "name": "school_code"
           },
           {
             "type": "string",
@@ -55,7 +55,7 @@
           },
           {
             "type": "string",
-            "name": "block_id"
+            "name": "block_code"
           },
           {
             "type": "string",
@@ -67,7 +67,7 @@
           },
           {
             "type": "string",
-            "name": "district_id"
+            "name": "district_code"
           },
           {
             "type": "string",
@@ -79,7 +79,7 @@
           },
           {
             "type": "string",
-            "name": "cluster_id"
+            "name": "cluster_code"
           },
           {
             "type": "string",
@@ -91,7 +91,7 @@
           },
           {
             "type": "string",
-            "name": "state_id"
+            "name": "state_code"
           },
           {
             "type": "string",
