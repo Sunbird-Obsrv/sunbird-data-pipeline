@@ -33,7 +33,7 @@
               {
                 "type": "jq",
                 "name": "tasks_name",
-                "expr": "[.tasks[]? | .name] | join(\",\")"
+                "expr": "[.tasks[]? | .name]"
               },
               {
                 "type": "jq",
