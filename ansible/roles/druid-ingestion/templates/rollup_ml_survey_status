@@ -159,6 +159,11 @@
               "type": "jq",
               "name": "solution_id",
               "expr": "if .solutionId then .solutionId else null end"
+            },
+            {
+              "type": "jq",
+              "name": "private_program",
+              "expr": "if .isAPrivateProgram == true then \"true\" elif .isAPrivateProgram == false then \"false\" else \"true\" end"
             }
           ]
         }
@@ -192,7 +197,7 @@
       },
       "dimensionsSpec": {
         "dimensions": [
-          "survey_submission_id","submission_status","user_id","user_sub_type","user_type","state_externalId","block_externalId","district_externalId","cluster_externalId","school_externalId","state_name","block_name","district_name","cluster_name","school_name","board_name","organisation_id","organisation_name","program_externalId","program_id","program_name","survey_name","survey_id","survey_externalId","created_date","submission_date","updatedAt","parent_channel",{"type":"long","name":"status_code"},"solution_name","solution_id"
+          "survey_submission_id","submission_status","user_id","user_sub_type","user_type","state_externalId","block_externalId","district_externalId","cluster_externalId","school_externalId","state_name","block_name","district_name","cluster_name","school_name","board_name","organisation_id","organisation_name","program_externalId","program_id","program_name","survey_name","survey_id","survey_externalId","created_date","submission_date","updatedAt","parent_channel",{"type":"long","name":"status_code"},"solution_name","solution_id","private_program"
         ]
       },
       "granularitySpec": {
