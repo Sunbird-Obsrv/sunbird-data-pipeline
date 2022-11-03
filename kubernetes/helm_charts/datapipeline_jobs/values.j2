@@ -10,6 +10,9 @@ s3_access_key: {{ s3_storage_key }}
 s3_secret_key: {{ s3_storage_secret }}
 s3_endpoint: {{ s3_storage_endpoint }}
 s3_path_style_access: {{ s3_path_style_access }}
+gcloud_client_key: {{ gcloud_client_key }}
+gcloud_private_secret: {{ gcloud_private_secret }}
+gcloud_project_id: {{ gcloud_project_id }}
 
 serviceMonitor:
   enabled: {{ service_monitor_enabled | lower}}
@@ -150,7 +153,7 @@ base_config: |
       statebackend {
         blob {
           storage {
-            account = "{% if checkpoint_store_type == "azure" %}{{ azure_account }}.blob.core.windows.net{% elif checkpoint_store_type == "s3" %}{{ flink_dp_storage_container }}{% endif %}"
+            account = "{% if checkpoint_store_type == "azure" %}{{ azure_account }}.blob.core.windows.net{% elif checkpoint_store_type == "s3" %}{{ flink_dp_storage_container }}{% elif checkpoint_store_type == "gcloud" %}{{ flink_dp_storage_container }}{% endif %}"
             container = "{{ flink_container_name }}"
             checkpointing.dir = "checkpoint"
           }
@@ -159,6 +162,8 @@ base_config: |
         base.url = "wasbs://"${job.statebackend.blob.storage.container}"@"${job.statebackend.blob.storage.account}"/"${job.statebackend.blob.storage.checkpointing.dir}
 {% elif checkpoint_store_type == "s3" %}
         base.url = "s3://"${job.statebackend.blob.storage.account}"/"${job.statebackend.blob.storage.container}"/"${job.statebackend.blob.storage.checkpointing.dir}
+{% elif checkpoint_store_type == "gcloud" %}
+        base.url = "gs://"${job.statebackend.blob.storage.account}"/"${job.statebackend.blob.storage.container}"/"${job.statebackend.blob.storage.checkpointing.dir}
 {% endif %}
       }
     }
