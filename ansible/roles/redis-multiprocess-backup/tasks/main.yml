@@ -37,7 +37,6 @@
     dest_folder_name: "{{ redis_backup_storage }}"
     dest_folder_path: ""
     local_file_or_folder_path: "{{ redis_backup_dir }}/*"
-  with_dict: "{{ redis.config }}"
   when: cloud_service_provider == "gcloud"
 
 - name: clean up backup dir after upload
