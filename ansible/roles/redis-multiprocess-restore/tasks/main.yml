@@ -6,13 +6,18 @@
   file: path=/tmp/{{ item }} state=directory recurse=yes
   with_items: "{{ redis_restore_process }}"
 
-- name: Download backup file
-  become: yes
-  become_user: "{{ redis_restore_user }}"
-  shell: "az storage blob download --container-name {{ redis_backup_azure_container_name }} --file {{ item }}/{{ redis_restore_file_name }} --name {{ item }}/{{ redis_restore_file_name }} --account-name {{sunbird_management_storage_account_name}} --account-key {{sunbird_management_storage_account_key}}"
-  args:
-    chdir: /tmp/
+- name: download a file from azure storage
+  include_role:
+    name: azure-cloud-storage
+    tasks_from: blob-download.yml
+  vars:
+    blob_container_name: "{{ redis_backup_storage }}"
+    blob_file_name: "{{ item }}/{{ redis_restore_file_name }}"
+    local_file_or_folder_path: "/tmp/{{ item }}/{{ redis_restore_file_name }}"
+    storage_account_name: "{{ azure_management_storage_account_name }}"
+    storage_account_key: "{{ azure_management_storage_account_key }}"
   with_items: "{{ redis_restore_process }}"
+  when: cloud_service_provider == "azure"
 
 - name: get redis process ports to stop 
   shell: "echo {{ lookup ('vars', item + '_port') }}"
