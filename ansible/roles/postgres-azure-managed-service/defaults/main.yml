@@ -1,6 +1,0 @@
-postgresql_user: postgres
-postgresql_backup_dir: /tmp/dp-postgres
-postgresql_backup_azure_container_name: dp-postgresql-backup
-
-db_name:
-  db: ['analytics']

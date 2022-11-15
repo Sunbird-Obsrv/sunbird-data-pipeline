@@ -7,7 +7,6 @@
 - set_fact:
     cassandra_backup_gzip_file_name: "cassandra-backup-{{ lookup('pipe', 'date +%Y%m%d') }}.tar.gz"
 
- 
 - set_fact:
     cassandra_backup_gzip_file_path: "{{ cassandra_backup_dir }}/{{ cassandra_backup_gzip_file_name }}.tar.gz"
 
@@ -24,15 +23,18 @@
 
 - name: print doc_root to console
   debug:
-    var: doc_data    
+    var: doc_data  
 
-- name: upload to azure
+- name: upload file to gcloud storage
   include_role:
-    name: artifacts-upload-azure
+    name: gcp-cloud-storage
+    tasks_from: upload-batch.yml
   vars:
-    artifact: "{{ cassandra_backup_gzip_file_name }}"
-    artifact_path: "{{ cassandra_backup_gzip_file_path }}"
-    artifacts_container: "{{ cassandra_backup_azure_container_name }}"
-   
+    gcp_bucket_name: "{{ gcloud_management_bucket_name }}"
+    dest_folder_name: "{{ cassandra_backup_storage }}"
+    dest_folder_path: ""
+    local_file_or_folder_path: "{{ cassandra_backup_gzip_file_path }}"
+  when: cloud_service_provider == "gcloud"
+  
 - name: clean up backup dir after upload
   file: path={{ cassandra_backup_dir }} state=absent
