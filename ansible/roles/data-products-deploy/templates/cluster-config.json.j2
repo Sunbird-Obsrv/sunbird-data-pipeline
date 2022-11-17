@@ -1,12 +1,35 @@
 {
     "jars": [
+    {% if checkpoint_store_type == "azure" %}
         "wasbs://{{ bucket }}@{{sunbird_private_storage_account_name}}.blob.core.windows.net/models-{{ model_version }}/{{ analytics_core_artifact }}",
         "wasbs://{{ bucket }}@{{sunbird_private_storage_account_name}}.blob.core.windows.net/models-{{ model_version }}/{{ scruid_artifact }}",
         "wasbs://{{ bucket }}@{{sunbird_private_storage_account_name}}.blob.core.windows.net/models-{{ model_version }}/{{ analytics_ed_dataporducts_jar_artifact }}"
+    {% elif checkpoint_store_type == "s3" %}
+        "s3://{{ bucket }}/models-{{ model_version }}/{{ analytics_core_artifact }}",
+        "s3://{{ bucket }}/models-{{ model_version }}/{{ scruid_artifact }}",
+        "s3://{{ bucket }}/models-{{ model_version }}/{{ analytics_ed_dataporducts_jar_artifact }}"
+    {% elif checkpoint_store_type == "gcloud" %}
+        "gs://{{ bucket }}/models-{{ model_version }}/{{ analytics_core_artifact }}",
+        "gs://{{ bucket }}/models-{{ model_version }}/{{ scruid_artifact }}",
+        "gs://{{ bucket }}/models-{{ model_version }}/{{ analytics_ed_dataporducts_jar_artifact }}"
+    {% endif %}
     ],
-    "file": "wasbs://{{ bucket }}@{{sunbird_private_storage_account_name}}.blob.core.windows.net/models-{{ model_version }}/{{ analytics_batch_module_artifact }}",
+    "file": 
+    {% if checkpoint_store_type == "azure" %}
+    "wasbs://{{ bucket }}@{{sunbird_private_storage_account_name}}.blob.core.windows.net/models-{{ model_version }}/{{ analytics_batch_module_artifact }}",
+    {% elif checkpoint_store_type == "s3" %}
+    "s3://{{ bucket }}/models-{{ model_version }}/{{ analytics_batch_module_artifact }}",
+    {% elif checkpoint_store_type == "gcloud" %}
+    "gs://{{ bucket }}/models-{{ model_version }}/{{ analytics_batch_module_artifact }}",
+    {% endif %}
     "files": [
+    {% if checkpoint_store_type == "azure" %}
         "wasbs://{{ bucket }}@{{sunbird_private_storage_account_name}}.blob.core.windows.net/models-{{ model_version }}/application.conf"
+    {% elif checkpoint_store_type == "s3" %}
+        "s3://{{ bucket }}/models-{{ model_version }}/{{ analytics_batch_module_artifact }}/application.conf",
+    {% elif checkpoint_store_type == "gcloud" %}
+        "gs://{{ bucket }}/models-{{ model_version }}/{{ analytics_batch_module_artifact }}/application.conf",
+    {% endif %}
     ],
     "className": "org.ekstep.analytics.job.JobExecutor",
     "executorCores": {{ spark_cluster.executor_core }},
