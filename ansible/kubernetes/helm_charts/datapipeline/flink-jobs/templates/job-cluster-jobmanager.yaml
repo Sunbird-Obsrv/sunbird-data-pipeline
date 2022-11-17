@@ -20,7 +20,7 @@ spec:
         imagePullPolicy: Always
         workingDir: /opt/flink
         command: ["/opt/flink/bin/standalone-job.sh"]
-#{{- $job-config-key := .Release.Name }}
+{{- $job-config-key := .Release.Name }}
 
         args: ["start-foreground",
                "--job-classname={{ index .Values $job-config-key.job_classname }}", 

@@ -206,9 +206,9 @@ spec:
           "-Ds3.path.style.access={{ .Values.s3_path_style_access }}",
 {{- end }}
 {{- if eq .Values.checkpoint_store_type "gcloud" }}
-               "-Dfs.gs.auth.client.id={{ .Values.gcloud_client_key }}",
-               "-Dfs.gs.auth.client.secret={{ .Values.gcloud_private_secret }}",
-               "-Dfs.gs.project.id={{ .Values.gcloud_project_id }}"
+          "-Dfs.gs.auth.client.id={{ .Values.gcloud_client_key }}",
+          "-Dfs.gs.auth.client.secret={{ .Values.gcloud_private_secret }}",
+          "-Dfs.gs.project.id={{ .Values.gcloud_project_id }}"
 {{- end }}
           "-Dweb.submit.enable=false",
           "-Dmetrics.reporter.prom.class=org.apache.flink.metrics.prometheus.PrometheusReporter",
