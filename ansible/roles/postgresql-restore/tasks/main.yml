@@ -27,6 +27,17 @@
     local_file_or_folder_path: "{{ postgresql_restore_gzip_file_path }}"
   when: cloud_service_provider == "gcloud"
 
+- name: download file from gcloud storage
+  include_role:
+    name: gcp-cloud-storage
+    tasks_from: download.yml
+  vars:
+    gcp_bucket_name: "{{ gcloud_management_bucket_name }}"
+    dest_folder_name: "{{ postgresql_restore_storage }}"
+    dest_file_name: "{{ postgresql_restore_gzip_file_name }}"
+    local_file_or_folder_path: "{{ postgresql_restore_gzip_file_path }}"
+  when: cloud_service_provider == "gcloud"
+
 - name: ensure postgresql service is stopped
   service: name=postgresql state=stopped
 
