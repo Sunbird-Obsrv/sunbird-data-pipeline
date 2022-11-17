@@ -6,10 +6,18 @@
     update_cache:  yes
     state: present
 
-- name: Download backup file
-  shell: "az storage blob download --container-name {{ influxdb_backup_azure_container_name }} --file {{ influxdb_restore_file_name }} --name {{ influxdb_restore_file_name }} --account-name {{sunbird_management_storage_account_name}} --account-key {{sunbird_management_storage_account_key}}"
-  args:
-    chdir: /tmp/
+- name: download a file from azure storage
+  become: true
+  include_role:
+    name: azure-cloud-storage
+    tasks_from: blob-download.yml
+  vars:
+    blob_container_name: "{{ influxdb_backup_storage }}"
+    blob_file_name: "{{ influxdb_restore_file_name }}"
+    local_file_or_folder_path: "/tmp/{{ influxdb_restore_file_name  }}"
+    storage_account_name: "{{ azure_management_storage_account_name }}"
+    storage_account_key: "{{ azure_management_storage_account_key }}"
+  when: cloud_service_provider == "azure"
 
 - name: Unarchieve backup file
   unarchive:

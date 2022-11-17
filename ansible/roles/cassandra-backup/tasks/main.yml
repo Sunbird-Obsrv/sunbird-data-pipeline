@@ -23,8 +23,21 @@
 
 - name: print doc_root to console
   debug:
-    var: doc_data  
-
+    var: doc_data    
+    
+- name: upload file to azure storage using azcopy
+  include_role:
+    name: azure-cloud-storage
+    tasks_from: upload-using-azcopy.yml
+  vars:
+    blob_container_name: "{{ cassandra_backup_storage }}"
+    container_public_access: "off"
+    blob_container_folder_path: ""
+    local_file_or_folder_path: "{{ cassandra_backup_gzip_file_path }}"
+    storage_account_name: "{{ azure_management_storage_account_name }}"
+    storage_account_sas_token: "{{ azure_management_storage_account_sas }}"
+  when: cloud_service_provider == "azure"
+   
 - name: upload file to gcloud storage
   include_role:
     name: gcp-cloud-storage

@@ -18,16 +18,20 @@
   poll: 10
   with_dict: "{{ redis.config }}"
 
-- name: upload to azure
+- name: upload file to azure storage
   include_role:
-    name: artifacts-upload-azure
+    name: azure-cloud-storage
+    tasks_from: blob-upload.yml
   vars:
-    artifact: "{{ item.value.name }}/{{ redis_backup_file_name }}"
-    artifact_path: "{{ redis_backup_dir }}/{{ item.value.name }}/{{ redis_backup_file_name }}"
-    artifacts_container: "{{ redis_backup_azure_container_name }}"
-  with_dict: "{{ redis.config }}"
+    blob_container_name: "{{ redis_backup_storage }}"
+    container_public_access: "off"
+    blob_file_name: "{{ item.value.name }}/{{ redis_backup_file_name }}"
+    local_file_or_folder_path: "{{ redis_backup_dir }}/{{ item.value.name }}/{{ redis_backup_file_name }}"
+    storage_account_name: "{{ azure_management_storage_account_name }}"
+    storage_account_key: "{{ azure_management_storage_account_key }}"
+  with_dict: "{{ redis.config }}"  
   when: cloud_service_provider == "azure"
-
+   
 - name: upload files to gcloud storage
   include_role:
     name: gcp-cloud-storage
