@@ -17,22 +17,34 @@
     name: azure-cloud-storage
     tasks_from: upload-using-azcopy.yml
   vars:
-    blob_container_name: "{{ influxdb_backup_storage }}"
+    blob_container_name: "{{ cloud_storage_influxdbbackup_foldername }}"
     container_public_access: "off"
     blob_container_folder_path: ""
     local_file_or_folder_path: "{{ influxdb_backup_dir }}/{{ influxdb_backup_file_name }}.zip"
-    storage_account_name: "{{ azure_management_storage_account_name }}"
+    storage_account_name: "{{ cloud_management_storage_accountname }}"
     storage_account_sas_token: "{{ azure_management_storage_account_sas }}"
   when: cloud_service_provider == "azure"
+
+- name: upload file to aws s3
+  include_role:
+    name: aws-cloud-storage
+    tasks_from: upload.yml
+  vars:
+    s3_bucket_name: "{{ cloud_storage_management_bucketname }}"
+    aws_access_key_id: "{{ cloud_management_storage_accountname }}"
+    aws_secret_access_key: "{{ cloud_management_storage_secret }}"
+    aws_default_region: "{{ cloud_public_storage_region }}"
+    local_file_or_folder_path: "{{ influxdb_backup_dir }}/{{ influxdb_backup_file_name }}.zip"
+    s3_path: "{{ cloud_storage_influxdbbackup_foldername }}/{{ influxdb_backup_file_name }}.zip"
+  when: cloud_service_provider == "aws"
 
 - name: upload file to gcloud storage
   include_role:
     name: gcp-cloud-storage
     tasks_from: upload.yml
   vars:
-    gcp_bucket_name: "{{ gcloud_management_bucket_name }}"
-    dest_folder_name: "{{ influxdb_backup_storage }}"
-    dest_file_name: "{{ influxdb_backup_file_name }}.zip"
+    gcp_bucket_name: "{{ cloud_storage_management_bucketname }}"
+    gcp_path: "{{ cloud_storage_influxdbbackup_foldername }}/{{ influxdb_backup_file_name }}.zip"
     local_file_or_folder_path: "{{ influxdb_backup_dir }}/{{ influxdb_backup_file_name }}.zip"
   when: cloud_service_provider == "gcloud"
 
