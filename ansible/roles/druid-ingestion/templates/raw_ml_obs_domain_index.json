@@ -8,7 +8,7 @@
         "blobs": [
           {
             "container": "{{container_name}}",
-            "path": "/projects/ml_projects.json"
+            "path": "/observation/domain/ml_observation_domain.json"
           }
         ],
         "fetchTimeout": 300000
@@ -24,7 +24,7 @@
       }
     },
     "dataSchema": {
-      "dataSource": "ml-project-status",
+      "dataSource": "ml-obs-domain",
       "granularitySpec": {
         "type": "uniform",
         "queryGranularity": "none",
@@ -47,15 +47,11 @@
           },
           {
             "type": "string",
-            "name": "project_title"
+            "name": "solution_name"
           },
           {
             "type": "string",
             "name": "solution_id"
-          },
-          {
-            "type": "string",
-            "name": "status_of_project"
           },
           {
             "type": "string",
@@ -74,6 +70,14 @@
             "name": "district_externalId"
           },
           {
+            "type":"string",
+            "name":"block_externalId"
+          },
+          {
+            "type":"string",
+            "name":"organisation_name"
+          },
+          {
             "type": "string",
             "name": "organisation_name"
           },
@@ -83,27 +87,43 @@
           },
           {
             "type": "string",
+            "name": "parent_channel"
+          },
+          {
+            "type": "string",
+            "name": "solution_type"
+          },
+          {
+            "type": "string",
             "name": "private_program"
           },
           {
             "type": "string",
-            "name": "project_created_type"
+            "name": "domain_name"
           },
           {
             "type": "string",
-            "name": "parent_channel"
+            "name": "domain_externalId"
+          },
+          {
+            "type": "string",
+            "name": "domain_level"
           },
           {
             "type": "long",
-            "name": "unique_projects"
+            "name": "unique_submissions"
+          },
+          {
+            "type": "long",
+            "name": "unique_entities"
           },
           {
             "type": "long",
             "name": "unique_users"
           },
           {
-            "type": "long",
-            "name": "no_of_imp_with_evidence"
+            "type":"long",
+            "name":"unique_solution"
           },
           {
             "type": "string",

@@ -200,6 +200,66 @@
           {
             "type": "string",
             "name": "user_type"
+          },
+          {
+            "type": "string",
+            "name": "observed_school_name"
+          },
+          {
+            "type": "string",
+            "name": "observed_school_id"
+          },
+          {
+            "type": "string",
+            "name": "observed_school_code"
+          },
+          {
+            "type": "string",
+            "name": "observed_state_name"
+          },
+          {
+            "type": "string",
+            "name": "observed_state_id"
+          },
+          {
+            "type": "string",
+            "name": "observed_state_code"
+          },
+          {
+            "type": "string",
+            "name": "observed_district_name"
+          },
+          {
+            "type": "string",
+            "name": "observed_district_id"
+          },
+          {
+            "type": "string",
+            "name": "observed_district_code"
+          },
+          {
+            "type": "string",
+            "name": "observed_block_name"
+          },
+          {
+            "type": "string",
+            "name": "observed_block_id"
+          },
+          {
+            "type": "string",
+            "name": "observed_block_code"
+          },
+          {
+            "type": "string",
+            "name": "observed_cluster_name"
+          },
+          {
+            "type": "string",
+            "name": "observed_cluster_id"
+          },
+          {
+            "type": "string",
+            "name": "observed_cluster_code"
           }
         ]
       },

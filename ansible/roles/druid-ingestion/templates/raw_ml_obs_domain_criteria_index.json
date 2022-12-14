@@ -8,7 +8,7 @@
         "blobs": [
           {
             "container": "{{container_name}}",
-            "path": "/observation/ml_observation_status.json"
+            "path": "/observation/domain_criteria/ml_observation_domain_criteria.json"
           }
         ],
         "fetchTimeout": 300000
@@ -24,7 +24,7 @@
       }
     },
     "dataSchema": {
-      "dataSource": "ml-obs-status",
+      "dataSource": "ml-obs-domain-criteria",
       "granularitySpec": {
         "type": "uniform",
         "queryGranularity": "none",
@@ -55,10 +55,6 @@
           },
           {
             "type": "string",
-            "name": "status"
-          },
-          {
-            "type": "string",
             "name": "state_name"
           },
           {
@@ -72,6 +68,14 @@
           {
             "type": "string",
             "name": "district_externalId"
+          },
+          {
+            "type":"string",
+            "name":"block_name"
+          },
+          {
+            "type":"string",
+            "name":"block_externalId"
           },
           {
             "type": "string",
@@ -94,6 +98,30 @@
             "name": "private_program"
           },
           {
+            "type": "string",
+            "name": "domain_name"
+          },
+          {
+            "type": "string",
+            "name": "domain_externalId"
+          },
+          {
+            "type": "string",
+            "name": "domain_level"
+          },
+          {
+            "type": "string",
+            "name": "criteria_name"
+          },
+          {
+            "type": "string",
+            "name": "criteria_score"
+          },
+          {
+            "type": "string",
+            "name": "criteria_id"
+          },
+          {
             "type": "long",
             "name": "unique_submissions"
           },
@@ -104,6 +132,10 @@
           {
             "type": "long",
             "name": "unique_users"
+          },
+          {
+            "type":"long",
+            "name":"unique_solution"
           },
           {
             "type": "string",

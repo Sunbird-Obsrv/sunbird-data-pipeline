@@ -8,7 +8,7 @@
         "blobs": [
           {
             "container": "{{container_name}}",
-            "path": "/observation/domain_criteria/ml_observation_domain_criteria.json"
+            "path": "/projects/ml_projects.json"
           }
         ],
         "fetchTimeout": 300000
@@ -24,7 +24,7 @@
       }
     },
     "dataSchema": {
-      "dataSource": "ml-obs-domain-criteria",
+      "dataSource": "ml-project-status",
       "granularitySpec": {
         "type": "uniform",
         "queryGranularity": "none",
@@ -47,11 +47,15 @@
           },
           {
             "type": "string",
-            "name": "solution_name"
+            "name": "project_title"
           },
           {
             "type": "string",
             "name": "solution_id"
+          },
+          {
+            "type": "string",
+            "name": "status_of_project"
           },
           {
             "type": "string",
@@ -70,6 +74,14 @@
             "name": "district_externalId"
           },
           {
+            "type":"string",
+            "name":"block_name"
+          },
+          {
+            "type":"string",
+            "name":"block_externalId"
+          },
+          {
             "type": "string",
             "name": "organisation_name"
           },
@@ -79,51 +91,31 @@
           },
           {
             "type": "string",
-            "name": "parent_channel"
-          },
-          {
-            "type": "string",
-            "name": "solution_type"
-          },
-          {
-            "type": "string",
             "name": "private_program"
           },
           {
             "type": "string",
-            "name": "domain_name"
+            "name": "project_created_type"
           },
           {
             "type": "string",
-            "name": "domain_externalId"
-          },
-          {
-            "type": "string",
-            "name": "domain_level"
-          },
-          {
-            "type": "string",
-            "name": "criteria_name"
-          },
-          {
-            "type": "string",
-            "name": "criteria_score"
-          },
-          {
-            "type": "string",
-            "name": "criteria_id"
+            "name": "parent_channel"
           },
           {
             "type": "long",
-            "name": "unique_submissions"
-          },
-          {
-            "type": "long",
-            "name": "unique_entities"
+            "name": "unique_projects"
           },
           {
             "type": "long",
             "name": "unique_users"
+          },
+          {
+            "type":"long",
+            "name":"unique_solution"
+          },
+          {
+            "type": "long",
+            "name": "no_of_imp_with_evidence"
           },
           {
             "type": "string",

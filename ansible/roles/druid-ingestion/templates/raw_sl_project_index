@@ -288,6 +288,42 @@
           {
             "type": "string",
             "name": "user_type"
+          },
+          {
+            "type": "string",
+            "name": "certificate_id"
+          },
+          {
+            "type": "string",
+            "name": "certificate_status"
+          },
+          {
+            "type": "string",
+            "name": "certificate_issued_on"
+          },
+          {
+            "type": "string",
+            "name": "certificate_status_customised"
+          },
+          {
+            "type": "string",
+            "name": "certificate_template_url"
+          },
+          {
+            "type":"long",
+            "name":"task_count"
+          },
+          {
+            "type":"long",
+            "name":"task_evidence_count"
+          },
+          {
+            "type":"long",
+            "name":"project_evidence_count"
+          },
+          {
+            "type":"long",
+            "name":"task_sequence"
           }
         ]
       },

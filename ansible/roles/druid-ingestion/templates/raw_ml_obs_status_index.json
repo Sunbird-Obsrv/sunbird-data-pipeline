@@ -8,7 +8,7 @@
         "blobs": [
           {
             "container": "{{container_name}}",
-            "path": "/observation/domain/ml_observation_domain.json"
+            "path": "/observation/ml_observation_status.json"
           }
         ],
         "fetchTimeout": 300000
@@ -24,7 +24,7 @@
       }
     },
     "dataSchema": {
-      "dataSource": "ml-obs-domain",
+      "dataSource": "ml-obs-status",
       "granularitySpec": {
         "type": "uniform",
         "queryGranularity": "none",
@@ -55,6 +55,10 @@
           },
           {
             "type": "string",
+            "name": "status"
+          },
+          {
+            "type": "string",
             "name": "state_name"
           },
           {
@@ -68,6 +72,14 @@
           {
             "type": "string",
             "name": "district_externalId"
+          },
+          {
+            "type":"string",
+            "name":"block_name"
+          },
+          {
+            "type":"string",
+            "name":"block_externalId"
           },
           {
             "type": "string",
@@ -90,18 +102,6 @@
             "name": "private_program"
           },
           {
-            "type": "string",
-            "name": "domain_name"
-          },
-          {
-            "type": "string",
-            "name": "domain_externalId"
-          },
-          {
-            "type": "string",
-            "name": "domain_level"
-          },
-          {
             "type": "long",
             "name": "unique_submissions"
           },
@@ -112,6 +112,10 @@
           {
             "type": "long",
             "name": "unique_users"
+          },
+          {
+            "type":"long",
+            "name":"unique_solution"
           },
           {
             "type": "string",
