@@ -45,7 +45,7 @@
   vars:
     local_file_or_folder_path: "{{ cassandra_backup_gzip_file_path }}"
     s3_bucket_name: "{{ cloud_storage_dpcassandrabackup_bucketname }}"
-    s3_path: "{{ cloud_storage_dpcassandrabackup_foldername }}/{{ cassandra_backup_gzip_file_path }}"
+    s3_path: "{{ cloud_storage_dpcassandrabackup_foldername }}/{{ cassandra_backup_gzip_file_name}}"
     aws_default_region: "{{ cloud_public_storage_region }}"
     aws_access_key_id: "{{ cloud_management_storage_accountname }}"
     aws_secret_access_key: "{{ cloud_management_storage_secret }}"
@@ -57,7 +57,7 @@
     tasks_from: upload-batch.yml
   vars:
     gcp_bucket_name: "{{ cloud_storage_dpcassandrabackup_bucketname }}"
-    gcp_path: "{{ cloud_storage_dpcassandrabackup_foldername }}/{{ cassandra_backup_gzip_file_path }}"
+    gcp_path: "{{ cloud_storage_dpcassandrabackup_foldername }}/{{ cassandra_backup_gzip_file_name}}"
     local_file_or_folder_path: "{{ cassandra_backup_gzip_file_path }}"
   when: cloud_service_provider == "gcloud"
   
