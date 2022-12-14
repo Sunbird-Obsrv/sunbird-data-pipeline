@@ -1,7 +1,7 @@
 ---
 - name: generate SAS token for azcopy
   shell: |
-   sas_expiry=`date -u -d "30 minutes" '+%Y-%m-%dT%H:%MZ'`
+   sas_expiry=`date -u -d "1 hour" '+%Y-%m-%dT%H:%MZ'`
    sas_token=?`az storage container generate-sas -n {{ blob_container_name }} --account-name {{ storage_account_name }} --account-key {{ storage_account_key }} --https-only --permissions dlrw --expiry $sas_expiry -o tsv`
    echo $sas_token
   register: sas_token
