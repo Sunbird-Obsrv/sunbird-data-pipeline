@@ -13,12 +13,8 @@ s3_endpoint: {{ oci_flink_s3_storage_endpoint }}
 {% else %}
 s3_endpoint: {{ s3_storage_endpoint }}
 {% endif %}
-
 s3_path_style_access: {{ s3_path_style_access }}
-gcloud_client_key: {{ gcloud_client_key }}
-gcloud_private_secret: {{ gcloud_private_secret }}
-gcloud_project_id: {{ gcloud_project_id }}
-
+cloud_storage_project_id: {{ cloud_public_storage_project }}
 serviceMonitor:
   enabled: {{ service_monitor_enabled | lower}}
 replicaCount: {{taskmanager_replicacount|default(1)}}
