@@ -471,10 +471,6 @@
             {
               "type":"boolean",
               "name":"isRubricDriven"
-            },
-            {
-              "type":"boolean",
-              "name":"criteriaLevelReport"
             }
           ]
         }
