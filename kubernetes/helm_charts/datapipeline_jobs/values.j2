@@ -3,16 +3,12 @@ imagepullsecrets: {{ imagepullsecrets }}
 dockerhub: {{ dockerhub }}
 repository: {{flink_repository|default('sunbird-datapipeline')}}
 image_tag: {{ image_tag }}
-checkpoint_store_type: {{ checkpoint_store_type }}
-azure_account: {{ azure_account }}
-azure_secret: {{ azure_secret }}
-s3_access_key: {{ s3_storage_key }}
-s3_secret_key: {{ s3_storage_secret }}
-s3_endpoint: {{ s3_storage_endpoint }}
+checkpoint_store_type: {{ cloud_storage_type }}
+cloud_storage_key: {{ cloud_public_storage_accountname }}
+cloud_storage_secret: {{ cloud_public_storage_secret }}
+cloud_storage_endpoint: {{ cloud_public_storage_endpoint }}
 s3_path_style_access: {{ s3_path_style_access }}
-gcloud_client_key: {{ gcloud_client_key }}
-gcloud_private_secret: {{ gcloud_private_secret }}
-gcloud_project_id: {{ gcloud_project_id }}
+cloud_storage_project_id: {{ cloud_public_storage_project }}
 
 serviceMonitor:
   enabled: {{ service_monitor_enabled | lower}}
