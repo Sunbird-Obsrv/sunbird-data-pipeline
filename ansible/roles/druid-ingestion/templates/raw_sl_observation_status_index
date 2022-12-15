@@ -260,6 +260,14 @@
           {
             "type": "string",
             "name": "observed_cluster_code"
+          },
+          {
+            "name": "criteriaLevelReport",
+            "type": "boolean"
+          },
+          {
+            "name": "isRubricDriven",
+            "type": "boolean"
           }
         ]
       },
