@@ -120,7 +120,11 @@
           {
             "type": "string",
             "name": "time_stamp"
-          }
+          },
+          {
+            "type":"long",
+            "name":"no_of_certificate_issued"
+          }            
         ]
       },
       "metricsSpec": []
