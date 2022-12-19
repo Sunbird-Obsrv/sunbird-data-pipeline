@@ -33,7 +33,7 @@ spec:
 {{- if eq .Values.checkpoint_store_type "azure" }}
                "-Dfs.azure.account.key.{{ .Values.cloud_storage_key }}.blob.core.windows.net: {{ .Values.cloud_storage_secret }}",
 {{- end }}
-{{- if eq .Values.checkpoint_store_type "s3" }} 
+{{- if eq .Values.checkpoint_store_type "aws" }} 
                "-Ds3.access-key={{ .Values.cloud_storage_key }}",
                "-Ds3.secret-key={{ .Values.cloud_storage_secret }}",
                "-Ds3.endpoint={{ .Values.cloud_public_endpoint }}",
