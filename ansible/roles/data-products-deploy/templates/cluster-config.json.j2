@@ -2,34 +2,34 @@
 {% if dp_object_store_type == "azure" %}
 {
     "jars": [
-    {% if cloud_storage_type == "azure" %}
+    {% if cloud_storage_telemetry_type == "azure" %}
         "wasbs://{{ bucket }}@{{cloud_private_storage_accountname}}.blob.core.windows.net/models-{{ model_version }}/{{ analytics_core_artifact }}",
         "wasbs://{{ bucket }}@{{cloud_private_storage_accountname}}.blob.core.windows.net/models-{{ model_version }}/{{ scruid_artifact }}",
         "wasbs://{{ bucket }}@{{cloud_private_storage_accountname}}.blob.core.windows.net/models-{{ model_version }}/{{ analytics_ed_dataporducts_jar_artifact }}"
-    {% elif cloud_storage_type == "s3" %}
+    {% elif cloud_storage_telemetry_type == "s3" %}
         "s3://{{ bucket }}/models-{{ model_version }}/{{ analytics_core_artifact }}",
         "s3://{{ bucket }}/models-{{ model_version }}/{{ scruid_artifact }}",
         "s3://{{ bucket }}/models-{{ model_version }}/{{ analytics_ed_dataporducts_jar_artifact }}"
-    {% elif cloud_storage_type == "gcloud" %}
+    {% elif cloud_storage_telemetry_type == "gcloud" %}
         "gs://{{ bucket }}/models-{{ model_version }}/{{ analytics_core_artifact }}",
         "gs://{{ bucket }}/models-{{ model_version }}/{{ scruid_artifact }}",
         "gs://{{ bucket }}/models-{{ model_version }}/{{ analytics_ed_dataporducts_jar_artifact }}"
     {% endif %}
     ],
     "file": 
-    {% if cloud_storage_type == "azure" %}
+    {% if cloud_storage_telemetry_type == "azure" %}
     "wasbs://{{ bucket }}@{{cloud_private_storage_accountname}}.blob.core.windows.net/models-{{ model_version }}/{{ analytics_batch_module_artifact }}",
-    {% elif cloud_storage_type == "s3" %}
+    {% elif cloud_storage_telemetry_type == "s3" %}
     "s3://{{ bucket }}/models-{{ model_version }}/{{ analytics_batch_module_artifact }}",
-    {% elif cloud_storage_type == "gcloud" %}
+    {% elif cloud_storage_telemetry_type == "gcloud" %}
     "gs://{{ bucket }}/models-{{ model_version }}/{{ analytics_batch_module_artifact }}",
     {% endif %}
     "files": [
-    {% if cloud_storage_type == "azure" %}
+    {% if cloud_storage_telemetry_type == "azure" %}
         "wasbs://{{ bucket }}@{{cloud_private_storage_accountname}}.blob.core.windows.net/models-{{ model_version }}/application.conf"
-    {% elif cloud_storage_type == "s3" %}
+    {% elif cloud_storage_telemetry_type == "s3" %}
         "s3://{{ bucket }}/models-{{ model_version }}/{{ analytics_batch_module_artifact }}/application.conf",
-    {% elif cloud_storage_type == "gcloud" %}
+    {% elif cloud_storage_telemetry_type == "gcloud" %}
         "gs://{{ bucket }}/models-{{ model_version }}/{{ analytics_batch_module_artifact }}/application.conf",
     {% endif %}
     ],
