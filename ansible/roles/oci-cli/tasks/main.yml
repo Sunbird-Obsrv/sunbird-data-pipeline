@@ -19,6 +19,8 @@
     remote_src: yes    
 
 - name: install oci cli
+  become: yes
+  become_user: "{{ analytics_user }}"
   shell: ./oci-cli-installation/install.sh --accept-all-defaults
   args:
     chdir: /tmp/
