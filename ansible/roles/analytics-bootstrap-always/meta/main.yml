@@ -1,7 +1,7 @@
 ---
 dependencies:
   - { role: jdk11 , become: yes }
-  # - { role: azure-cli  , become: yes, when: cloud_service_provider == "azure" }
+  - { role: azure-cli  , become: yes, when: cloud_service_provider == "azure" }
   # - { role: oci-cli  , become: yes, when: cloud_service_provider == "oci" }
     
   
