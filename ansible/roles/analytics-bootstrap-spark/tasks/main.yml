@@ -16,6 +16,15 @@
     - {var: 'OCI_CLI_TENANCY', value: '{{ oci_cli_tenancy }}'}    
     - {var: 'OCI_CLI_KEY_CONTENT', value: '{{ oci_cli_key_content }}'}   
 
+- name: Adding PATH for oci cli Vars to bashrc file of spark.
+  become: yes
+  become_user: "{{ analytics_user }}"
+  lineinfile:
+    path: '{{ analytics_user_home }}/.bashrc'
+    line: 'export PATH={{ analytics_user_home }}/bin:$PATH'
+    regexp: "export PATH={{ analytics_user_home }}/bin.*"
+  when: cloud_service_provider == "oci"
+
 - name: Adding ENV Vars to spark servers environment.
   become: yes
   lineinfile:
