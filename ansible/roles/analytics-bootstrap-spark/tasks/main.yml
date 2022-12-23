@@ -5,16 +5,12 @@
   become_user: "{{ analytics_user }}"
   lineinfile:
     path: '{{ analytics_user_home }}/.bashrc'
-    line: 'export {{item.var}}="{{item.value}}"'
+    line: 'export {{item.var}}={{item.value}}'
     regexp: "export {{ item.var }}.*"
   with_items:
     - {var: 'azure_storage_key', value: '{{ sunbird_private_storage_account_name }}'}
     - {var: 'azure_storage_secret', value: '{{ sunbird_private_storage_account_key }}'}
-    - {var: 'OCI_CLI_USER', value: '{{ oci_cli_user_ocid }}'}
-    - {var: 'OCI_CLI_REGION', value: '{{ oci_cli_region }}'}
-    - {var: 'OCI_CLI_FINGERPRINT', value: '{{ oci_cli_fingerprint }}'}
-    - {var: 'OCI_CLI_TENANCY', value: '{{ oci_cli_tenancy }}'}    
-    - {var: 'OCI_CLI_KEY_CONTENT', value: '{{ oci_cli_key_content }}'}   
+ 
 
 - name: Adding PATH for oci cli Vars to bashrc file of spark.
   become: yes
@@ -29,7 +25,7 @@
   become: yes
   lineinfile:
     path: '/etc/environment'
-    line: '{{item.var}}={{item.value}}'
+    line: '{{item.var}}="{{item.value}}"'
     regexp: "{{ item.var }}.*"
   with_items:
     - {var: 'azure_storage_key', value: '{{ sunbird_private_storage_account_name }}'}
@@ -45,6 +41,11 @@
     - {var: 'STORAGE_PROVIDER', value: 'AZURE'}
     - {var: 'ENV', value: '{{env}}'}
     - {var: 'KAFKA_BROKER_HOST', value: "{{groups['processing-cluster-kafka'][0]}}:9092"}
+    - {var: 'OCI_CLI_USER', value: '{{ oci_cli_user_ocid }}'}
+    - {var: 'OCI_CLI_REGION', value: '{{ oci_cli_region }}'}
+    - {var: 'OCI_CLI_FINGERPRINT', value: '{{ oci_cli_fingerprint }}'}
+    - {var: 'OCI_CLI_TENANCY', value: '{{ oci_cli_tenancy }}'}    
+    - {var: 'OCI_CLI_KEY_CONTENT', value: '{{ oci_cli_key_content }}'}  
 
 - name: Install required python packages
   become: yes
