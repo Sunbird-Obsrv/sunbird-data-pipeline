@@ -6,8 +6,12 @@ dockerhub: {{ dockerhub }}
 repository: {{ datapipeline_repository|default('data-pipeline') }}
 image_tag: {{ image_tag }}
 
-azure_storage_account={{ sunbird_private_storage_account_name }}
-azure_storage_secret={{ sunbird_private_storage_account_key }}
+checkpoint_store_type: {{ cloud_service_provider }} 
+cloud_storage_key: {{ cloud_public_storage_accountname }}
+cloud_storage_secret: {{ cloud_public_storage_secret }}
+cloud_storage_endpoint: {{ cloud_public_storage_endpoint }}
+cloud_storage_path_style_access: {{ cloud_storage_pathstyle_access }}
+cloud_storage_project_id: {{ cloud_public_storage_project }}
 
 telemetry-extractor:
   job_name=telemetry-extractor

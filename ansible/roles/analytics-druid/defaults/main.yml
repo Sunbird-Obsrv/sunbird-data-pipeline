@@ -31,7 +31,7 @@ druid_request_logging_type: "file"
 
 #Druid Extensions
 
-druid_storage_type: "azure"
+druid_storage_type: {{ cloud_storage_telemetry_type }}
 
 druid_extensions_list : '"druid-azure-extensions", "graphite-emitter", "postgresql-metadata-storage", "druid-kafka-indexing-service", "druid-datasketches"'
 
@@ -40,7 +40,7 @@ druid_community_extensions:
 
 # End of druid_extensions
 
-druid_indexing_logs_type: azure
+druid_indexing_logs_type:  {{ cloud_storage_telemetry_type }}
 druid_indexing_log_dir: /var/druid/indexing-logs
 druid_indexing_storage_type : metadata
 druid_indexing_task_basedir : "/var/task"
@@ -126,23 +126,23 @@ default_druid_configs:
    druid_postgres_user: "{{ druid_postgres_user | default('druid@' + postgres.db_url) }}"
    #Druid Azure Details 
    druid_postgres_pass: "{{ dp_vault_druid_postgress_pass }}"
-   azure_account_name: "{{ sunbird_druid_storage_account_name }}"
-   azure_storage_secret: "{{ sunbird_druid_storage_account_key }}"
-   azure_container: "{{ druid_azure_container_name }}"
+   azure_account_name: "{{ cloud_public_storage_accountname }}"
+   azure_storage_secret: "{{ cloud_public_storage_secret }}"
+   azure_container: "{{ cloud_storage_telemetry_bucketname }}"
    #Logging the indexing logs to azure
-   druid_log_azure_container: "{{ druid_azure_container_name }}"
+   druid_log_azure_container: "{{ cloud_storage_telemetry_bucketname }}"
    druid_log_azure_folder: "druidlogs"
    #Druid S3 Details
-   druid_storage_type: "{{ druid_storage_type }}"
-   s3_access_key: "{{ s3_storage_key }}"
-   s3_secret_key: "{{ s3_storage_secret }}"
-   s3_bucket: "{{ s3_storage_container }}"
-   s3_endpoint: "{{ s3_storage_endpoint }}"
+   druid_storage_type: "{{ cloud_storage_telemetry_type }}"
+   s3_access_key: "{{ cloud_public_storage_accountname }}"
+   s3_secret_key: "{{ cloud_public_storage_secret }}"
+   s3_bucket: "{{ cloud_storage_telemetry_bucketname }}"
+   s3_endpoint: "{{ cloud_public_storage_endpoint }}"
    s3_segment_dir: "druid/raw/segments"
-   s3_path_like_access: "{{ s3_path_style_access }}"
-   s3_v4_sign_region: "{{ s3_default_bucket_location }}"
+   s3_path_like_access: "{{ cloud_storage_path_style_access }}"
+   s3_v4_sign_region: "{{ cloud_public_storage_region }}"
    #Logging the indexing logs to s3
-   s3_logging_bucket: "{{ s3_storage_container }}"
+   s3_logging_bucket: "{{ cloud_storage_telemetry_bucketname }}"
    s3_indexer_logs_dir: "druid/raw/stage/indexing_logs"
    #Druid coordinator node configuration
    druid_coordinator_heap_size: 128m
@@ -200,23 +200,23 @@ default_druid_configs:
    druid_postgres_user: "{{ druid_postgres_user | default('druid@' + postgres.db_url) }}"
    #Druid Azure Details
    druid_postgres_pass: "{{ dp_vault_druid_postgress_pass }}"
-   azure_account_name: "{{ sunbird_druid_storage_account_name }}"
-   azure_storage_secret: "{{ sunbird_druid_storage_account_key }}"
-   azure_container: "{{ druid_azure_container_name }}"
+   azure_account_name: "{{ cloud_public_storage_accountname }}"
+   azure_storage_secret: "{{ cloud_public_storage_secret }}"
+   azure_container: "{{ cloud_storage_telemetry_bucketname }}"
    #Logging the indexing logs to azure
-   druid_log_azure_container: "{{ druid_azure_container_name }}"
+   druid_log_azure_container: "{{ cloud_storage_telemetry_bucketname }}"
    druid_log_azure_folder: "druidlogs"
    #Druid S3 Details
-   druid_storage_type: "{{ druid_storage_type }}"
+   druid_storage_type: "{{ cloud_storage_telemetry_type }}"
    s3_access_key: "{{ s3_storage_key }}"
    s3_secret_key: "{{ s3_storage_secret }}"
    s3_bucket: "{{ s3_storage_container }}"
    s3_endpoint: "{{ s3_storage_endpoint }}"
    s3_segment_dir: "druid/rollup/segments"
-   s3_path_like_access: "{{ s3_path_style_access }}"
-   s3_v4_sign_region: "{{ s3_default_bucket_location }}"
+   s3_path_like_access: "{{ cloud_storage_path_style_access }}"
+   s3_v4_sign_region: "{{ cloud_public_storage_region }}"
    #Logging the indexing logs to s3
-   s3_logging_bucket: "{{ s3_storage_container }}"
+   s3_logging_bucket: "{{ cloud_storage_telemetry_bucketname }}"
    s3_indexer_logs_dir: "druid/rollup/stage/indexing_logs"
    #Druid coordinator node configuration
    druid_coordinator_heap_size: 128m
