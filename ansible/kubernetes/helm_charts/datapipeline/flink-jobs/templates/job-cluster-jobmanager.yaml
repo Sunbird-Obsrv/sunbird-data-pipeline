@@ -36,7 +36,7 @@ spec:
 {{- if eq .Values.checkpoint_store_type "aws" }} 
                "-Ds3.access-key={{ .Values.cloud_storage_key }}",
                "-Ds3.secret-key={{ .Values.cloud_storage_secret }}",
-               "-Ds3.endpoint={{ .Values.cloud_public_endpoint }}",
+               "-Ds3.endpoint={{ .Values.cloud_private_endpoint }}",
                "-Ds3.path.style.access={{ .Values.s3_path_style_access }}",
 {{- end }}
 {{- if eq .Values.checkpoint_store_type "gcloud" }}
