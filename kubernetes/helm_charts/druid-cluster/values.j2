@@ -24,8 +24,8 @@ druid_metadata_storage_connector_password: {{ druid_configs[cluster_type].druid_
 
 # Druid Storage Type
 druid_deepstorage_type: azure
-druid_azure_storage_account: "{{ sunbird_private_storage_account_name }}"
-druid_azure_storage_account_key: "{{ sunbird_private_storage_account_key }}"
+druid_azure_storage_account: "{{ cloud_private_storage_accountname }}"
+druid_azure_storage_account_key: "{{ cloud_private_storage_secret }}"
 druid_azure_container: "{{ druid_configs[cluster_type].azure_container }}"
 
 # Indexing service logs

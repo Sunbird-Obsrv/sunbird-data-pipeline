@@ -4,8 +4,8 @@
     line: '{{item.var}}={{item.value}}'
     regexp: "{{ item.var }}.*"
   with_items:
-    - {var: 'azure_storage_key', value: '{{ sunbird_private_storage_account_name }}'}
-    - {var: 'azure_storage_secret', value: '{{ sunbird_private_storage_account_key }}'}
+    - {var: 'azure_storage_key', value: '{{ cloud_private_storage_accountname }}'}
+    - {var: 'azure_storage_secret', value: '{{ cloud_private_storage_secret }}'}
   no_log: true
 
 - name: Remove guava-jre, guice default jars

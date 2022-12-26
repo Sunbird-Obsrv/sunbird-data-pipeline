@@ -8,8 +8,8 @@
     line: 'export {{item.var}}={{item.value}}'
     regexp: "export {{ item.var }}.*"
   with_items:
-    - {var: 'azure_storage_key', value: '{{ sunbird_private_storage_account_name }}'}
-    - {var: 'azure_storage_secret', value: '{{ sunbird_private_storage_account_key }}'}
+    - {var: 'azure_storage_key', value: '{{ cloud_private_storage_accountname }}'}
+    - {var: 'azure_storage_secret', value: '{{ cloud_private_storage_secret }}'}
 
 - name: Adding ENV Vars to spark servers environment.
   become: yes
@@ -18,19 +18,20 @@
     line: '{{item.var}}={{item.value}}'
     regexp: "{{ item.var }}.*"
   with_items:
-    - {var: 'azure_storage_key', value: '{{ sunbird_private_storage_account_name }}'}
-    - {var: 'azure_storage_secret', value: '{{ sunbird_private_storage_account_key }}'}
-    - {var: 'AZURE_STORAGE_ACCOUNT', value: '{{ sunbird_private_storage_account_name }}'}
-    - {var: 'AZURE_STORAGE_ACCESS_KEY', value: '{{ sunbird_private_storage_account_key }}'}
-    - {var: 'PUBLIC_AZURE_STORAGE_ACCOUNT', value: '{{ sunbird_public_storage_account_name }}'}
-    - {var: 'PUBLIC_AZURE_STORAGE_ACCESS_KEY', value: '{{ sunbird_public_storage_account_key }}'}
-    - {var: 'PRIVATE_REPORT_CONTAINER', value: '{{ sunbird_private_azure_report_container_name }}'}
-    - {var: 'PUBLIC_REPORT_CONTAINER', value: '{{ sunbird_public_azure_report_container_name }}'}
+    - {var: 'azure_storage_key', value: '{{ cloud_private_storage_accountname }}'}
+    - {var: 'azure_storage_secret', value: '{{ cloud_private_storage_secret }}'}
+    - {var: 'AZURE_STORAGE_ACCOUNT', value: '{{ cloud_private_storage_accountname }}'}
+    - {var: 'AZURE_STORAGE_ACCESS_KEY', value: '{{ cloud_private_storage_secret }}'}
+    - {var: 'PUBLIC_AZURE_STORAGE_ACCOUNT', value: '{{ cloud_public_storage_accountname }}'}
+    - {var: 'PUBLIC_AZURE_STORAGE_ACCESS_KEY', value: '{{ cloud_public_storage_secret }}'}
+    - {var: 'PRIVATE_REPORT_CONTAINER', value: '{{ cloud_storage_privatereports_bucketname }}'}
+    - {var: 'PUBLIC_REPORT_CONTAINER', value: '{{ cloud_storage_publicreports_bucketname }}'}
     - {var: 'REPORT_BACKUP_CONTAINER', value: 'portal-reports-backup'}
     - {var: 'GOOGLE_CREDENTIALS_PATH', value: '/home/analytics/credentials'}
     - {var: 'STORAGE_PROVIDER', value: 'AZURE'}
     - {var: 'ENV', value: '{{env}}'}
     - {var: 'KAFKA_BROKER_HOST', value: "{{groups['processing-cluster-kafka'][0]}}:9092"}
+
 
 - name: Install required python packages
   become: yes
