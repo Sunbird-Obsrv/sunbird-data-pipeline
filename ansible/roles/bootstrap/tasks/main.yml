@@ -1,5 +1,5 @@
-- name: Add Azure apt repository
-  apt_repository: repo='deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ xenial main' state=present
+# - name: Add Azure apt repository
+#   apt_repository: repo='deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ xenial main' state=present
 
 - name: Import Azure signing key
   become: yes
