@@ -7,6 +7,7 @@
     - {var: 'azure_storage_key', value: '{{ cloud_private_storage_accountname }}'}
     - {var: 'azure_storage_secret', value: '{{ cloud_private_storage_secret }}'}
   no_log: true
+  when: cloud_service_provider == "azure"
 
 - name: Remove guava-jre, guice default jars
   become: yes

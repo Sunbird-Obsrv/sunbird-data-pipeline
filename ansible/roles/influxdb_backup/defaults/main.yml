@@ -2,4 +2,6 @@ influxdb_backup_dir: /tmp/influxdb_backup
 influxdb_backup_databases: ["monitoring_events"]
 influxdb_backup_file_prefix: influxdb_backup
 influxdb_backup_file_name: "{{ influxdb_backup_file_prefix }}-{{ ansible_date_time.date }}-{{ ansible_date_time.hour }}-{{ ansible_date_time.minute }}-{{ ansible_date_time.second }}"
-azure_influxdb_backup_container: influxdb-backup
+
+cloud_storage_influxdbbackup_bucketname: "{{ cloud_storage_management_bucketname }}"
+cloud_storage_influxdbbackup_foldername: influxdb-backup
