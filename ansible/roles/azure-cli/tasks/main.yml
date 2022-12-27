@@ -14,8 +14,8 @@
     - libssl1.0-dev
   when: ansible_distribution_release == "focal"
 
-- name: ensure azure-cli and apt-transport-https is installed
-  apt: name={{ item }} state=present update_cache=yes 
-  with_items:
-    - apt-transport-https 
-    - azure-cli
+# - name: ensure azure-cli and apt-transport-https is installed
+#   apt: name={{ item }} state=present update_cache=yes 
+#   with_items:
+#     - apt-transport-https 
+#     - azure-cli
