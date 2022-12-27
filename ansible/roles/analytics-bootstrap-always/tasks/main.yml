@@ -23,7 +23,7 @@
   apt:
     name: "{{item}}"
     state: present
-    update_cache: true
+    update_cache: false
   with_items:
     - rsync
     - zip
