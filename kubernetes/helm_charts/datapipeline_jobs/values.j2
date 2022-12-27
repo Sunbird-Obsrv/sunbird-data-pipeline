@@ -4,11 +4,11 @@ dockerhub: {{ dockerhub }}
 repository: {{flink_repository|default('sunbird-datapipeline')}}
 image_tag: {{ image_tag }}
 checkpoint_store_type: {{ cloud_service_provider }}
-cloud_storage_key: {{ cloud_public_storage_accountname }}
-cloud_storage_secret: {{ cloud_public_storage_secret }}
-cloud_storage_endpoint: {{ cloud_public_storage_endpoint }}
-s3_path_style_access: {{ cloud_storage_path_style_access }}
-cloud_storage_project_id: {{ cloud_public_storage_project }}
+cloud_storage_key: {{ cloud_private_storage_accountname }}
+cloud_storage_secret: {{ cloud_private_storage_secret }}
+cloud_storage_endpoint: {{ cloud_private_storage_endpoint }}
+s3_path_style_access: {{ cloud_storage_pathstyle_access }}
+cloud_storage_project_id: {{ cloud_private_storage_project }}
 
 serviceMonitor:
   enabled: {{ service_monitor_enabled | lower}}

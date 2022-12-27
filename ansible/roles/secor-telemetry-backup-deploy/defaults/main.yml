@@ -3,7 +3,7 @@ analytics_group: analytics
 analytics_user_home: /home/{{analytics_user}}
 sbin_path: "{{ analytics_user_home }}/sbin"
 azure_container_name: "{{secor_azure_container_name}}"
-azure_account_key: "{{sunbird_private_storage_account_key}}"
+azure_account_key: "{{cloud_private_storage_secret}}"
 
 telemetry_ingestion_topic: "{{ env }}.telemetry.ingest"
 
