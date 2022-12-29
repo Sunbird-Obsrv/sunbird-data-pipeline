@@ -75,7 +75,7 @@
     - framework-spark-cluster
 
 - name: Copy Framework Library to oci oss
-  command: /home/{{analytics_user}}/bin/oci os os object put -bn {{ bucket }} --name models-{{ model_version }}/{{ analytics_core_artifact }} --file {{ analytics.home }}/models-{{ model_version }}/{{ analytics_core_artifact }} --force
+  command: /home/{{analytics_user}}/bin/oci os object put -bn {{ bucket }} --name models-{{ model_version }}/{{ analytics_core_artifact }} --file {{ analytics.home }}/models-{{ model_version }}/{{ analytics_core_artifact }} --force
   async: 3600
   poll: 10
   when: dp_object_store_type == "s3" and cloud_service_provider == "oci"
