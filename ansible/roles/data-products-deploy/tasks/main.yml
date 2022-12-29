@@ -4,7 +4,7 @@
   when: dp_object_store_type == "azure"
 
 - name: Ensure oci oss bucket exists
-  command: oci os bucket create -c {{oci_bucket_compartment}} --name {{bucket}}
+  command: "{{ analytics.home }}/bin/oci os bucket create -c {{oci_bucket_compartment}} --name {{bucket}}"
   when: dp_object_store_type == "s3" and cloud_service_provider == "oci"
 
   tags:
