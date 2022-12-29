@@ -4,11 +4,10 @@
   when: dp_object_store_type == "azure"
 
 - name: Ensure oci oss bucket exists
-  command: oci os bucket get --name {{ bucket }}
+  command: "/home/{{analytics_user}}/bin/oci os bucket get --name {{ bucket }}"
   register: check_bucket
   when: dp_object_store_type == "s3" and cloud_service_provider == "oci"
   
-
 - name: Ensure oci oss bucket exists
   command: "/home/{{analytics_user}}/bin/oci os bucket create -c {{oci_bucket_compartment}} --name {{bucket}}"
   when: dp_object_store_type == "s3" and cloud_service_provider == "oci" and check_bucket.rc !=0
