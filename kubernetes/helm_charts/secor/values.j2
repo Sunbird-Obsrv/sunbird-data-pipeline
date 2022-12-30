@@ -11,15 +11,15 @@ s3_bucket_name: "telemetry-data-store"
 
 {% if cloud_service_provider == 'oci' -%}
 storage_type: "S3"
-secor_storage_class: "oci-bv"
+storageClass: "oci-bv"
 {%- else -%}
 storage_type: "Azure"
+storageClass: {{ secor_storage_class | default('default') }}
 {%- endif %}
 
 
 
 namespace: {{ secor_namespace }}
-storageClass: {{ secor_storage_class | default('default') }}
 imagepullsecrets: {{ imagepullsecrets }}
 
 secor_jobs:
