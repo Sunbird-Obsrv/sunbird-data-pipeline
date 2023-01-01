@@ -286,6 +286,11 @@ telemetry-extractor:
     heartbeat.interval: 5000
     taskmanager.memory.process.size: {{ flink_job_names['telemetry-extractor'].taskmanager_process_memory }}
     jobmanager.memory.process.size: {{ flink_job_names['telemetry-extractor'].jobmanager_process_memory }}
+    fs.s3.access.key: {{s3_storage_key}}
+    fs.s3.secret.key: {{s3_storage_secret}}
+    fs.s3.endpoint: {{s3_storage_endpoint}}
+    fs.s3.path.style.access: {{s3_path_style_access}}
+
 
 pipeline-preprocessor:
   pipeline-preprocessor: |+
