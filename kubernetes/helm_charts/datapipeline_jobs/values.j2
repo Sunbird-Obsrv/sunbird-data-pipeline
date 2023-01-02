@@ -160,7 +160,7 @@ base_config: |
         base.url = "wasbs://"${job.statebackend.blob.storage.container}"@"${job.statebackend.blob.storage.account}"/"${job.statebackend.blob.storage.checkpointing.dir}
 {% elif checkpoint_store_type == "s3" %}
         # base.url = "s3://"${job.statebackend.blob.storage.account}"/"${job.statebackend.blob.storage.container}"/"${job.statebackend.blob.storage.checkpointing.dir}
-        base.url = "s3://dev-data-store/checkpoint"
+        base.url = "s3a://dev-data-store/checkpoint"
 {% endif %}
       }
     }
