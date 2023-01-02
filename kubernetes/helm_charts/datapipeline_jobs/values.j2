@@ -290,7 +290,7 @@ telemetry-extractor:
     jobmanager.memory.process.size: {{ flink_job_names['telemetry-extractor'].jobmanager_process_memory }}
     fs.s3.access.key: {{s3_storage_key}}
     fs.s3.secret.key: {{s3_storage_secret}}
-    fs.s3.endpoint: https://apaccpt03.compat.objectstorage.ap-hyderabad-1.oraclecloud.com
+    fs.s3.endpoint: 'https://apaccpt03.compat.objectstorage.ap-hyderabad-1.oraclecloud.com'
     fs.s3.path.style.access: {{s3_path_style_access}}
 
 
