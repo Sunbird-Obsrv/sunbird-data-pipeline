@@ -32,7 +32,7 @@ class DialCodeUpdaterFunction(config: ContentCacheUpdaterConfig)
 
     override def open(parameters: Configuration): Unit = {
         super.open(parameters)
-        dataCache = new DataCache(config, new RedisConnect(config.metaRedisHost, config.metaRedisPort, config),
+        dataCache = new DataCache(config, new RedisConnect(config.dialcodeRedisHost, config.dialcodeRedisPort, config),
             config.dialcodeStore, config.dialcodeFields)
         dataCache.init()
     }

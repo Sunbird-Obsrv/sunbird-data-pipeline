@@ -14,25 +14,30 @@ spec:
     rules:
     - alert: KubePodCrashLooping
       annotations:
-        message: {{`Pod {{ $labels.namespace }}/{{ $labels.pod }} ({{ $labels.container
-          }}) is restarting {{ printf "%.2f" $value }} times / 5 minutes.`}}
+        message: {{` The pod {{ $labels.namespace }}/{{ $labels.pod }} is restarting. `}}
         runbook_url: https://github.com/kubernetes-monitoring/kubernetes-mixin/tree/master/runbook.md#alert-name-kubepodcrashlooping
+        job_id: {{`({{ $labels.container }})`}}
+        alertname: KubePodCrashLooping
       expr: rate(kube_pod_container_status_restarts_total{job="kube-state-metrics",
         namespace=~".*"}[15m]) * 60 * 5 > 0
       for: 15m
       labels:
         severity: critical
+        alerttype: job
     - alert: KubePodNotReady
       annotations:
         message: {{`Pod {{ $labels.namespace }}/{{ $labels.pod }} has been in a non-ready`}}
           state for longer than 15 minutes.
         runbook_url: https://github.com/kubernetes-monitoring/kubernetes-mixin/tree/master/runbook.md#alert-name-kubepodnotready
+        job_id: {{`({{ $labels.pod }})`}}
+        alertname: KubePodNotReady
       expr: sum by (namespace, pod) (max by(namespace, pod) (kube_pod_status_phase{job="kube-state-metrics",
         namespace=~".*", phase=~"Pending|Unknown"}) * on(namespace, pod) group_left(owner_kind)
         max by(namespace, pod, owner_kind) (kube_pod_owner{owner_kind!="Job"})) > 0
       for: 15m
       labels:
         severity: critical
+        alerttype: job
     - alert: KubeDeploymentGenerationMismatch
       annotations:
         message: {{`Deployment generation for {{ $labels.namespace }}/{{ $labels.deployment
@@ -132,11 +137,14 @@ spec:
         message: {{`Pod {{ $labels.namespace }}/{{ $labels.pod }} container {{ $labels.container}}
           has been in waiting state for longer than 1 hour.`}}
         runbook_url: https://github.com/kubernetes-monitoring/kubernetes-mixin/tree/master/runbook.md#alert-name-kubecontainerwaiting
+        job_id: {{`({{ $labels.container }})`}}
+        alertname: KubeContainerWaiting
       expr: sum by (namespace, pod, container) (kube_pod_container_status_waiting_reason{job="kube-state-metrics",
         namespace=~".*"}) > 0
       for: 1h
       labels:
         severity: warning
+        alerttype: job
     - alert: KubeDaemonSetNotScheduled
       annotations:
         message: {{`'{{ $value }} Pods of DaemonSet {{ $labels.namespace }}/{{ $labels.daemonset
@@ -173,10 +181,13 @@ spec:
       annotations:
         message: {{`Job {{ $labels.namespace }}/{{ $labels.job_name }} failed to complete.`}}
         runbook_url: https://github.com/kubernetes-monitoring/kubernetes-mixin/tree/master/runbook.md#alert-name-kubejobfailed
+        job_id: {{`({{ $labels.job_name }})`}}
+        alertname: KubeJobFailed
       expr: kube_job_failed{job="kube-state-metrics", namespace=~".*"}  > 0
       for: 15m
       labels:
-        severity: warning
+        severity: critical
+        alerttype: job
     - alert: KubeHpaReplicasMismatch
       annotations:
         message: {{`HPA {{ $labels.namespace }}/{{ $labels.hpa }} has not matched the desired
@@ -203,3 +214,19 @@ spec:
       for: 15m
       labels:
         severity: warning
+
+## kubepersistentvolumeusagecritical
+    - alert: KubePersistentVolumeUsageCritical
+      annotations:
+        message: The PersistentVolume claimed by {{`{{`}} $labels.persistentvolumeclaim {{`}}`}} in Namespace {{`{{`}} $labels.namespace {{`}}`}} usage is {{`{{`}} printf "%0.2f" $value {{`}}`}}%.
+        metrics: {{`({{ humanize $value }})`}}
+        alertname: KubePersistentVolumeUsageCritical
+      expr: |-
+        100 * kubelet_volume_stats_used_bytes{job="kubelet", namespace="secor"}
+          /
+        kubelet_volume_stats_capacity_bytes{job="kubelet", namespace="secor"}
+          > {{ .Values.pv_usage_threshold_critical }} 
+      for: 1m
+      labels:
+        alerttype: nodemetrics
+        severity: critical

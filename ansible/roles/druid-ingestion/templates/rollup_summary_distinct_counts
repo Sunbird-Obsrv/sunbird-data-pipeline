@@ -1,0 +1,375 @@
+{
+  "type": "kafka",
+  "dataSchema": {
+    "dataSource": "summary-distinct-counts",
+    "parser": {
+      "type": "string",
+      "parseSpec": {
+        "format": "json",
+        "flattenSpec": {
+          "useFieldDiscovery": false,
+          "fields": [
+            {
+              "type": "root",
+              "name": "syncts"
+            },
+            {
+              "type": "root",
+              "name": "uid"
+            },
+            {
+              "type": "path",
+              "name": "dimensions_pdata_id",
+              "expr": "$.dimensions.pdata.id"
+            },
+            {
+              "type": "path",
+              "name": "dimensions_pdata_pid",
+              "expr": "$.dimensions.pdata.pid"
+            },
+            {
+              "type": "path",
+              "name": "dimensions_type",
+              "expr": "$.dimensions.type"
+            },
+            {
+              "type": "path",
+              "name": "dimensions_pdata_ver",
+              "expr": "$.dimensions.pdata.ver"
+            },
+            {
+              "type": "path",
+              "name": "dimensions_mode",
+              "expr": "$.dimensions.mode"
+            },
+            {
+              "type": "path",
+              "name": "content_name",
+              "expr": "$.contentdata.name"
+            },
+            {
+              "type": "path",
+              "name": "content_channel",
+              "expr": "$.contentdata.channel"
+            },
+            {
+              "type": "path",
+              "name": "content_board",
+              "expr": "$.contentdata.board"
+            },
+            {
+              "type": "path",
+              "name": "content_medium",
+              "expr": "$.contentdata.medium[*]"
+            },
+            {
+              "type": "path",
+              "name": "content_gradelevel",
+              "expr": "$.contentdata.gradelevel[*]"
+            },
+            {
+              "type": "path",
+              "name": "content_subject",
+              "expr": "$.contentdata.subject[*]"
+            },
+            {
+              "type": "path",
+              "name": "content_created_for",
+              "expr": "$.contentdata.createdfor"
+            },
+            {
+              "type": "path",
+              "name": "content_mimetype",
+              "expr": "$.contentdata.mimetype"
+            },
+            {
+              "type": "path",
+              "name": "object_id",
+              "expr": "$.object.id"
+            },
+            {
+              "type": "path",
+              "name": "object_type",
+              "expr": "$.object.type"
+            },
+            {
+              "type": "path",
+              "name": "object_rollup_l1",
+              "expr": "$.object.rollup.l1"
+            },
+            {
+              "type": "path",
+              "name": "dialcode_channel",
+              "expr": "$.dialcodedata.channel"
+            },
+            {
+              "type": "path",
+              "name": "derived_loc_state",
+              "expr": "$.derivedlocationdata.state"
+            },
+            {
+              "type": "path",
+              "name": "derived_loc_district",
+              "expr": "$.derivedlocationdata.district"
+            },
+            {
+              "type": "path",
+              "name": "derived_loc_from",
+              "expr": "$.derivedlocationdata.from"
+            },
+            {
+              "type": "path",
+              "name": "collection_name",
+              "expr": "$.collectiondata.name"
+            },
+            {
+              "type": "path",
+              "name": "collection_channel",
+              "expr": "$.collectiondata.channel"
+            },
+            {
+              "type": "path",
+              "name": "collection_type",
+              "expr": "$.collectiondata.contenttype"
+            },
+            {
+              "type": "path",
+              "name": "collection_board",
+              "expr": "$.collectiondata.board"
+            },
+            {
+              "type": "path",
+              "name": "collection_medium",
+              "expr": "$.collectiondata.medium[*]"
+            },
+            {
+              "type": "path",
+              "name": "collection_subject",
+              "expr": "$.collectiondata.subject[*]"
+            },
+            {
+              "type": "path",
+              "name": "collection_gradelevel",
+              "expr": "$.collectiondata.gradelevel[*]"
+            },
+            {
+              "type": "path",
+              "name": "collection_created_for",
+              "expr": "$.collectiondata.createdfor"
+            },
+            {
+              "type": "path",
+              "name": "user_type",
+              "expr": "$.userdata.usertype"
+            },
+            {
+              "type": "path",
+              "name": "user_signin_type",
+              "expr": "$.userdata.usersignintype"
+            },
+            {
+              "type": "path",
+              "name": "user_login_type",
+              "expr": "$.userdata.userlogintype"
+            },
+            {
+              "type": "path",
+              "name": "user_loc_block",
+              "expr": "$.userdata.block"
+            },
+            {
+              "type": "path",
+              "name": "user_loc_cluster",
+              "expr": "$.userdata.cluster"
+            },
+            {
+              "type": "path",
+              "name": "user_school_name",
+              "expr": "$.userdata.schoolname"
+            },
+            {
+              "type": "path",
+              "name": "dimensions_did",
+              "expr": "$.dimensions.did"
+            },
+            {
+              "type": "path",
+              "name": "actor_id",
+              "expr": "$.actor.id"
+            }
+          ]
+        },
+        "dimensionsSpec": {
+          "dimensions": [
+            {
+              "type": "string",
+              "name": "dimensions_pdata_id"
+            },
+            {
+              "type": "string",
+              "name": "dimensions_pdata_pid"
+            },
+            {
+              "type": "string",
+              "name": "dimensions_type"
+            },
+            {
+              "type": "string",
+              "name": "dimensions_pdata_ver"
+            },
+            {
+              "type": "string",
+              "name": "dimensions_mode"
+            },
+            {
+              "type": "string",
+              "name": "content_name"
+            },
+            {
+              "type": "string",
+              "name": "content_board"
+            },
+            {
+              "name": "content_medium"
+            },
+            {
+              "name": "content_gradelevel"
+            },
+            {
+              "name": "content_channel"
+            },
+            {
+              "name": "content_subject"
+            },
+            {
+              "name": "content_created_for"
+            },
+            {
+              "type": "string",
+              "name": "content_mimetype"
+            },
+            {
+              "type": "string",
+              "name": "object_id"
+            },
+            {
+              "type": "string",
+              "name": "object_type"
+            },
+            {
+              "type": "string",
+              "name": "object_rollup_l1"
+            },
+            {
+              "type": "string",
+              "name": "dialcode_channel"
+            },
+            {
+              "type": "string",
+              "name": "derived_loc_state"
+            },
+            {
+              "type": "string",
+              "name": "derived_loc_district"
+            },
+            {
+              "type": "string",
+              "name": "derived_loc_from"
+            },
+            {
+              "type": "string",
+              "name": "user_type"
+            },
+            {
+              "type": "string",
+              "name": "user_signin_type"
+            },
+            {
+              "type": "string",
+              "name": "user_login_type"
+            },
+            {
+              "type": "string",
+              "name": "user_loc_block"
+            },
+            {
+              "type": "string",
+              "name": "user_loc_cluster"
+            },
+            {
+              "type": "string",
+              "name": "user_school_name"
+            },
+            {
+              "type": "string",
+              "name": "collection_name"
+            },
+            {
+              "type": "string",
+              "name": "collection_board"
+            },
+            {
+              "type": "string",
+              "name": "collection_type"
+            },
+            {
+              "name": "collection_channel"
+            },
+            {
+              "name": "collection_medium"
+            },
+            {
+              "name": "collection_gradelevel"
+            },
+            {
+              "name": "collection_subject"
+            },
+            {
+              "type": "string",
+              "name": "collection_created_for"
+            }
+          ],
+          "dimensionsExclusions": []
+        },
+        "timestampSpec": {
+          "column": "syncts",
+          "format": "auto"
+        }
+      }
+    },
+    "metricsSpec": [
+      {
+        "type": "HLLSketchBuild",
+        "name": "unique_devices",
+        "fieldName": "dimensions_did"
+      },
+      {
+        "type": "HLLSketchBuild",
+        "name": "unique_users",
+        "fieldName": "uid"
+      }
+    ],
+    "granularitySpec": {
+      "type": "uniform",
+      "segmentGranularity": "day",
+      "queryGranularity": "day",
+      "rollup": false
+    }
+  },
+  "ioConfig": {
+   "topic": "{{env}}.druid.events.summary",
+    "consumerProperties": {
+      "bootstrap.servers": "{{kafka_brokers}}"
+    },
+    "taskCount": {{rollup_summary_distinct_counts_taskcount}},
+    "replicas": 1,
+    "taskDuration": "PT14400S",
+    "useEarliestOffset": true,
+    "completionTimeout": "PT1800S"
+  },
+  "tuningConfig": {
+    "type": "kafka",
+    "reportParseExceptions": false,
+    "maxRowsPerSegment": 5000000
+  }
+}

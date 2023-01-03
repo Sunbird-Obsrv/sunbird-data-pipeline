@@ -1,0 +1,10 @@
+[program:{{ supervisord_process_name }}]
+process_name={{ supervisord_process_name }}
+command={{ virtualenv_path }}/bin/anomaly_detection druid_anomaly_detection --config_file={{ anomaly_detection_job_config_file }} --data_dir="{{ anomaly_detection_data_dir }}" --druid_broker_host="{{ rollup_druid_broker_host }}" --druid_broker_port=8082
+environment=PATH="{{ virtualenv_path }}/bin:%(ENV_PATH)s"
+user={{analytics_user}}
+group={{analytics_user}}
+killasgroup=true
+startsecs=5
+stopwaitsecs=5
+redirect_stderr=True

@@ -1,0 +1,119 @@
+from __future__ import division
+import math
+import psycopg2
+import sys
+import pandas as pd
+from IPython.display import display
+from psycopg2 import sql, connect
+import json
+
+ 
+def updateExhaustRequests(db, table, update_list):
+    for r in update_list:
+        cursor = db.cursor()
+        batchNum = r['batch_number']
+        requestId = r['request_id']
+        insertQry = "UPDATE {0} SET batch_number = {1} WHERE request_id = '{2}'".format(table, batchNum, requestId)
+        n = cursor.execute(insertQry)
+
+def updateDruidRequests(db, table, update_list):
+    for r in update_list:
+        cursor = db.cursor()
+        batchNum = r['batch_number']
+        reportId = r['report_id']
+        insertQry = "UPDATE {0} SET batch_number = {1} WHERE report_id = '{2}'".format(table, batchNum, reportId)
+        n = cursor.execute(insertQry)
+
+def processRequests(totalRequestsDf, jobId, batchSize, db, table,jobType):
+    # Compute parallelism from batchSize & totalRequests
+    # update batch_number to table
+
+    totalRequests = len(totalRequestsDf.index)
+    print("totalRequests {0}".format(totalRequests))
+
+    parallelism = int(math.ceil(totalRequests/batchSize))
+    print("parallelism computed {0}".format(parallelism))
+
+    if totalRequests > 0:
+        if jobType == 'exhaust':
+          totalRequestsDf["row_num"] = totalRequestsDf.groupby(by=['job_id'])['request_id'].transform(lambda x: x.rank())
+        else:
+          totalRequestsDf["row_num"] = totalRequestsDf['report_id'].transform(lambda x: x.rank())
+        #display(totalRequestsDf)
+
+        start_index = 1
+        end_index = batchSize
+        for i in range(1, parallelism+1):
+            subSetDf = totalRequestsDf[(totalRequestsDf['row_num'] >= start_index) & (totalRequestsDf['row_num'] <= end_index)]
+            subSetDf["batch_number"] = i
+            print(start_index,end_index)
+            if jobType == 'exhaust':
+              updateExhaustRequests(db, table, json.loads(subSetDf.to_json(orient='records')))
+            else:
+              updateDruidRequests(db, table, json.loads(subSetDf.to_json(orient='records')))
+            start_index = 1 + end_index
+            end_index = end_index + batchSize
+        db.commit()
+        db.close()    
+        return parallelism
+    else:
+        return 0
+
+def postgresql_to_dataframe(db, select_query, column_names):
+    cursor = db.cursor()
+    try:
+        cursor.execute(select_query)
+    except (Exception, psycopg2.DatabaseError) as error:
+        print("Error: %s" % error)
+        return 1
+    
+    tupples = cursor.fetchall()
+    
+    df = pd.DataFrame(tupples, columns=column_names)
+    #display(df)
+    return df
+
+def get_columns_names(db,table):
+    columns = []
+    col_cursor = db.cursor()
+    col_names_str = "SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE "
+    col_names_str += "table_name = '{}';".format( table )
+    try:
+        sql_object = sql.SQL(col_names_str).format(sql.Identifier( table))
+        col_cursor.execute( sql_object )
+        col_names = (col_cursor.fetchall())
+        for tup in col_names:
+           columns += [ tup[0] ]
+        col_cursor.close()
+    except Exception as err:
+        print ("get_columns_names ERROR:", err)
+    return columns
+
+def main(batchSize, jobId,jobType,table):
+    host="{{postgres.db_url}}"
+    port={{postgres.db_port}}
+    user="{{postgres.db_username}}"
+    password="{{postgres.db_password}}"
+    database="{{postgres.db_name}}"
+    url_connect = "jdbc:postgresql://{0}:{1}/{2}".format(host, port, database)
+
+    db = psycopg2.connect(host=host, user=user, password=password, database=database, port=port)
+
+    column_names = get_columns_names(db, table)
+    
+    if jobType == 'exhaust':
+      jobId = jobId.split("-v2")[0] if "-v2" in jobId else jobId
+      selectQuery = "select * from {0} where job_id = '{1}' and status IN ('SUBMITTED', 'FAILED') and iteration < 3;".format(table, jobId)
+    else:
+      selectQuery = "select * from {0} where status IN ('ACTIVE')".format(table)
+    df = postgresql_to_dataframe(db, selectQuery, column_names)
+
+    parallelism = processRequests(df, jobId, batchSize, db, table,jobType)
+    return parallelism
+
+batchSize =int(sys.argv[2])
+jobId=sys.argv[1]
+jobType = sys.argv[3]
+table = sys.argv[4]
+parallelism = main(batchSize, jobId,jobType,table)
+print("returning parallelism value: {0}".format(parallelism))

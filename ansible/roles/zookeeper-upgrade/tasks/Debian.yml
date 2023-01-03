@@ -1,41 +1,68 @@
----
-- name: Update apt cache
-  apt: update_cache=yes cache_valid_time={{apt_cache_timeout}}
+- name: download and unarchive zookeeper binary
+  become: yes
+  #  become_user: "{{ zookeeper_user }}"
+  unarchive: 
+    src: "{{ zookeeper_url }}"
+    dest: "{{ zookeeper_dir }}"
+    mode: 0755
+    group: "{{ zookeeper_user }}"
+    owner: "{{ zookeeper_user }}"
+    remote_src: True
 
-- name: Apt install required system packages.
-  apt: pkg={{item}} state=present
-  with_items:
-    - zookeeper
-    - zookeeperd
+- name: check if the zookeeper dir already exists
+  stat:
+    path: "{{ zookeeper_dir }}/zookeeper"
+  register: folder_exists
+
+- name: rename the dir name
+  become: yes
+  shell: mv "apache-zookeeper-{{ zookeeper_version }}-bin" zookeeper
+  #group: "{{ zookeeper_user }}"
+  #owner: "{{ zookeeper_user }}"
+  args:
+    chdir: "{{ zookeeper_dir }}"
+  when: folder_exists.stat.exists == false
 
 - name: Registering server_id
   set_fact:
-    server_id: "{% for servername in play_hosts %}{% if inventory_hostname==servername %}{{ loop.index }}{% endif %}{% endfor %}"
+    server_id: "{% for servername in ansible_play_hosts %}{% if inventory_hostname==servername %}{{ loop.index }}{% endif %}{% endfor %}"
 
 - name: Overwrite myid file.
-  template: src=myid.j2 dest=/etc/zookeeper/conf/myid
+  template: src=myid.j2 dest={{ zookeeper_dir }}/zookeeper/myid
   notify:
     - Restart zookeeper
 
 - name: Overwrite log4j file.
-  template: src=log4j.properties.j2 dest=/etc/zookeeper/conf/log4j.properties
+  template: src=log4j.properties.j2 dest={{ zookeeper_dir }}/zookeeper/conf/log4j.properties
   notify:
     - Restart zookeeper
 
 - name: Overwrite env file.
-  template: src=environment.j2 dest=/etc/zookeeper/conf/environment
+  template: src=environment.j2 dest={{ zookeeper_dir }}/zookeeper/conf/environment
   notify:
     - Restart zookeeper
 
 - name: Overwrite default config file
-  template: src=zoo.cfg.j2 dest=/etc/zookeeper/conf/zoo.cfg
+  template: src=zoo.cfg.j2 dest={{ zookeeper_dir }}/zookeeper/conf/zoo.cfg
   notify:
     - Restart zookeeper
 
-- name: Start zookeeper service
-  service: name=zookeeper state=started enabled=yes
+- name: Change ownership of zookeeper installation
+  become: yes
+  file: path={{ zookeeper_dir }}/zookeeper owner={{ zookeeper_user }} group={{ zookeeper_user }} state=directory recurse=yes
+
+- name: create systemd config
+  template: dest={{zookeeper_systemd_service}} owner=root group=root mode=644 src=zookeeper.service.j2
+  notify:
+    - Restart zookeeper
+
+- name: just force systemd to reread configs
+  systemd: daemon_reload=yes
+
+- name: Enable and Start zookeeper
+  systemd: name=zookeeper state=started enabled=yes
+  become: yes
 
 - name: wait for zookeeper port
   wait_for: host={{zookeeper_listen_address| default('localhost')}} port={{zookeeper_port}} state=started timeout=30
   when: verify
-

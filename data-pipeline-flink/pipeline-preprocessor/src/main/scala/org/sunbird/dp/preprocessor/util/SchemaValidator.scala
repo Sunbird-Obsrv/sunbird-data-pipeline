@@ -1,23 +1,20 @@
 package org.sunbird.dp.preprocessor.util
 
 import java.io.{File, IOException}
-import java.nio.file.{FileSystems, Files, Paths}
+import java.nio.charset.StandardCharsets
+import java.nio.file._
 
 import com.fasterxml.jackson.databind.{JsonNode, ObjectMapper}
 import com.github.fge.jackson.JsonLoader
 import com.github.fge.jsonschema.core.exceptions.ProcessingException
 import com.github.fge.jsonschema.core.report.ProcessingReport
 import com.github.fge.jsonschema.main.{JsonSchema, JsonSchemaFactory}
-import com.google.common.io.ByteStreams
-import com.google.gson.Gson
+import io.github.classgraph.{ClassGraph, Resource}
 import org.slf4j.LoggerFactory
 import org.sunbird.dp.preprocessor.domain.Event
 import org.sunbird.dp.preprocessor.task.PipelinePreprocessorConfig
 
-import scala.collection.JavaConverters._
 import scala.collection.mutable
-import scala.collection.mutable.ListBuffer
-import scala.util.Try
 
 class SchemaValidator(config: PipelinePreprocessorConfig) extends java.io.Serializable {
 
@@ -28,38 +25,28 @@ class SchemaValidator(config: PipelinePreprocessorConfig) extends java.io.Serial
   logger.info("Initializing schema for telemetry objects...")
 
   private val schemaJsonMap: Map[String, JsonSchema] = {
-    val schamaMap = new mutable.HashMap[String, JsonSchema]()
-    val schemaFactory = JsonSchemaFactory.byDefault
-    val schemaUrl = this.getClass.getClassLoader.getResource(s"${config.schemaPath}").toURI
-    // $COVERAGE-OFF$ Disabling code coverage for below code, It can be testable only incase of jar
-    val schemaFiles = if (schemaUrl.getScheme.equalsIgnoreCase("jar")) {
-      val fileSystem = FileSystems.newFileSystem(schemaUrl, Map[String, AnyRef]().asJava)
-      val files = loadSchemaFiles(fileSystem.getPath(s"${config.schemaPath}"))
-      fileSystem.close()
-      files
-    } else {
-      loadSchemaFiles(Paths.get(schemaUrl))
-    }
+    readResourceFiles(s"${config.schemaPath}")
+  }
 
-    logger.info(s"Loaded ${schemaFiles.size} telemetry schema files...")
-    schemaFiles.map { schemaFile =>
-      val schemaJson =
-        new String(ByteStreams.toByteArray(
-          this.getClass.getClassLoader.getResourceAsStream(s"${config.schemaPath}/$schemaFile")
-        ))
-      schamaMap += schemaFile.toString -> schemaFactory.getJsonSchema(JsonLoader.fromString(schemaJson))
+  def readResourceFiles(schemaUrl: String): Map[String, JsonSchema] = {
+    val classGraphResult = new ClassGraph().acceptPaths(schemaUrl).scan()
+    val schemaFactory = JsonSchemaFactory.byDefault
+    val schemaMap = new mutable.HashMap[String, JsonSchema]()
+    try {
+      val resources = classGraphResult.getResourcesWithExtension("json")
+      resources.forEachByteArrayIgnoringIOException((res: Resource, content: Array[Byte]) => {
+        schemaMap += Paths.get(res.getPath).getFileName.toString -> schemaFactory.getJsonSchema(JsonLoader.fromString(new String(content, StandardCharsets.UTF_8)))
+      })
+    } catch {
+      case ex: Exception => ex.printStackTrace()
+        throw ex
+    } finally {
+      classGraphResult.close()
     }
-    schamaMap.toMap
+    schemaMap.toMap
   }
 
   logger.info("Schema initialization completed for telemetry objects...")
-
-  def loadSchemaFiles(schemaDirPath: java.nio.file.Path): List[String] = {
-    val schemaFiles = Try(Files.newDirectoryStream(schemaDirPath)).map { stream =>
-      stream.iterator().asScala.toList.map(path => path.getFileName.toString)
-    }.getOrElse(List[String]())
-    schemaFiles
-  }
 
   def schemaFileExists(event: Event): Boolean = schemaJsonMap.contains(event.schemaName)
 

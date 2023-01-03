@@ -2,7 +2,8 @@ version: 2.1
 jobs:
   datapipeline-build:
     working_directory: ~/dp/data-pipeline-flink
-    machine: true
+    machine:
+      image: ubuntu-2004:202008-01
     steps:
       - checkout:
           path: ~/dp
@@ -22,4 +23,4 @@ workflows:
   build_and_test:
     jobs:
       - datapipeline-build
-#testing quality gate
+#testing  quality gate

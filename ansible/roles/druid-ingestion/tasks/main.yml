@@ -1,21 +1,35 @@
 
-- name: Copy the schema file
-  template: src="{{item}}" dest="{{druid_home}}/{{item}}.json"
-  with_items: "{{druid_schema}}"
+- name: Load the context json
+  set_fact: {"{{ item }}_context":"{{ lookup('template', 'context.json.j2')}}"}
+  with_items: "{{ ingestion_spec_configs }}"
   tags: start-task
 
+- name: Load the ingestion json
+  set_fact: {"{{ item }}_json":"{{ lookup('template', (item))}}"}
+  with_items: "{{ ingestion_task_names.split(',')|list }}"
+  tags: start-task
+
+- name: Override the schema spec with context and  Copy schema file
+  copy:
+     content: "{{ (lookup('vars', item + '_context' , default={}) | combine(vars[(item + '_json')])) | to_json(indent=4) }}"
+     dest: "{{druid_home}}/{{item}}.json"
+  become_user: "{{remote_user}}"
+  with_items: "{{ ingestion_task_names.split(',')|list }}"
+  tags: start-task
+
+
 - name: Start kafka supervisor tasks for defined datasources
-  shell: 'curl -X POST -H "Content-Type:application/json" -d @{{druid_home}}/{{item}}.json http://{{overlord_host}}:8090/druid/indexer/v1/supervisor'
-  with_items: "{{druid_schema}}"
+  shell: 'curl -X POST -H "Content-Type:application/json" -d @{{druid_home}}/{{item}}.json http://{{overlord_host}}:{{druid_overlord_port}}/druid/indexer/v1/supervisor'
+  with_items: "{{ ingestion_task_names.split(',')|list }}"
   become_user: "{{remote_user}}" 
   tags: start-task
 
 - name: Stop kafka supervisor tasks for defined datasources
-  shell: 'curl -X POST http://{{overlord_host}}:8090/druid/indexer/v1/supervisor/{{item}}/terminate'
-  with_items: "{{event_types}}"
+  shell: 'curl -X POST http://{{overlord_host}}:{{druid_overlord_port}}/druid/indexer/v1/supervisor/{{item}}/terminate'
+  with_items: "{{ ingestion_task_names.split(',')|list }}"
   tags: stop-task
 
 - name: Stop currently running ingestion tasks
-  shell: 'curl -XPOST http://{{overlord_host}}:8090/druid/indexer/v1/datasources/{{item}}/shutdownAllTasks'
-  with_items: "{{event_types}}"
+  shell: 'curl -XPOST http://{{overlord_host}}:{{druid_overlord_port}}/druid/indexer/v1/datasources/{{item}}/shutdownAllTasks'
+  with_items: "{{ ingestion_task_names.split(',')|list }}"
   tags: stop-task

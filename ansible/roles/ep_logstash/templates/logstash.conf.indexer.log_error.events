@@ -1,11 +1,12 @@
+{% if not send_logs_to_graylog %}
 # Logstash configuration 
 # Kafka(telemetry.log) -> Logstash -> Elasticsearch pipeline index error type events into(telemetry-error-events) and log type events into(telemetry-log-index).
 
 input {  
 	kafka {
 		bootstrap_servers => "{{bootstrap_server}}"
-		topics => ["{{kafka_topic_prefix}}.telemetry.log"]
-		group_id => "{{kafka_topic_prefix}}.telemetry.log"
+		topics => ["{{kafka_topic_prefix}}.druid.events.log", "{{kafka_topic_prefix}}.druid.events.error"]
+		group_id => "{{kafka_topic_prefix}}.telemetry-log.indexer"
 		auto_offset_reset => "latest"
 		codec => "json"
 		consumer_threads => 1
@@ -34,9 +35,16 @@ output {
 			manage_template => true        
 			document_type => "events"
 		}
+	}else if "JOB_" in [eid] {
+		elasticsearch {
+			codec => "json"
+			hosts => ["{{logger_es}}"]
+			template => "{{backend_telemetry_mapping_file_path}}"
+			template_name => "dp-backend"
+			index => "{{backend_log_es_index}}-%{+YYYY.MM.ww}"
+			manage_template => true        
+			document_type => "events"
+		}
 	}
 }
-
-
-
-
+{% endif %}

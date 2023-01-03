@@ -1,0 +1,60 @@
+---
+# tasks file for redis
+- name: change the data dir ownership
+  file:
+    path: /data
+    state: directory
+    owner: "{{ redis_user }}"
+    group: "{{ redis_user }}"
+    mode: 0755
+  become: yes
+
+- name: create the redis dir
+  become: yes
+  become_user: "{{ redis_user }}"
+  file:
+    path: "{{ analytics_redis_user_home }}/redis"
+    state: directory
+
+- name: download redis zipfile
+  become: yes
+  become_user: "{{ redis_user }}"
+  get_url: url={{ redis_tar_ball }} dest={{ redis_dir }}/redis-{{ redis_version }}.tar.gz timeout=50 force=no owner={{ redis_user }}
+
+- name: unzip
+  become: yes
+  become_user: "{{ redis_user }}"
+  unarchive: src={{ redis_dir }}/redis-{{ redis_version }}.tar.gz dest={{ redis_dir }} copy=no group={{ redis_user }} owner={{ redis_user }} creates={{ redis_home }}
+
+- name: Change ownership of redis installation
+  become: yes
+  file: path={{ redis_home }} owner={{ redis_user }} group={{ redis_user }} state=directory recurse=yes
+
+- name: Copy redis conf files
+  become: yes
+  become_user: "{{ redis_user }}"
+  template: src=redis.conf.j2 dest={{ redis_dir }}/redis-{{ redis_version }}/redis-{{ item.value.name }}.conf
+  vars:
+    _port_: "{{ item.value.port }}"
+    _name_: "{{ item.value.name }}"
+    max_memory: "{{ item.value.max_memory }}"
+  with_dict: "{{ redis.config }}"
+
+- name: Install required utils
+  apt: name={{ item }} state=present
+  become: yes
+  with_items:
+    - make
+    - gcc
+    - build-essential
+
+- name: Go to the folder and run make
+  become: yes
+  become_user: "{{ redis_user }}"
+  command: chdir={{ redis_home }} make
+
+- name: start redis
+  become: yes
+  become_user: "{{ redis_user }}"
+  command: '{{ redis_dir }}/redis-{{ redis_version }}/src/redis-server {{ redis_dir }}/redis-{{ redis_version }}/redis-{{ item.value.name }}.conf'
+  with_dict: "{{ redis.config }}" 

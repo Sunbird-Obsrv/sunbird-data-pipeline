@@ -25,20 +25,12 @@ node() {
                 module = sh(returnStdout: true, script: "echo $JOB_NAME").split('/')[-2].trim()
                 jobName = sh(returnStdout: true, script: "echo $JOB_NAME").split('/')[-1].trim()
                 currentWs = sh(returnStdout: true, script: 'pwd').trim()
-                ansiblePlaybook = "${currentWs}/ansible/postgres-provision.yml"
-                ansibleExtraArgs = "--connection=local --extra-vars \"consumer_id=${params.Consumer_id} channel=${params.Channel_id} status=${params.status} created_by=${params.Created_by}\" --vault-password-file /var/lib/jenkins/secrets/vault-pass"
+                ansiblePlaybook = "${currentWs}/ansible/postgres-db-update.yml"
+                ansibleExtraArgs = "--connection=local --tags insert --extra-vars \"consumer_id=${params.Consumer_id} channel=${params.Channel_id} status=${params.status} created_by=${params.Created_by}\" --vault-password-file /var/lib/jenkins/secrets/vault-pass"
                 values.put('currentWs', currentWs)
                 values.put('env', envDir)
                 values.put('module', module)
                 values.put('jobName', jobName)
-                values.put('ansiblePlaybook', ansiblePlaybook)
-                values.put('ansibleExtraArgs', ansibleExtraArgs)
-                println values
-                ansible_playbook_run(values)
-                
-
-                ansiblePlaybook = "${currentWs}/ansible/lpa_api_deploy.yml"
-                ansibleExtraArgs = "--tags refresh-cache --vault-password-file /var/lib/jenkins/secrets/vault-pass"
                 values.put('ansiblePlaybook', ansiblePlaybook)
                 values.put('ansibleExtraArgs', ansibleExtraArgs)
                 println values

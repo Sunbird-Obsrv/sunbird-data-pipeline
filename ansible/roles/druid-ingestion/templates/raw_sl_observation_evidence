@@ -1,0 +1,125 @@
+{
+  "type": "kafka",
+  "dataSchema": {
+    "dataSource": "sl-observation-evidence",
+    "parser": {
+      "type": "string",
+      "parseSpec": {
+        "format": "json",
+        "timestampSpec": {
+          "column": "completedDate",
+          "format": "auto"
+        },
+        "dimensionsSpec": {
+          "dimensions": [
+            {
+              "type": "string",
+              "name": "total_evidences"
+            },
+            {
+              "type": "string",
+              "name": "observationSubmissionId"
+            },
+            {
+              "type": "string",
+              "name": "entity"
+            },
+            {
+              "type": "string",
+              "name": "entityExternalId"
+            },
+            {
+              "type": "string",
+              "name": "entityName"
+            },
+            {
+              "type": "string",
+              "name": "entityTypeId"
+            },
+            {
+              "type": "string",
+              "name": "entityType"
+            },
+            {
+              "type": "string",
+              "name": "createdBy"
+            },
+            {
+              "type": "string",
+              "name": "solutionExternalId"
+            },
+            {
+              "type": "string",
+              "name": "solutionId"
+            },
+            {
+              "type": "string",
+              "name": "observationId"
+            },
+            {
+              "type": "string",
+              "name": "remarks"
+            },
+            {
+              "type": "string",
+              "name": "questionId"
+            },
+            {
+              "type": "string",
+              "name": "questionExternalId"
+            },
+            {
+              "type": "string",
+              "name": "questionResponseType"
+            },
+            {
+              "type": "string",
+              "name": "questionName"
+            },
+            {
+              "type": "string",
+              "name": "evidence_count"
+            },
+            {
+              "type": "string",
+              "name": "fileName"
+            },
+            {
+              "type": "string",
+              "name": "fileSourcePath"
+            },
+            {
+              "type": "string",
+              "name": "completedDate"
+            },
+            {
+              "type": "string",
+              "name": "appName"
+            }
+          ]
+        }
+      }
+    },
+    "metricsSpec": [],
+    "granularitySpec": {
+      "type": "uniform",
+      "segmentGranularity": "DAY",
+      "queryGranularity": "none",
+      "rollup": false
+    }
+  },
+  "tuningConfig": {
+    "type": "kafka",
+    "reportParseExceptions": false
+  },
+  "ioConfig": {
+    "topic": "{{env}}.ml.observation.evidence.druid",
+    "consumerProperties": {
+      "bootstrap.servers": "{{kafka_brokers}}"
+    },
+    "taskCount": "{{ml_observation_evidence_task_count}}",
+    "replicas": 1,
+    "taskDuration": "PT14400S",
+    "useEarliestOffset": true
+  }
+}

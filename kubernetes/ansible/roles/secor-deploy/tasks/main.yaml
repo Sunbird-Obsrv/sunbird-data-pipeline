@@ -1,0 +1,18 @@
+- name: template values.yaml file
+  vars:
+    secor_job_list: "{{ job_names_to_deploy.split(',')|list }}"
+  template:
+    src: "{{ chart_path }}/values.j2"
+    dest: "{{ chart_path }}/values.yaml"
+    
+- name: helm upgrade
+  shell: helm --debug upgrade --install {{ item }} {{ chart_path }} -n {{ secor_namespace }}
+  with_items:
+    - "{{ job_names_to_deploy.split(',')|list }}"
+  tags: secor_deploy
+
+- name: create alert rules
+  shell: helm  upgrade --install {{ item }} {{ chart_path }}/charts/alertrules -f {{ chart_path }}/values.yaml
+  with_items:
+    - "{{ job_names_to_deploy.split(',')|list }}"
+  tags: alertrule

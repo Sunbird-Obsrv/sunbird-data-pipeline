@@ -1,0 +1,242 @@
+#jinja2:lstrip_blocks: True
+{#
+# This name is used to define the 
+# additionalScrapeConfigs name
+# {{ fullnameOverride }}-prometheus-scrape-confg
+# If you change this, make sure to update the value in 
+# additionalScrapeConfigs/defautls/main.yaml
+#}
+fullnameOverride: sunbird-monitoring
+
+# Enabling external prometheus scrape config 
+prometheus:
+  prometheusSpec:
+    additionalScrapeConfigsExternal: {{ additional_scrape_configs_enabled | d(false) }}
+    retention: "{{ prometheus_retention_time | d('60d') }}"
+    externalLabels:
+      sb_cluster: "{{ kubernetes_cluster_name | default('kubernetes-1')}}"
+{% if prometheus_storage_spec is defined and prometheus_storage_spec %}
+    storageSpec: {{ prometheus_storage_spec|to_json }}
+{% endif %}
+{% if prometheus_service is defined and prometheus_service %}
+  service: {{ (prometheus_service | to_json) }}
+{% endif %}
+kubeControllerManager: 
+  enabled: false
+kubeScheduler:
+  enabled: false
+
+
+alertmanager:
+  config:
+    global:
+      smtp_from: "{{ monitor_alerts_mail_from_email }}"
+      smtp_smarthost: "{{ monitor_alerts_mail_server_host }}:{{ monitor_alerts_mail_server_port}}"
+      smtp_auth_username: "{{ monitor_alerts_mail_server_username }}"
+      smtp_auth_password: "{{ monitor_alerts_mail_server_password }}"
+    route:
+      receiver: '{{env}}_devops_team'
+      group_by: [sb_cluster, alertname]
+      group_wait: 30s
+      group_interval: 5m
+      repeat_interval: 4h
+      routes:
+      - match_re:
+         alertname: ^(node_exporter_down_critical|Watchdog|PrometheusRuleFailures)
+        receiver: "null"
+      - match:
+          alerttype: nodemetrics
+          severity: warning
+        receiver: nodemetrics_slack_warning
+      - match:
+          alerttype: nodemetrics
+          severity: critical
+        receiver: nodemetrics_slack_critical
+      - match:
+          alerttype: lag
+          severity: warning
+        receiver: lag_slack_warning
+      - match:
+          alerttype: lag
+          severity: critical
+        receiver: lag_slack_critical
+      - match:
+          alerttype: job
+          severity: critical
+        receiver: jobs_slack_critical
+      - receiver: slack
+        continue: true
+      - match:
+          owner:
+        receiver: {{env}}_devops_team
+    receivers:
+      - name: {{env}}_devops_team
+        email_configs:
+          - send_resolved: true
+            to: '{{ default_mailing_list }}'
+            html: '{% raw %}{{ template "email.default.html" . }}{% endraw %}'
+            headers:
+              subject: '[{{ kubernetes_cluster_name }}] {% raw %}{{ .GroupLabels.alertname }}{% endraw %}'
+      - name: 'jobs_slack_critical'
+        slack_configs:
+          - send_resolved: true
+            api_url: "{{ dp_monitor_alerts_critical_slack_url }}"
+            username: 'Monitor - Alerter'
+            channel: "{{ dp_monitor_alerts_critical_slack_channel }}"
+            title_link: ""
+            title: '{% raw %}[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}]{% endraw %}' 
+            text: |-
+                  {{ "{{" }} range .Alerts {{ "}}" }}
+                    *Alert:* {{ "{{" }} .Annotations.alertname {{ "}}" }}
+                    *Job:* {{ "{{" }} .Annotations.job_id {{ "}}" }}
+                    *AlertType:* {{ "{{" }} .Labels.severity {{ "}}" }}
+                    *Details:* {{ "{{" }} .Annotations.message {{ "}}" }}
+                  {{ "{{" }} end {{ "}}" }}
+            icon_emoji: ':dart:'
+
+        email_configs:
+          - send_resolved: true
+            to: '{{ default_mailing_list }}'
+            html: '{% raw %}{{ template "email.default.html" . }}{% endraw %}'
+            headers:
+              subject: '[{{ kubernetes_cluster_name }}] {% raw %}{{ .GroupLabels.alertname }}{% endraw %}'
+
+      - name: 'lag_slack_warning'
+        slack_configs:
+          - send_resolved: true
+            api_url: "{{ dp_monitor_alerts_warning_slack_url }}"
+            username: 'Monitor - Alerter'
+            channel: "{{ dp_monitor_alerts_warning_slack_channel }}"
+            title_link: ""
+            title: '{% raw %}[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}]{% endraw %}' 
+            text: |-
+                  {{ "{{" }} range .Alerts {{ "}}" }}
+                    *Alert:* {{ "{{" }} .Annotations.alertname {{ "}}" }}
+                    *Job:* {{ "{{" }} .Annotations.job_id {{ "}}" }}
+                    *AlertType:* {{ "{{" }} .Labels.severity {{ "}}" }}
+                    *AlertMetric:* {{ "{{" }} .Annotations.lag {{ "}}" }}
+                    *Details:* {{ "{{" }} .Annotations.message {{ "}}" }}
+                  {{ "{{" }} end {{ "}}" }}
+            icon_emoji: ':dart:'
+        
+        email_configs:
+          - send_resolved: true
+            to: '{{ default_mailing_list }}'
+            html: '{% raw %}{{ template "email.default.html" . }}{% endraw %}'
+            headers:
+              subject: '[{{ kubernetes_cluster_name }}] {% raw %}{{ .GroupLabels.alertname }}{% endraw %}'
+
+      - name: 'lag_slack_critical'
+        slack_configs:
+          - send_resolved: true
+            api_url: "{{ dp_monitor_alerts_critical_slack_url }}"
+            username: 'Monitor - Alerter'
+            channel: "{{ dp_monitor_alerts_critical_slack_channel }}"
+            title_link: ""
+            title: '{% raw %}[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}]{% endraw %}' 
+            text: |-
+                  {{ "{{" }} range .Alerts {{ "}}" }}
+                    *Alert:* {{ "{{" }} .Annotations.alertname {{ "}}" }}
+                    *Job:* {{ "{{" }} .Annotations.job_id {{ "}}" }}
+                    *AlertType:* {{ "{{" }} .Labels.severity {{ "}}" }}
+                    *AlertMetric:* {{ "{{" }} .Annotations.lag {{ "}}" }}
+                    *Details:* {{ "{{" }} .Annotations.message {{ "}}" }}
+                  {{ "{{" }} end {{ "}}" }}
+            icon_emoji: ':dart:'
+        
+        email_configs:
+          - send_resolved: true
+            to: '{{ default_mailing_list }}'
+            html: '{% raw %}{{ template "email.default.html" . }}{% endraw %}'
+            headers:
+              subject: '[{{ kubernetes_cluster_name }}] {% raw %}{{ .GroupLabels.alertname }}{% endraw %}'
+        
+      - name: 'nodemetrics_slack_warning'
+        slack_configs:
+          - send_resolved: true
+            api_url: "{{ dp_monitor_alerts_warning_slack_url }}"
+            username: 'Monitor - Alerter'
+            channel: "{{ dp_monitor_alerts_warning_slack_channel }}"
+            title_link: ""
+            title: '{% raw %}[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}]{% endraw %}' 
+            text: |-
+                  {{ "{{" }} range .Alerts {{ "}}" }}
+                    *Alert:* {{ "{{" }} .Annotations.alertname {{ "}}" }}
+                    *AlertType:* {{ "{{" }} .Labels.severity {{ "}}" }}
+                    *AlertMetric:* {{ "{{" }} .Annotations.metrics {{ "}}" }}
+                    *Details:* {{ "{{" }} .Annotations.message {{ "}}" }}
+                  {{ "{{" }} end {{ "}}" }}
+            icon_emoji: ':dart:'
+
+        email_configs:
+          - send_resolved: true
+            to: '{{ default_mailing_list }}'
+            html: '{% raw %}{{ template "email.default.html" . }}{% endraw %}'
+            headers:
+              subject: '[{{ kubernetes_cluster_name }}] {% raw %}{{ .GroupLabels.alertname }}{% endraw %}'
+
+      - name: 'nodemetrics_slack_critical'
+        slack_configs:
+          - send_resolved: true
+            api_url: "{{ dp_monitor_alerts_critical_slack_url }}"
+            username: 'Monitor - Alerter'
+            channel: "{{ dp_monitor_alerts_critical_slack_channel }}"
+            title_link: ""
+            title: '{% raw %}[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}]{% endraw %}' 
+            text: |-
+                  {{ "{{" }} range .Alerts {{ "}}" }}
+                    *Alert:* {{ "{{" }} .Annotations.alertname {{ "}}" }}
+                    *AlertType:* {{ "{{" }} .Labels.severity {{ "}}" }}
+                    *AlertMetric:* {{ "{{" }} .Annotations.metrics {{ "}}" }}
+                    *Details:* {{ "{{" }} .Annotations.message {{ "}}" }}
+                  {{ "{{" }} end {{ "}}" }}
+            icon_emoji: ':dart:'
+
+        email_configs:
+          - send_resolved: true
+            to: '{{ default_mailing_list }}'
+            html: '{% raw %}{{ template "email.default.html" . }}{% endraw %}'
+            headers:
+              subject: '[{{ kubernetes_cluster_name }}] {% raw %}{{ .GroupLabels.alertname }}{% endraw %}'
+
+
+      - name: 'slack'
+        slack_configs:
+          - send_resolved: true
+            api_url: "{{ dp_monitor_alerts_warning_slack_url }}"
+            username: 'Monitor - Alerter'
+            channel: "{{ dp_monitor_alerts_warning_slack_channel }}"
+            title_link: ""
+            title: '{% raw %}[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}]{% endraw %}' 
+            text: |-
+                  {{ "{{" }} range .Alerts {{ "}}" }}
+                    *Alert:* {{ "{{" }} .Annotations.message {{ "}}" }} - `{{ "{{" }} .Labels.severity {{ "}}" }}`
+                    *Description:* {{ "{{" }} .Annotations.message {{ "}}" }}
+                    *Details:*
+                    {{ "{{" }} range .Labels.SortedPairs {{ "}}" }} • *{{ "{{" }} .Name {{ "}}" }}:* `{{ "{{" }} .Value {{ "}}" }}`
+                    {{ "{{" }} end {{ "}}" }}
+                  {{ "{{" }} end {{ "}}" }}
+            icon_emoji: ':dart:'
+
+      - name: 'null'
+
+grafana:
+  env:
+    #    GF_SERVER_ROOT_URL: http://grafana.local.com/grafana
+  adminPassword: {{ (grafana_admin_password| default('prom-operator'))}}
+{% if grafana_data_sources is defined and grafana_data_sources %}
+  additionalDataSources: {{ (grafana_data_sources) | to_json}}
+{% endif %}
+{% if grafana_persistence is defined and grafana_persistence %}
+  persistence: {{ grafana_persistence|to_json}}
+{% endif %}
+{% if grafana_service is defined and grafana_service %}
+  service: {{ grafana_service|to_json}}
+{% endif %}
+ 
+## Overriding the kubernetes-apps alert rules by disabling default alert rule creation. 
+# Why: We were getting few unwanted alerts and we wanted to disable those alerts. Hence created the custom alert rules.
+defaultRules:
+  create: true
+  rules:
+    kubernetesApps: false

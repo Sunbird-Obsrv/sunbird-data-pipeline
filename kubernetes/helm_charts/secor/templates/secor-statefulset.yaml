@@ -1,0 +1,78 @@
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  annotations:
+    configmap.reloader.stakater.com/reload: {{ .Release.Name }}-config
+  name: {{ .Release.Name }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: secor
+    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  serviceName: secor
+  updateStrategy:
+    type: RollingUpdate
+  replicas: {{ get (get $.Values.secor_jobs $.Release.Name) "replicas" }}
+  selector:
+    matchLabels:
+      app: secor
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: secor
+        release: {{ .Release.Name }}
+    spec:
+      imagePullSecrets:
+      - name: {{ .Values.imagepullsecrets }}
+      initContainers:
+      - name: change-pv-dir-ownership
+        image: alpine:3
+        command: ["/bin/sh", "-c"]
+        args: ["chown -R 9999:9999 /mnt/data"]
+        volumeMounts:
+        - name: data-path
+          mountPath: /mnt/data
+      containers:
+        - name: {{ .Release.Name }}-secor
+          image: {{ .Values.image.prefix | default "" }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: "CONFIG_FILE"
+              value: "/opt/secor/config/secor.partition.properties"
+            - name: "LOG4J_CONFIGURATION"
+              value: "/opt/secor/config/log4j.docker.properties"
+
+          volumeMounts:
+           - mountPath: /opt/secor/config
+             name: secor-config
+           - name: "data-path"
+             mountPath: /mnt/data
+          resources:
+            requests:
+              cpu: {{ get (get (get $.Values.secor_jobs $.Release.Name) "requests") "cpu" }}
+              memory: {{ get (get (get $.Values.secor_jobs $.Release.Name) "requests") "memory"}}
+          securityContext:
+            runAsUser: 9999
+
+      volumes:
+        - configMap:
+            name: {{ .Release.Name }}-config
+          name: secor-config
+
+  volumeClaimTemplates:
+    - metadata:
+        name: data-path
+        labels:
+          app: secor
+      spec:
+        storageClassName: "{{- .Values.storageClass }}"
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: {{ get (get (get $.Values.secor_jobs $.Release.Name) "storage") "size" }}
+

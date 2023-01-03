@@ -1,0 +1,56 @@
+ 
+@Library('deploy-conf') _
+node('build-slave') {
+    try {
+        String ANSI_GREEN = "\u001B[32m"
+        String ANSI_NORMAL = "\u001B[0m"
+        String ANSI_BOLD = "\u001B[1m"
+        String ANSI_RED = "\u001B[31m"
+        String ANSI_YELLOW = "\u001B[33m"
+
+        ansiColor('xterm') {
+            stage('Checkout') { 
+                checkout scm            
+            }
+            
+            stage('copy cluster creation script') {
+                values = [:]
+                envDir = sh(returnStdout: true, script: "echo $JOB_NAME").split('/')[-3].trim()
+                module = sh(returnStdout: true, script: "echo $JOB_NAME").split('/')[-2].trim()
+                jobName = sh(returnStdout: true, script: "echo $JOB_NAME").split('/')[-1].trim()
+                currentWs = sh(returnStdout: true, script: 'pwd').trim()
+                ansiblePlaybook = "${currentWs}/ansible/azure-hdinsight-spark.provision.yml"
+                ansibleExtraArgs = "--extra-vars \"azure_resource_group=${params.resource_group} location=${params.location} component_version=${params.component_version} version=${params.version} headnode_size=${params.headnode_size} workernode_size=${params.workernode_size} subnet_name=${subnet_name} vnet_name=${vnet_name} workernode_count=${workernode_count} subscription_id=${env.subscription_id} tenant_id=${env.tenant_id} cluster_state=${params.type}\" --tags copy-script,copy-creation-script --vault-password-file /var/lib/jenkins/secrets/vault-pass"
+                values.put('currentWs', currentWs)
+                values.put('env', envDir)
+                values.put('module', module)
+                values.put('jobName', jobName)
+                values.put('ansiblePlaybook', ansiblePlaybook)
+                values.put('ansibleExtraArgs', ansibleExtraArgs)
+                println values
+                ansible_playbook_run(values)
+            }
+            stage('create and provision spark HDinsight cluster') {
+                storage_container=params.storage_container
+                withCredentials([usernamePassword(credentialsId: 'azure-service-principal', passwordVariable: 'sppass', usernameVariable: 'spuser')]) {
+                   sh '''
+                   currentws=$(pwd)
+                   ansibleplaybook="$currentws/ansible/azure-hdinsight-spark.provision.yml"
+                   cd /tmp
+                   ./create-cluster.sh $spuser $sppass
+                   vars="storage_container=$storage_container"
+                   export ANSIBLE_HOST_KEY_CHECKING=False
+                   ansible-playbook -i $currentws/ansible/inventory/env $ansibleplaybook --extra-vars '"'$vars'"' --tags spark-provision --vault-password-file /var/lib/jenkins/secrets/vault-pass
+                   '''
+                }   
+               
+            }
+                
+        }
+    }
+    catch (err) {
+        currentBuild.result = "FAILURE"
+        throw err
+    }
+
+}

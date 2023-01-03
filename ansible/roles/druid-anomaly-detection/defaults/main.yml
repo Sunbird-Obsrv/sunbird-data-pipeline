@@ -1,0 +1,22 @@
+rollup_druid_broker_host: "http://{{ groups['rollup-broker'][0] | default(groups['raw-broker'][0]) }}"
+supervisord_process_name: anomaly_detection
+anomaly_detection_module_artifact: anomaly_detection.tar.gz
+anomaly_detection_module_path: /home/analytics/anomaly_detection
+virtualenv_path: "{{ anomaly_detection_module_path }}/anomaly_venv"
+anomaly_detection_job_config_file: "{{virtualenv_path}}/config.json"
+anomaly_detection_data_dir: "/home/analytics/anomaly_detection/data"
+anomaly_detection_queries:
+  content-mimetype-errors:
+    job_id: "content-mimetype-errors"
+    query_granularity: "hour"
+    query: 'WITH \"content_plays\" AS (SELECT \"content_mimetype\",\"context_pdata_id\",sum(total_count) AS \"plays\" FROM \"druid\".\"telemetry-hourly-rollup-syncts\" WHERE \"__time\" BETWEEN TIMESTAMP ''{start_time}'' AND TIMESTAMP ''{end_time}'' AND \"edata_type\" = ''content'' AND \"edata_mode\" = ''play'' GROUP BY \"content_mimetype\",\"context_pdata_id\") SELECT cp.content_mimetype, cp.context_pdata_id, SUM(cpe.errors) * 100.0/SUM(cp.plays) AS \"perc_errors\" FROM (SELECT \"content_mimetype\", \"context_pdata_id\",SUM(\"total_count\") AS \"errors\" FROM \"druid\".\"error-hourly-rollup-syncts\" WHERE \"__time\" BETWEEN TIMESTAMP ''{start_time}'' AND TIMESTAMP ''{end_time}'' GROUP BY \"content_mimetype\",\"context_pdata_id\") AS cpe INNER JOIN content_plays AS cp ON cp.content_mimetype = cpe.content_mimetype AND cp.context_pdata_id = cpe.context_pdata_id GROUP BY cp.content_mimetype, cp.context_pdata_id'
+    frequency: "hour"
+    cron: "0 */1 * * *"
+    offset_in_mins: 5
+  collection-type-errors:
+    job_id: "collection-type-errors"
+    query_granularity: "hour"
+    query: 'WITH \"content_plays\" AS (SELECT \"collection_type\", \"context_pdata_id\",sum(total_count) AS \"plays\" FROM \"druid\".\"telemetry-hourly-rollup-syncts\" WHERE \"__time\" BETWEEN TIMESTAMP ''{start_time}'' AND TIMESTAMP ''{end_time}'' AND \"edata_type\" = ''content'' AND \"edata_mode\" = ''play'' GROUP BY \"collection_type\",\"context_pdata_id\") SELECT cp.collection_type,cp.context_pdata_id, SUM(cpe.errors) * 100.0/SUM(cp.plays) AS \"perc_errors\" FROM (SELECT \"collection_type\", \"context_pdata_id\",SUM(\"total_count\") AS \"errors\" FROM \"druid\".\"error-hourly-rollup-syncts\" WHERE \"__time\" BETWEEN TIMESTAMP ''{start_time}'' AND TIMESTAMP ''{end_time}'' GROUP BY \"collection_type\",\"context_pdata_id\") AS cpe INNER JOIN content_plays AS cp ON cp.collection_type = cpe.collection_type AND cp.context_pdata_id = cpe.context_pdata_id GROUP BY cp.collection_type, cp.context_pdata_id'
+    frequency: "hour"
+    cron: "0 */1 * * *"
+    offset_in_mins: 5

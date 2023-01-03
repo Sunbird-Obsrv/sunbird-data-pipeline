@@ -8,10 +8,9 @@ import org.apache.flink.api.java.typeutils.TypeExtractor
 import org.apache.flink.api.java.utils.ParameterTool
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment
 import org.sunbird.dp.denorm.domain.Event
-import org.sunbird.dp.denorm.functions.DenormalizationFunction
+import org.sunbird.dp.denorm.functions.{DenormalizationFunction, DenormalizationWindowFunction, SummaryDeduplicationFunction}
 import org.sunbird.dp.core.job.FlinkKafkaConnector
 import org.sunbird.dp.core.util.FlinkUtil
-import org.sunbird.dp.denorm.functions.SummaryDeduplicationFunction
 
 /**
   * Denormalization stream task does the following pipeline processing in a sequence:
@@ -61,25 +60,27 @@ class SummaryDenormalizationStreamTask(config: DenormalizationConfig, kafkaConne
       env.addSource(source, config.summaryDenormalizationConsumer).uid(config.summaryDenormalizationConsumer)
         .setParallelism(config.kafkaConsumerParallelism).rebalance()
         .process(new SummaryDeduplicationFunction(config)).name(config.summaryDedupFunction).uid(config.summaryDedupFunction)
-        .setParallelism(config.summaryDedupParallelism)
+        .setParallelism(config.summaryDownstreamOperatorsParallelism)
 
     val summaryDenormStream = summaryEventStream.getSideOutput(config.uniqueSummaryEventsOutputTag)
-      .process(new DenormalizationFunction(config))
+      .keyBy(new DenormKeySelector(config)).countWindow(config.windowCount)
+      .process(new DenormalizationWindowFunction(config))
       .name(config.summaryDenormalizationFunction).uid(config.summaryDenormalizationFunction)
-      .setParallelism(config.denormParallelism)
+      .setParallelism(config.summaryDownstreamOperatorsParallelism)
 
     summaryEventStream.getSideOutput(config.duplicateEventsOutputTag)
       .addSink(kafkaConnector.kafkaEventSink[Event](config.duplicateTopic))
       .name(config.summaryDuplicateEventProducer).uid(config.summaryDuplicateEventProducer)
+      .setParallelism(config.summaryDownstreamOperatorsParallelism)
 
-    summaryDenormStream.getSideOutput(config.denormEventsTag).addSink(kafkaConnector.kafkaEventSink(config.denormSuccessTopic))
+    summaryDenormStream.getSideOutput(config.denormEventsTag).addSink(kafkaConnector.kafkaEventSink(config.summaryDenormOutputTopic))
       .name(config.summaryDenormEventsProducer).uid(config.summaryDenormEventsProducer)
-      .setParallelism(config.denormSinkParallelism)
+      .setParallelism(config.summaryDownstreamOperatorsParallelism)
 
     summaryEventStream.getSideOutput(config.uniqueSummaryEventsOutputTag)
-      .addSink(kafkaConnector.kafkaEventSink(config.summaryOutputEventsTopic))
+      .addSink(kafkaConnector.kafkaEventSink(config.summaryUniqueEventsTopic))
       .name(config.summaryEventsProducer).uid(config.summaryEventsProducer)
-      .setParallelism(config.summarySinkParallelism)
+      .setParallelism(config.summaryDownstreamOperatorsParallelism)
 
     env.execute(config.jobName)
   }

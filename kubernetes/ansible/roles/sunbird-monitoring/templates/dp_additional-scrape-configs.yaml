@@ -1,0 +1,26 @@
+# This name is used to define the 
+# additionalScrapeConfigs name
+# {{ fullnameOverride }}-prometheus-scrape-confg
+# If you change this, make sure to update the value in 
+# additionalScrapeConfigs/defautls/main.yaml
+#}
+
+fullnameOverride: "sunbird-monitoring"
+
+scrapeconfig:
+  # This scrape config will enable us to annotate any pod and that pod will get automonitored
+  #
+  # annotations:
+  #   prometheus.io/scrape: "true"
+  #   prometheus.io/port: "2020"
+  #   prometheus.io/path: /api/v1/metrics/prometheus
+  #
+  - job_name: 'federate'
+    metrics_path: /prometheus/federate
+    honor_labels: true
+    params:
+      match[]:
+        - '{__name__=~"^job:.*"}'
+    static_configs:
+      # This empty line make sure the indentation is correct
+      - targets: [ '{{private_ingressgateway_ip}}' ]

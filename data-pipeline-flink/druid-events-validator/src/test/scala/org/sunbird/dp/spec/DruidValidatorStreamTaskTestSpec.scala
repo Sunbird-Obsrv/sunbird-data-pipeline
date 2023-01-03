@@ -13,12 +13,15 @@ import org.apache.flink.streaming.api.functions.source.SourceFunction.SourceCont
 import org.apache.flink.test.util.MiniClusterWithClientResource
 import org.mockito.Mockito
 import org.mockito.Mockito.when
+import org.sunbird.dp.core.domain.EventsPath
 import org.sunbird.dp.core.job.FlinkKafkaConnector
 import org.sunbird.dp.fixture.EventFixture
 import org.sunbird.dp.validator.domain.Event
 import org.sunbird.dp.validator.task.{DruidValidatorConfig, DruidValidatorStreamTask}
 import org.sunbird.dp.{BaseMetricsReporter, BaseTestSpec}
 import redis.embedded.RedisServer
+
+import scala.collection.JavaConverters._
 
 
 class DruidValidatorStreamTaskTestSpec extends BaseTestSpec {
@@ -32,8 +35,6 @@ class DruidValidatorStreamTaskTestSpec extends BaseTestSpec {
       .build)
 
     var redisServer: RedisServer = _
-    // val config: Config = ConfigFactory.load("test.conf")
-    // val druidValidatorConfig: DruidValidatorConfig = new DruidValidatorConfig(config)
     var config: Config = _
     var druidValidatorConfig: DruidValidatorConfig = _
     val mockKafkaUtil: FlinkKafkaConnector = mock[FlinkKafkaConnector](Mockito.withSettings().serializable())
@@ -45,16 +46,6 @@ class DruidValidatorStreamTaskTestSpec extends BaseTestSpec {
         redisServer.start()
 
         BaseMetricsReporter.gaugeMetrics.clear()
-
-        /*
-        when(mockKafkaUtil.kafkaEventSource[Event](druidValidatorConfig.kafkaInputTopic)).thenReturn(new DruidValidatorEventSource)
-
-        when(mockKafkaUtil.kafkaEventSink[Event](druidValidatorConfig.kafkaDuplicateTopic)).thenReturn(new DupEventsSink)
-        when(mockKafkaUtil.kafkaEventSink[Event](druidValidatorConfig.kafkaTelemetryRouteTopic)).thenReturn(new TelemetryEventsSink)
-        when(mockKafkaUtil.kafkaEventSink[Event](druidValidatorConfig.kafkaSummaryRouteTopic)).thenReturn(new SummaryEventsSink)
-        when(mockKafkaUtil.kafkaEventSink[Event](druidValidatorConfig.kafkaFailedTopic)).thenReturn(new FailedEventsSink)
-        */
-
         flinkCluster.before()
     }
 
@@ -81,24 +72,27 @@ class DruidValidatorStreamTaskTestSpec extends BaseTestSpec {
 
         val task = new DruidValidatorStreamTask(druidValidatorConfig, mockKafkaUtil)
         task.process()
-        TelemetryEventsSink.values.size() should be (2)
+        TelemetryEventsSink.values.size() should be (3)
         SummaryEventsSink.values.size() should be (1)
         FailedEventsSink.values.size() should be (1)
         DupEventsSink.values.size() should be (1)
+
+        val invalidDialCodeKeyEvent = TelemetryEventsSink.values.asScala.filter(event => event.mid() === "invalid_dialcode_key").head
+        invalidDialCodeKeyEvent.getTelemetry.read(s"${EventsPath.EDTA_FILTERS}.dialCodes") should not be None
 
         DupEventsSink.values.get(0).getFlags.get("dv_duplicate").booleanValue() should be(true)
         
         FailedEventsSink.values.get(0).getFlags.get("dv_processed").booleanValue() should be(false)
         FailedEventsSink.values.get(0).getFlags.get("dv_validation_failed").booleanValue() should be(true)
         
-        BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.${druidValidatorConfig.validationSuccessMetricsCount}").getValue() should be (3)
+        BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.${druidValidatorConfig.validationSuccessMetricsCount}").getValue() should be (4)
         BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.${druidValidatorConfig.validationFailureMetricsCount}").getValue() should be (1)
 
         BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.duplicate-event-count").getValue() should be (1)
-        BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.unique-event-count").getValue() should be (4)
+        BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.unique-event-count").getValue() should be (5)
 
         BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.${druidValidatorConfig.summaryRouterMetricCount}").getValue() should be (1)
-        BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.${druidValidatorConfig.telemetryRouterMetricCount}").getValue() should be (2)
+        BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.${druidValidatorConfig.telemetryRouterMetricCount}").getValue() should be (3)
 
     }
 
@@ -122,7 +116,7 @@ class DruidValidatorStreamTaskTestSpec extends BaseTestSpec {
 
         val task = new DruidValidatorStreamTask(druidValidatorConfig, mockKafkaUtil)
         task.process()
-        TelemetryEventsSink.values.size() should be (4)
+        TelemetryEventsSink.values.size() should be (5)
         SummaryEventsSink.values.size() should be (1)
         FailedEventsSink.values.size() should be (0)
         DupEventsSink.values.size() should be (0)
@@ -134,7 +128,7 @@ class DruidValidatorStreamTaskTestSpec extends BaseTestSpec {
         BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.unique-event-count").getValue() should be (0)
 
         BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.${druidValidatorConfig.summaryRouterMetricCount}").getValue() should be (1)
-        BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.${druidValidatorConfig.telemetryRouterMetricCount}").getValue() should be (4)
+        BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.${druidValidatorConfig.telemetryRouterMetricCount}").getValue() should be (5)
 
     }
 
@@ -158,19 +152,22 @@ class DruidValidatorStreamTaskTestSpec extends BaseTestSpec {
 
         val task = new DruidValidatorStreamTask(druidValidatorConfig, mockKafkaUtil)
         task.process()
-        TelemetryEventsSink.values.size() should be (3)
+        TelemetryEventsSink.values.size() should be (4)
         SummaryEventsSink.values.size() should be (1)
         FailedEventsSink.values.size() should be (1)
         DupEventsSink.values.size() should be (0)
 
-        BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.${druidValidatorConfig.validationSuccessMetricsCount}").getValue() should be (4)
+        val invalidDialCodeKeyEvent = TelemetryEventsSink.values.asScala.filter(event => event.mid() === "invalid_dialcode_key").head
+        invalidDialCodeKeyEvent.getTelemetry.read(s"${EventsPath.EDTA_FILTERS}.dialCodes") should not be None
+
+        BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.${druidValidatorConfig.validationSuccessMetricsCount}").getValue() should be (5)
         BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.${druidValidatorConfig.validationFailureMetricsCount}").getValue() should be (1)
 
         BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.duplicate-event-count").getValue() should be (0)
         BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.unique-event-count").getValue() should be (0)
 
         BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.${druidValidatorConfig.summaryRouterMetricCount}").getValue() should be (1)
-        BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.${druidValidatorConfig.telemetryRouterMetricCount}").getValue() should be (3)
+        BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.${druidValidatorConfig.telemetryRouterMetricCount}").getValue() should be (4)
 
     }
 
@@ -194,7 +191,7 @@ class DruidValidatorStreamTaskTestSpec extends BaseTestSpec {
 
         val task = new DruidValidatorStreamTask(druidValidatorConfig, mockKafkaUtil)
         task.process()
-        TelemetryEventsSink.values.size() should be (3)
+        TelemetryEventsSink.values.size() should be (4)
         SummaryEventsSink.values.size() should be (1)
         FailedEventsSink.values.size() should be (0)
         DupEventsSink.values.size() should be (1)
@@ -203,10 +200,10 @@ class DruidValidatorStreamTaskTestSpec extends BaseTestSpec {
         BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.${druidValidatorConfig.validationFailureMetricsCount}").getValue() should be (0)
 
         BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.duplicate-event-count").getValue() should be (1)
-        BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.unique-event-count").getValue() should be (4)
+        BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.unique-event-count").getValue() should be (5)
 
         BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.${druidValidatorConfig.summaryRouterMetricCount}").getValue() should be (1)
-        BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.${druidValidatorConfig.telemetryRouterMetricCount}").getValue() should be (3)
+        BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.${druidValidatorConfig.telemetryRouterMetricCount}").getValue() should be (4)
 
     }
 
@@ -219,11 +216,13 @@ class DruidValidatorEventSource  extends SourceFunction[Event] {
         val event1 = gson.fromJson(EventFixture.VALID_DENORM_TELEMETRY_EVENT, new util.LinkedHashMap[String, Any]().getClass)
         val event2 = gson.fromJson(EventFixture.INVALID_DENORM_TELEMETRY_EVENT, new util.LinkedHashMap[String, Any]().getClass)
         val event3 = gson.fromJson(EventFixture.VALID_DENORM_SUMMARY_EVENT, new util.LinkedHashMap[String, Any]().getClass)
-        val event4 = gson.fromJson(EventFixture.VALID_SERACH_EVENT, new util.LinkedHashMap[String, Any]().getClass)
+        val event4 = gson.fromJson(EventFixture.VALID_SEARCH_EVENT, new util.LinkedHashMap[String, Any]().getClass)
+        val event5 = gson.fromJson(EventFixture.SEARCH_EVENT_WITH_INCORRECT_DIALCODES_KEY, new util.LinkedHashMap[String, Any]().getClass)
         ctx.collect(new Event(event1))
         ctx.collect(new Event(event2))
         ctx.collect(new Event(event3))
         ctx.collect(new Event(event4))
+        ctx.collect(new Event(event5))
         ctx.collect(new Event(event1))
     }
 

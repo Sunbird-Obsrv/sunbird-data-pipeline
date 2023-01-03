@@ -1,24 +1,58 @@
 ## Data products deployment ##
+- name: Ensure azure blob storage container exists
+  command: az storage container create --name {{ bucket }}
+  when: dp_object_store_type == "azure"
+  tags:
+    - always
+
 - name: Copy Core Data Products
   copy: src={{ analytics_batch_module_artifact }} dest={{ analytics.home }}/models-{{ model_version }}
   tags:
     - dataproducts
 
+- name: Copy Core Data Products to azure blob
+  command: az storage blob upload --overwrite -c {{ bucket }} --name models-{{ model_version }}/{{ analytics_batch_module_artifact }} -f {{ analytics.home }}/models-{{ model_version }}/{{ analytics_batch_module_artifact }}
+  async: 3600
+  poll: 10
+  tags:
+    - dataproducts-spark-cluster 
+
 - name: Unarchive Ed Data Products
   become: yes
   unarchive: src={{ playbook_dir}}/{{ analytics_ed_dataporducts_artifact }} dest={{ analytics.home }}/models-{{ model_version }} copy=yes group={{ analytics_group }} owner={{ analytics_user }}
   tags:
-    - ed-dataproducts    
+    - ed-dataproducts
+
+- name: Copy Ed Data Products to azure blob
+  command: az storage blob upload --overwrite -c {{ bucket }} --name models-{{ model_version }}/data-products-1.0.jar -f {{ analytics.home }}/models-{{ model_version }}/data-products-1.0/data-products-1.0.jar
+  async: 3600
+  poll: 10
+  tags:
+    - ed-dataproducts-spark-cluster      
 
 - name: Copy Framework Library
   copy: src={{ analytics_core_artifact }} dest={{ analytics.home }}/models-{{ model_version }}
   tags:
     - framework
 
+- name: Copy Framework Library to azure blob
+  command: az storage blob upload --overwrite --debug -c {{ bucket }} --name models-{{ model_version }}/{{ analytics_core_artifact }} -f {{ analytics.home }}/models-{{ model_version }}/{{ analytics_core_artifact }}
+  async: 3600
+  poll: 10
+  tags:
+    - framework-spark-cluster
+
 - name: Copy Scruid Library
   copy: src={{ scruid_artifact }} dest={{ analytics.home }}/models-{{ model_version }}
   tags:
     - framework  
+
+- name: Copy Scruid Library to azure blob
+  command: az storage blob upload --overwrite -c {{ bucket }} --name models-{{ model_version }}/{{ scruid_artifact }} -f {{ analytics.home }}/models-{{ model_version }}/{{ scruid_artifact }}
+  async: 3600
+  poll: 10
+  tags:
+    - framework-spark-cluster  
 
 - name: Copy Job Manager
   copy: src={{ analytics_job_manager_artifact }} dest={{ analytics.home }}/models-{{ model_version }}
@@ -31,6 +65,43 @@
     - dataproducts
     - ed-dataproducts
     - framework
+  when: dockdataproducts is undefined
+
+- name: Copy configuration file
+  template: src=common.conf.j2 dest={{ analytics.home }}/models-{{ model_version }}/dock-{{ env }}.conf mode=755 owner={{ analytics_user }} group={{ analytics_group }}
+  tags:
+    - dataproducts
+    - ed-dataproducts
+    - framework
+  when: dockdataproducts is defined
+
+- name: Copy configuration file as application.conf for cluster
+  template: src=common.conf.j2 dest={{ analytics.home }}/models-{{ model_version }}/application.conf mode=755 owner={{ analytics_user }} group={{ analytics_group }}
+  tags:
+    - framework-spark-cluster
+
+- name: Update spark temp dir value for cluster
+  lineinfile:
+    path: '{{ analytics.home }}/models-{{ model_version }}/application.conf'
+    regexp: '^spark_output_temp_dir="/mount/data/analytics/tmp/"'
+    line: 'spark_output_temp_dir="/var/log/sparkapp/tmp/"'
+  tags:
+    - framework-spark-cluster
+
+- name: Update logger kafka config for cluster
+  lineinfile:
+    path: '{{ analytics.home }}/models-{{ model_version }}/application.conf'
+    regexp: '^log.appender.kafka.enable="false"'
+    line: 'log.appender.kafka.enable="true"'
+  tags:
+    - framework-spark-cluster       
+
+- name: Copy configuration file to azure blob
+  command: az storage blob upload --overwrite -c {{ bucket }} -f {{ analytics.home }}/models-{{ model_version }}/application.conf --name models-{{ model_version }}/application.conf
+  async: 3600
+  poll: 10
+  tags:
+    - framework-spark-cluster    
 
 - name: Copy log4j2 xml file
   template: src=log4j2.xml.j2 dest={{ analytics.home }}/models-{{ model_version }}/log4j2.xml mode=755 owner={{ analytics_user }} group={{ analytics_group }}
@@ -40,6 +111,18 @@
   template: src={{ item }}.j2 dest={{ analytics.home }}/scripts/{{ item }}.sh mode=755 owner={{ analytics_user }} group={{ analytics_group }}
   with_items: "{{ analytics.scripts }}"
   tags: [ dataproducts, framework, ed-dataproducts ]
+  when: dockdataproducts is undefined
+
+- name: Copy python sanity check script file
+  template: src=exhaust_sanity_check.py.j2 dest={{ analytics.home }}/scripts/exhaust_sanity_check.py
+  tags: [ dataproducts, framework, ed-dataproducts ]
+  when: dockdataproducts is undefined
+
+- name: Copy Dock Scripts
+  template: src={{ item }}.j2 dest={{ analytics.home }}/scripts/{{ item }}.sh mode=755 owner={{ analytics_user }} group={{ analytics_group }}
+  with_items: "{{ analytics.dockScripts }}"
+  tags: [ dataproducts, framework, ed-dataproducts ]
+  when: dockdataproducts is defined
 
 - name: Update model config
   template: src=model-config.j2 dest={{ analytics.home }}/scripts/model-config.sh mode=755 owner={{ analytics_user }} group={{ analytics_group }}
@@ -47,6 +130,15 @@
     - dataproducts
     - update-config
     - ed-dataproducts
+  when: dockdataproducts is undefined
+
+- name: Update model dock config
+  template: src=model-dock-config.j2 dest={{ analytics.home }}/scripts/model-dock-config.sh mode=755 owner={{ analytics_user }} group={{ analytics_group }}
+  tags:
+    - dataproducts
+    - update-config
+    - ed-dataproducts
+  when: dockdataproducts is defined
 
 - name: Copy submit-all-jobs ruby file
   template: src=submit-all-jobs.rb.j2 dest={{ analytics.home }}/scripts/submit-all-jobs.rb mode=755 owner={{ analytics_user }} group={{ analytics_group }}
@@ -99,28 +191,12 @@
     - spark-jobs
     - cronjobs
 
-- name: Create video-streaming cron job
-  cron: name="{{env}}-video-streaming" minute=*/{{ video_stream_job_schedule }} job="{{ analytics.home }}/scripts/run-job.sh video-streaming"
-  tags:
-    - default-jobs
-    - spark-jobs
-    - cronjobs
-
-- name: Create course-dashboard-metrics cron job
-  cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }}  job="{{ analytics.home }}/scripts/run-job.sh course-dashboard-metrics"
-  with_dict: "{{ run_course_metrics_job }}"
+- name: Create course-batch-status-updater cron job
+  cron: name="{{env}}-course-batch-status-updater" minute=*/{{ course_batch_status_updater_job_schedule }} job="{{ analytics.home }}/scripts/run-job.sh course-batch-status-updater"
   tags:
     - cronjobs
     - default-jobs
     - spark1-jobs
-
-- name: Create assessment-dashboard-metrics cron job
-  cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }}  job="{{ analytics.home }}/scripts/run-job.sh assessment-dashboard-metrics"
-  with_dict: "{{ run_assessment_metrics_job }}"
-  tags:
-    - cronjobs
-    - default-jobs
-    - spark-jobs
 
 - name: Create admin-user-reports cron job
   cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }}  job="{{ analytics.home }}/scripts/run-job.sh admin-user-reports"
@@ -129,7 +205,6 @@
     - cronjobs 
     - default-jobs
     - spark-jobs
-    
 - name: Create admin-geo-reports cron job
   cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }}  job="{{ analytics.home }}/scripts/run-job.sh admin-geo-reports"
   with_dict: "{{ run_admin_geo_reports_job }}"
@@ -154,24 +229,213 @@
     - default-jobs
     - spark-jobs
 
-#- name: Create district-weekly cron job
-#  cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }} weekday={{ item.value.weekday }}  job="{{ analytics.home }}/scripts/run-job.sh district-weekly"
-#  with_dict: "{{ run_district_weekly_job }}"
-#  tags:
-#    - cronjobs
-#    - default-jobs
-#    - ed-dataproducts
+- name: Create progress-exhaust cron job
+  cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }}  job="{{ analytics.home }}/scripts/run-job.sh progress-exhaust"
+  with_dict: "{{ run_progress_exhaust }}"
+  tags:
+    - cronjobs
+    - default-jobs
+    - spark1-jobs
 
-#- name: Create district-monthly cron job
-#  cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }} month={{ item.value.month }} day={{ item.value.day }}  job="{{ analytics.home }}/scripts/run-job.sh district-monthly"
-#  with_dict: "{{ run_district_monthly_job }}"
-#  tags:
-#    - cronjobs
-#    - default-jobs
-#    - ed-dataproducts
+- name: Create response-exhaust cron job
+  cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }}  job="{{ analytics.home }}/scripts/run-job.sh response-exhaust"
+  with_dict: "{{ run_response_exhaust }}"
+  tags:
+    - cronjobs
+    - default-jobs
+    - spark-jobs
+
+- name: Create cassandra-migration cron job
+  cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }}  job="{{ analytics.home }}/scripts/run-job.sh cassandra-migration"
+  with_dict: "{{ run_cassandra_migration }}"
+  tags:
+    - cronjobs
+    - default-jobs
+    - spark-jobs
+    
+
+- name: Create userinfo-exhaust cron job
+  cron: name="{{ env }}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }} job="{{ analytics.home }}/scripts/run-job.sh userinfo-exhaust"
+  with_dict: "{{ run_userinfo_exhaust }}"
+  tags:
+    - cronjobs
+    - default-jobs
+    - spark-jobs
+
+- name: Create collection-summary cron job
+  cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }}  job="{{ analytics.home }}/scripts/run-job.sh collection-summary-report"
+  with_dict: "{{ run_collection_summary }}"
+  tags:
+    - cronjobs
+    - default-jobs
+    - spark-jobs
+
+- name: Copy collection-summary ingestion spec
+  copy: src="collection-summary-ingestion-spec.json" dest={{ analytics.home }}/scripts/ mode=755 owner={{ analytics_user }} group={{ analytics_group }}
+  tags:
+    - ed-dataproducts
+
+- name: Create sourcing-summary cron job
+  cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }}  job="{{ analytics.home }}/scripts/run-dock-job.sh sourcing-summary-report"
+  with_dict: "{{ run_sourcing_summary }}"
+  tags:
+    - cronjobs
+    - default-jobs
+    - spark-jobs
+
+- name: Create uci-private-exhaust cron job
+  cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }}  job="{{ analytics.home }}/scripts/run-job.sh uci-private-exhaust"
+  with_dict: "{{ run_uci_private_exhaust_job }}"
+  tags:
+    - cronjobs
+    - default-jobs
+    - spark-jobs
+
+- name: Create uci-response-exhaust cron job
+  cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }}  job="{{ analytics.home }}/scripts/run-job.sh uci-response-exhaust"
+  with_dict: "{{ run_uci_response_exhaust_job }}"
+  tags:
+    - cronjobs
+    - default-jobs
+    - spark-jobs 
+
+- name: Copy sourcing-summary ingestion spec
+  copy: src="sourcing-ingestion-spec.json" dest={{ analytics.home }}/scripts/ mode=755 owner={{ analytics_user }} group={{ analytics_group }}
+  tags:
+    - ed-dataproducts
 
 - name: Update start jobmanager
   template: src=start-jobmanager.j2 dest={{ analytics.home }}/scripts/start-jobmanager.sh mode=755 owner={{ analytics_user }} group={{ analytics_group }}
   tags:
     - update-jobmanager-config
     - dataproducts
+
+# Cluster job sumbit tasks
+- name: Copy cluster-config.json file
+  template: src=cluster-config.json.j2 dest={{ analytics_cluster.home }}/cluster-config.json
+  delegate_to: localhost
+  tags:
+    - replay-job
+    - run-job
+    - config-update
+
+- name: Copy submit-script.sh file
+  template: src=submit-script.j2 dest={{ analytics_cluster.home }}/submit-script.sh mode=755
+  delegate_to: localhost
+  tags:
+    - replay-job
+    - run-job
+    - config-update
+
+- name: Copy model-config.sh file
+  template: src=model-config.j2 dest={{ analytics_cluster.home }}/model-config.sh
+  delegate_to: localhost  
+  tags:
+    - replay-job
+    - run-job
+    - config-update
+
+- name: Replay Job
+  shell: "nohup {{ analytics_cluster.home }}/submit-script.sh --job {{ job_id }} --mode {{ mode }} --partitions {{ partitions }} --parallelisation {{ parallelisation }} --startDate {{ start_date }} --endDate {{ end_date }} --sparkMaster {{ sparkMaster }} --selectedPartitions {{ selected_partitions }} &"
+  async: "{{ (pause_min * 60) }}"
+  poll: 0
+  tags:
+    - replay-job 
+
+- name: Run Job
+  shell: "nohup {{ analytics_cluster.home }}/submit-script.sh --job {{ job_id }} --mode {{ mode }} --partitions {{ partitions }} --parallelisation {{ parallelisation }} --sparkMaster {{ sparkMaster }} --selectedPartitions {{ selected_partitions }} --batch_id {{ batch_id }} &"
+  async: "{{ (pause_min * 60) }}"
+  poll: 0
+  tags:
+    - run-job
+
+- name: Submit jobs
+  shell: "nohup {{ analytics_cluster.home }}/submit-script.sh --job {{ item }} --mode default --sparkMaster yarn &"
+  with_items: "{{ jobs.split(',')|list }}"
+  tags:
+    - job-submit
+
+# Cluster exhaust parallel jobs sumbit tasks
+
+- name: Install required python packages
+  pip:
+    name:
+      - psycopg2-binary
+      - pandas
+      - IPython
+  tags:
+    - parallel-jobs-submit  
+
+- name: Copy python script file
+  template: src=update-job-requests.py.j2 dest={{ analytics_cluster.home }}/update-job-requests.py
+  delegate_to: localhost  
+  tags:
+    - parallel-jobs-submit
+
+- name: Execute python script to populate batch numbers
+  shell: |
+    if echo "{{jobs}}" | grep 'druid'
+    then
+     python {{ analytics_cluster.home }}/update-job-requests.py {{ jobs }} {{ batch_size }} druid {{env}}_report_config
+    elif echo "{{jobs}}" | grep 'exhaust'
+     then
+     python {{ analytics_cluster.home }}/update-job-requests.py {{ jobs }} {{ batch_size }} exhaust {{env}}_job_request
+    fi
+  tags:
+    - parallel-jobs-submit
+  register: jobsCountStr
+
+
+- debug:
+    var: jobsCountStr
+  tags:
+    - parallel-jobs-submit  
+
+- name: Get stdout with parallelisation value from python script to tmp file
+  shell: echo "{{ jobsCountStr.stdout }}" > /tmp/test.txt
+  tags:
+    - parallel-jobs-submit
+
+- name: Extract parallelisation value from tmp file
+  shell: "cat /tmp/test.txt | tr '\n' ' ' | awk -F': ' '{print $NF}'"
+  register: jobsCountOut
+  tags:
+    - parallel-jobs-submit
+
+- debug:
+    var: jobsCountOut
+  tags:
+    - parallel-jobs-submit
+
+# set jobs count variable from python script output
+- set_fact:
+    jobs_count: "{{ jobsCountOut.stdout }}"
+  tags:
+    - parallel-jobs-submit  
+
+- name: Submit parallel exhaust jobs
+  shell: "nohup {{ analytics_cluster.home }}/submit-script.sh --job {{ jobs }} --mode parallel-jobs --parallelisation {{ jobs_count }} &"
+  poll: 30
+  tags:
+    - parallel-jobs-submit 
+  register: submitOutput
+
+- debug:
+    var: submitOutput 
+  tags:
+    - parallel-jobs-submit      
+
+# Execute Exhaust job sanity check script tasks
+
+- name: Install required python packages
+  pip:
+    name:
+      - requests
+  tags:
+    - run-sanity    
+
+- name: Run sanity check python script
+  shell: python {{ analytics.home }}/scripts/exhaust_sanity_check.py
+  tags:
+    - run-sanity
+  register: SanityCheckStatus

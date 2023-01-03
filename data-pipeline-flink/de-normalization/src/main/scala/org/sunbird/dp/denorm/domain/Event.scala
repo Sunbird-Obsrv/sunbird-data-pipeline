@@ -5,9 +5,11 @@ import java.util
 import org.joda.time.{DateTime, DateTimeZone}
 import org.joda.time.format.{DateTimeFormat, DateTimeFormatter}
 import org.sunbird.dp.core.domain.{Events, EventsPath}
+import org.sunbird.dp.denorm.task.DenormalizationConfig
 
 import scala.collection.JavaConverters._
 import scala.collection.mutable.Map
+import scala.collection.mutable
 
 class Event(eventMap: util.Map[String, Any]) extends Events(eventMap) {
 
@@ -93,17 +95,22 @@ class Event(eventMap: util.Map[String, Any]) extends Events(eventMap) {
     telemetry.read[String](keyPath = EventsPath.OBJECT_ROLLUP_L1).orNull
   }
 
-  def objectRollUpl1FieldsPresent(): Boolean = {
+  def objectRollUpl2ID(): String = {
+    telemetry.read[String](keyPath = EventsPath.OBJECT_ROLLUP_L2).orNull
+  }
 
-    val objectrollUpl1 = telemetry.read[String](keyPath = EventsPath.OBJECT_ROLLUP_L1).orNull
+  def objectRollUpFieldsPresent(path: String): Boolean = {
+
+    val objectrollUpl1 = telemetry.read[String](keyPath = path).orNull
     null != objectrollUpl1 && !objectrollUpl1.isEmpty
   }
 
-  def checkObjectIdNotEqualsRollUpl1Id(): Boolean = {
-    objectRollUpl1FieldsPresent() && !objectID().equals(objectRollUpl1ID())
+  def checkObjectIdNotEqualsRollUpId(path: String): Boolean = {
+    objectRollUpFieldsPresent(path) && !objectID().equals(objectRollUpl1ID())
   }
 
-  def addUserData(newData: Map[String, AnyRef]) {
+  // def addUserData(newData: Map[String, String]) {
+  def addUserData(newData: mutable.Map[String, AnyRef]) {
     val userdata: util.Map[String, AnyRef] = telemetry.read(EventsPath.USERDATA_PATH).getOrElse(new util.HashMap[String, AnyRef]())
     userdata.putAll(newData.asJava)
     telemetry.add(EventsPath.USERDATA_PATH, userdata)
@@ -128,6 +135,14 @@ class Event(eventMap: util.Map[String, Any]) extends Events(eventMap) {
     telemetry.add(EventsPath.COLLECTION_PATH, collectionMap)
     setFlag("coll_denorm", true)
   }
+
+  def addL2Data(newData: Map[String, AnyRef]) {
+    val l2Map = new util.HashMap[String, AnyRef]()
+    l2Map.putAll(newData.asJava)
+    telemetry.add(EventsPath.L2_DATA_PATH, l2Map)
+    setFlag("l2_denorm", true)
+  }
+
 
   def getEpochConvertedContentDataMap(data: Map[String, AnyRef]): Map[String, AnyRef] = {
 
@@ -196,6 +211,10 @@ class Event(eventMap: util.Map[String, Any]) extends Events(eventMap) {
     if (statecode != null && !statecode.isEmpty) {
       "IN-" + statecode
     } else ""
+  }
+
+  def isValidEventForContentDenorm(config: DenormalizationConfig, objectId: String, objectType: String, eid: String): Boolean = {
+    (null != objectType && (config.permitEid.contains(eid) || !List("user", "qr", "dialcode").contains(objectType.toLowerCase())) && null != objectId)
   }
 
 }

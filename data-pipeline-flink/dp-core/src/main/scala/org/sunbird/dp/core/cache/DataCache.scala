@@ -1,7 +1,6 @@
 package org.sunbird.dp.core.cache
 
 import java.util
-
 import com.google.gson.Gson
 import org.slf4j.LoggerFactory
 import org.sunbird.dp.core.job.BaseJobConfig
@@ -9,7 +8,9 @@ import redis.clients.jedis.Jedis
 import redis.clients.jedis.exceptions.{JedisConnectionException, JedisException}
 
 import scala.collection.JavaConverters._
+import scala.collection.mutable
 import scala.collection.mutable.Map
+import scala.collection.immutable
 
 class DataCache(val config: BaseJobConfig, val redisConnect: RedisConnect, val dbIndex: Int, val fields: List[String]) {
 
@@ -25,31 +26,56 @@ class DataCache(val config: BaseJobConfig, val redisConnect: RedisConnect, val d
     this.redisConnection.close()
   }
 
-  def hgetAllWithRetry(key: String): Map[String, String] = {
+  def hgetAllWithRetry(key: String): mutable.Map[String, AnyRef] = {
     try {
-      hgetAll(key)
+      convertToComplexDataTypes(hgetAll(key))
     } catch {
       case ex: JedisException =>
         logger.error("Exception when retrieving data from redis cache", ex)
         this.redisConnection.close()
         this.redisConnection = redisConnect.getConnection(dbIndex)
-        hgetAll(key)
+        convertToComplexDataTypes(hgetAll(key))
     }
-
   }
 
-  private def hgetAll(key: String): Map[String, String] = {
+  def isArray(value: String): Boolean = {
+    val redisValue = value.trim
+    redisValue.length > 0 && redisValue.startsWith("[")
+  }
+
+   def isObject(value: String) = {
+     val redisValue = value.trim
+     redisValue.length > 0 && redisValue.startsWith("{")
+   }
+
+  def convertToComplexDataTypes(data: mutable.Map[String, String]): mutable.Map[String, AnyRef] = {
+    val result = mutable.Map[String, AnyRef]()
+    data.keys.map {
+      redisKey =>
+        val redisValue = data(redisKey)
+        if(isArray(redisValue)) {
+          result += redisKey -> gson.fromJson(redisValue, new util.ArrayList[AnyRef]().getClass)
+        } else if (isObject(redisValue)) {
+          result += redisKey -> gson.fromJson(redisValue, new util.HashMap[String, AnyRef]().getClass)
+        } else {
+          result += redisKey -> redisValue
+        }
+    }
+    result
+  }
+
+  private def hgetAll(key: String): mutable.Map[String, String] = {
     val dataMap = redisConnection.hgetAll(key)
     if (dataMap.size() > 0) {
       if(fields.nonEmpty) dataMap.keySet().retainAll(fields.asJava)
       dataMap.values().removeAll(util.Collections.singleton(""))
       dataMap.asScala
     } else {
-      Map[String, String]()
+      mutable.Map[String, String]()
     }
   }
 
-  def getWithRetry(key: String): Map[String, AnyRef] = {
+  def getWithRetry(key: String): mutable.Map[String, AnyRef] = {
     try {
       get(key)
     } catch {
@@ -62,15 +88,15 @@ class DataCache(val config: BaseJobConfig, val redisConnect: RedisConnect, val d
 
   }
 
-  private def get(key: String): Map[String, AnyRef] = {
+  private def get(key: String): mutable.Map[String, AnyRef] = {
     val data = redisConnection.get(key)
-    if (data != null && !data.isEmpty()) {
+    if (data != null && !data.isEmpty) {
       val dataMap = gson.fromJson(data, new util.HashMap[String, AnyRef]().getClass)
       if(fields.nonEmpty) dataMap.keySet().retainAll(fields.asJava)
       dataMap.values().removeAll(util.Collections.singleton(""))
       dataMap.asScala
     } else {
-      Map[String, AnyRef]()
+      mutable.Map[String, AnyRef]()
     }
   }
 
@@ -114,6 +140,54 @@ class DataCache(val config: BaseJobConfig, val redisConnect: RedisConnect, val d
 
   def set(key: String, value: String): Unit = {
     redisConnection.set(key, value)
+  }
+
+  def sMembers(key: String): util.Set[String] = {
+    redisConnection.smembers(key)
+  }
+  def getKeyMembers(key: String): util.Set[String] = {
+    try {
+      sMembers(key)
+    } catch {
+      case ex: JedisException =>
+        logger.error("Exception when retrieving data from redis cache", ex)
+        this.redisConnection.close()
+        this.redisConnection = redisConnect.getConnection(dbIndex)
+        sMembers(key)
+    }
+  }
+
+  def hdel(key: String, fieldSeq: Seq[String]): Unit = {
+    this.redisConnection.hdel(key, fieldSeq: _*)
+  }
+
+  def hdelWithRetry(key: String, fieldSeq: Seq[String]): Unit = {
+    try {
+      hdel(key, fieldSeq)
+    } catch {
+      case ex: JedisException =>
+        logger.error("Exception when deleting fields in hash", ex)
+        this.redisConnection.close()
+        this.redisConnection = redisConnect.getConnection(dbIndex)
+        hdel(key, fieldSeq)
+    }
+  }
+
+  def hIncBy(key: String, field: String, value: Long): Unit = {
+    this.redisConnection.hincrBy(key, field, value)
+  }
+
+  def hIncByWithRetry(key: String, field: String, value: Long): Unit = {
+    try {
+      hIncBy(key, field, value)
+    } catch {
+      case ex: JedisException => {
+        logger.error(s"Exception while incrementing count key=${key}, field=${field}, value=${value}", ex)
+        this.redisConnection.close()
+        this.redisConnection = redisConnect.getConnection(dbIndex)
+        hIncBy(key, field, value)
+      }
+    }
   }
 
 }

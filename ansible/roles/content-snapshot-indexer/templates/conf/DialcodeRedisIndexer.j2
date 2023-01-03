@@ -1,6 +1,6 @@
 # redis
 redis.host="{{ redis.host }}"
-redis.port="{{ redis.port }}"
+redis.port="{{ dialcode_port }}"
 redis.connection.max={{ redis.connection.max }}
 redis.connection.idle.max={{ redis.connection.idle_max }}
 redis.connection.idle.min={{ redis.connection.idle_min }}
@@ -10,7 +10,7 @@ redis.max.pipeline.size="{{ redis.max_pipeline_size }}"
 
 redis.dialcode.database.index=6
 
-cloudStorage.accountName="{{ azure_storage_account }}"
-cloudStorage.accountKey="{{ azure_storage_secret }}"
-cloudStorage.container="{{ bucket }}"
+cloudStorage.accountName="{{sunbird_private_storage_account_name}}"
+cloudStorage.accountKey="{{sunbird_private_storage_account_key}}"
+cloudStorage.container="{{ bucket | default('telemetry-data-store') }}"
 cloudStorage.dialCodeDataFile="dialcode-data/dial_code.csv"

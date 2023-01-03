@@ -1,10 +1,16 @@
 #!/usr/bin/env bash
 
-echo "Executing the script $1"
+#$1 script_to_run: It can be USER_CACHE_INDEXER, DRUID_CONTENT_INDEXER etc,.
+#$2 identifier: userid- Especially for UserCache indexer script to cache specific user id details
+#$3 date: YYYY-MM-DD- Especially for UserCache indexer script to cache all the user data from this specific updated date.
+#$4 populate_anonymous_user: true/false - Especially for UserCacheIndexer to read anonymous user's data
+#$5 refresh_user_data: true/false - Especially for UserCacheIndexer to refresh user's data of redis
+
+echo "Executing the script $1 $2 $3 $4 $5"
 case "$1" in
    "USER_CACHE_INDEXER") 
       echo "Invoked RedisUserDataIndexer"
-      nohup {{ content_snapshot_path }}/scripts/RedisUserDataIndexer.sh & 
+      nohup {{ content_snapshot_path }}/scripts/RedisUserDataIndexer.sh $2 $3 $4 $5 &
    ;;
    "DRUID_CONTENT_INDEXER")
       echo "Invoked DruidContentIndexer"

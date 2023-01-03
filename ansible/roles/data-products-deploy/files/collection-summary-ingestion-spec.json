@@ -1,0 +1,251 @@
+{
+  "type": "index",
+  "spec": {
+    "dataSchema": {
+      "dataSource": "collection-summary-snapshot",
+      "parser": {
+        "type": "string",
+        "parseSpec": {
+          "format": "json",
+          "flattenSpec": {
+            "useFieldDiscovery": false,
+            "fields": [
+              {
+                "type": "root",
+                "name": "content_org",
+                "expr": "contentorg"
+              },
+              {
+                "type": "root",
+                "name": "user_org",
+                "expr": "orgname"
+              },
+              {
+                "type": "root",
+                "name": "batch_start_date",
+                "expr": "startdate"
+              },
+              {
+                "type": "root",
+                "name": "batch_end_date",
+                "expr": "enddate"
+              },
+              {
+                "type": "root",
+                "name": "has_certificate",
+                "expr": "hascertified"
+              },
+              {
+                "type": "root",
+                "name": "collection_id",
+                "expr": "courseid"
+              },
+              {
+                "type": "root",
+                "name": "batch_id",
+                "expr": "batchid"
+              },
+              {
+                "type": "root",
+                "name": "collection_name",
+                "expr": "collectionname"
+              },
+              {
+                "type": "root",
+                "name": "batch_name",
+                "expr": "batchname"
+              },
+              {
+                "type": "root",
+                "name": "total_enrolment",
+                "expr": "enrolleduserscount"
+              },
+              {
+                "type": "root",
+                "name": "total_completion",
+                "expr": "completionuserscount"
+              },
+              {
+                "type": "root",
+                "name": "total_certificates_issued",
+                "expr": "certificateissuedcount"
+              },
+              {
+                "type": "root",
+                "name": "content_status",
+                "expr": "contentstatus"
+              },
+              {
+                "type": "root",
+                "name": "user_state",
+                "expr": "state"
+              },
+              {
+                "type": "root",
+                "name": "user_district",
+                "expr": "district"
+              },
+              {
+                "type": "root",
+                "name": "content_channel",
+                "expr": "channel"
+              },
+              {
+                "type": "root",
+                "name": "keywords",
+                "expr": "keywords"
+              },
+              {
+                "type": "root",
+                "name": "timestamp",
+                "expr": "timestamp"
+              },
+              {
+                "type": "root",
+                "name": "medium",
+                "expr": "medium"
+              },
+              {
+                "type": "root",
+                "name": "subject",
+                "expr": "subject"
+              },
+              {
+                "type": "root",
+                "name": "created_for",
+                "expr": "createdfor"
+              },
+              {
+                "type": "root",
+                "name": "user_type",
+                "expr": "usertype"
+              },
+              {
+                "type": "root",
+                "name": "user_subtype",
+                "expr": "usersubtype"
+              }
+            ]
+          },
+          "dimensionsSpec": {
+            "dimensions": [
+              {
+                "name": "content_org"
+              },
+              {
+                "name": "user_org"
+              },
+              {
+                "type": "string",
+                "name": "batch_id"
+              },
+              {
+                "type": "string",
+                "name": "batch_start_date"
+              },
+              {
+                "type": "string",
+                "name": "batch_end_date"
+              },
+              {
+                "type": "string",
+                "name": "collection_id"
+              },
+              {
+                "type": "string",
+                "name": "collection_name"
+              },
+              {
+                "type": "string",
+                "name": "batch_name"
+              },
+              {
+                "type": "long",
+                "name": "total_enrolment"
+              },
+              {
+                "type": "long",
+                "name": "total_completion"
+              },
+              {
+                "type": "long",
+                "name": "total_certificates_issued"
+              },
+              {
+                "type": "string",
+                "name": "content_status"
+              },
+              {
+                "type": "string",
+                "name": "user_state"
+              },
+              {
+                "type": "string",
+                "name": "user_district"
+              },
+              {
+                "name": "keywords"
+              },
+              {
+                "name": "has_certificate"
+              },
+              {
+                "type": "string",
+                "name": "content_channel"
+              },
+              {
+                "name": "medium"
+              },
+              {
+                "name": "subject"
+              },
+              {
+                "name": "created_for"
+              },
+              {
+                "type": "string",
+                "name": "user_type"
+              },
+              {
+                "type": "string",
+                "name": "user_subtype"
+              }
+            ],
+            "dimensionsExclusions": []
+          },
+          "timestampSpec": {
+            "column": "timestamp",
+            "format": "auto"
+          }
+        }
+      },
+      "metricsSpec": [],
+      "granularitySpec": {
+        "type": "uniform",
+        "segmentGranularity": "day",
+        "queryGranularity": "none",
+        "rollup": true
+      }
+    },
+    "ioConfig": {
+      "type": "index",
+      "firehose": {
+        "type": "static-azure-blobstore",
+        "blobs": [
+          {
+            "container": "reports",
+            "path": "/collection-summary-reports-v2/collection-summary-report-latest.json"
+          }
+        ],
+        "fetchTimeout": 300000
+      }
+    },
+    "tuningConfig": {
+      "type": "index",
+      "targetPartitionSize": 5000000,
+      "maxRowsInMemory": 25000,
+      "forceExtendableShardSpecs": false,
+      "logParseExceptions": true
+    }
+  }
+}

@@ -16,6 +16,29 @@
         groups: sudo
         shell: /bin/bash
   roles:
+    - redis-multiprocess
+  serial: 1
+  tags:
+    - metadata_redis  # this tag installs multiple redis process in single server
+
+- hosts: redis
+  become: yes
+  vars_files:
+    - "{{inventory_dir}}/secrets.yml"
+  pre_tasks:
+    - name: Create group
+      group:
+        name: analytics
+        state: present
+    - name: Create user
+      user:
+        name: analytics
+        comment: "analytics"
+        group: analytics
+        groups: sudo
+        shell: /bin/bash
+  roles:
     - redis
   serial: 1
-
+  tags: 
+    - single_redis_process # this tags installs single redis process.

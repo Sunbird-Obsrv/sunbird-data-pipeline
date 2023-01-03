@@ -123,4 +123,38 @@ object EventFixtures {
       |{"ver":"3.0","ets":1577278681178,"actor":{"type":"User","id":"7c3ea1bb-4da1-48d0-9cc0-c4f150554149"},"context":{"channel":"505c7c48ac6dc1edc9b08f21db5a571d","pdata":{"id":"prod.sunbird.desktop","pid":"sunbird.app","ver":"2.3.162"},"env":"app","sid":"82e41d87-e33f-4269-aeae-d56394985599","did":"1b17c32bad61eb9e33df281eecc727590d739b2b"},"edata":{"dir":"In","type":"File","items":[{"origin":{"id":"1b17c32bad61eb9e33df281eecc727590d739b2b","type":"Device"},"id":"do_312785709424099328114191","type":"CONTENT","ver":"1","params":[{"transfers":0,"size":21084308}]},{"origin":{"id":"1b17c32bad61eb9e33df281eecc727590d739b2b","type":"Device"},"id":"do_31277435209002188818711","type":"CONTENT","ver":"18","params":[{"transfers":12,"size":"123"}]},{"origin":{"id":"1b17c32bad61eb9e33df281eecc727590d739b2b","type":"Device"},"id":"do_31278794857559654411554","type":"TextBook","ver":"1"}]},"object":{"id":"do_312528116260749312248818","type":"TextBook","version":"10","rollup":{}},"mid":"02ba33e5-15fe-4ec5-b32.1084308E760-3d03429fae84","syncts":1577278682630,"@timestamp":"2019-12-25T12:58:02.630Z","type":"events"}
       |""".stripMargin
 
+  // Invalid SUMMARY event with edata.extra.[].value datatype mismatch
+  val EVENT_13 =
+    """
+      |{"eid":"SUMMARY","ets":1625043400402,"ver":"3.0","mid":"SUMMARY:a3e517153c4ba392297e70521aa5e17a","actor":{"id":"70e496fe83dee324009a847ea222bc5c","type":"User"},"context":{"channel":"01268904781886259221","pdata":{"id":"staging.sunbird.portal","ver":"4.1.0","pid":"sunbird-portal"},"env":"contentplayer","sid":"73d82044-8ea5-dffc-1af5-6cdf2a1fa1da","did":"70e496fe83dee324009a847ea222bc5c","cdata":[{"id":"kubXMwcsJK2JANa0PeYc00GK5CSXoS1q","type":"ContentSession"},{"id":"xcFG0rntKUGltu2m8zJh7ZqattT9u3Ix","type":"PlaySession"},{"id":"2.0","type":"PlayerVersion"}],"rollup":{"l1":"01268904781886259221"},"uid":"anonymous"},"object":{"id":"do_213302422998196224166","ver":"1","type":"Content","rollup":{}},"tags":["01268904781886259221"],"edata":{"type":"content","mode":"play","starttime":1625043385301,"endtime":1625043401236,"timespent":16,"pageviews":2,"interactions":2,"extra":[{"id":"progress","value":100},{"id":"endpageseen","value":true},{"id":"score","value":2},{"id":"correct","value":2},{"id":"incorrect","value":0},{"id":"partial","value":0},{"id":"skipped","value":0}]}}
+      |
+      |""".stripMargin
+
+  // Invalid SUMMARY event with edata.timespent datatype mismatch
+  val EVENT_14 =
+    """
+      |{"eid":"SUMMARY","ets":1625043400402,"ver":"3.0","mid":"SUMMARY:a3e517153c4ba392297e70521aa5e17a","actor":{"id":"70e496fe83dee324009a847ea222bc5c","type":"User"},"context":{"channel":"01268904781886259221","pdata":{"id":"staging.sunbird.portal","ver":"4.1.0","pid":"sunbird-portal"},"env":"contentplayer","sid":"73d82044-8ea5-dffc-1af5-6cdf2a1fa1da","did":"70e496fe83dee324009a847ea222bc5c","cdata":[{"id":"kubXMwcsJK2JANa0PeYc00GK5CSXoS1q","type":"ContentSession"},{"id":"xcFG0rntKUGltu2m8zJh7ZqattT9u3Ix","type":"PlaySession"},{"id":"2.0","type":"PlayerVersion"}],"rollup":{"l1":"01268904781886259221"},"uid":"anonymous"},"object":{"id":"do_213302422998196224166","ver":"1","type":"Content","rollup":{}},"tags":["01268904781886259221"],"edata":{"type":"content","mode":"play","starttime":1625043385301,"endtime":1625043401236,"timespent":"0:16","pageviews":2,"interactions":2,"extra":[{"id":"progress","value":"100"},{"id":"endpageseen","value":"true"},{"id":"score","value":"2"},{"id":"correct","value":"2"},{"id":"incorrect","value":"0"},{"id":"partial","value":"0"},{"id":"skipped","value":"0"}]}}
+      |
+      |""".stripMargin
+
+  // Valid SUMMARY event
+  val EVENT_15 =
+    """
+      |{"eid":"SUMMARY","ets":1625043400402,"ver":"3.0","mid":"SUMMARY:a3e517153c4ba392297e70521aa5e17a","actor":{"id":"70e496fe83dee324009a847ea222bc5c","type":"User"},"context":{"channel":"01268904781886259221","pdata":{"id":"staging.sunbird.portal","ver":"4.1.0","pid":"sunbird-portal"},"env":"contentplayer","sid":"73d82044-8ea5-dffc-1af5-6cdf2a1fa1da","did":"70e496fe83dee324009a847ea222bc5c","cdata":[{"id":"kubXMwcsJK2JANa0PeYc00GK5CSXoS1q","type":"ContentSession"},{"id":"xcFG0rntKUGltu2m8zJh7ZqattT9u3Ix","type":"PlaySession"},{"id":"2.0","type":"PlayerVersion"}],"rollup":{"l1":"01268904781886259221"},"uid":"anonymous"},"object":{"id":"do_213302422998196224166","ver":"1","type":"Content","rollup":{}},"tags":["01268904781886259221"],"edata":{"type":"content","mode":"play","starttime":1625043385301,"endtime":1625043401236,"timespent":16,"pageviews":2,"interactions":2,"extra":[{"id":"progress","value":"100"},{"id":"endpageseen","value":"true"},{"id":"score","value":"2"},{"id":"correct","value":"2"},{"id":"incorrect","value":"0"},{"id":"partial","value":"0"},{"id":"skipped","value":"0"}]}}
+      |
+      |""".stripMargin
+
+  // Invalid METRICS event with edata.subsystem missing
+  val EVENT_16 =
+    """
+      |{"@timestamp":"2021-05-09T06:53:58.317Z","actor":{"id":"5e78cb4a62f5c60d3a007ff366c740727afa2aec42f9e63e26fb1a879b87513b","type":"User"},"context":{"cdata":[],"did":"5e78cb4a62f5c60d3a007ff366c740727afa2aec42f9e63e26fb1a879b87513b","channel":"desktop","env":"DesktopApp","pdata":{"id":"desktop,app","pid":"desktop.app","ver":"1.0"},"sid":"0e2dcdd2-e81c-4e9c-9c43-b41a6fdd6c48"},"edata":{"metrics":[{"metric":"minApiTime","value":0.002482144},{"metric":"maxApiTime","value":7.236265204},{"metric":"avgApiTime","value":0.5468935359999998},{"metric":"totalApiS","value":50.0},{"metric":"minAppStartupTime","value":6.566},{"metric":"maxAppStartupTime","value":11.422},{"metric":"avgAppStartupTime","value":9.755999999999998},{"metric":"totalAppStartupS","value":3.0},{"metric":"minImportTime","value":1.196166354944613},{"metric":"maxImportTime","value":1.196166354944613},{"metric":"avgImportTime","value":1.196166354944613},{"metric":"totalImportS","value":1.0},{"metric":"createdDate","value":1620431999999.0}],"system":"DesktopApp"},"eid":"METRICS","ets":1620542437965.0,"mid":"METRICS:1711d2706507cbd2e22ec88f7660a569","object":{},"syncts":1620543238317,"tags":[],"ver":"3.0"}
+      |
+      |""".stripMargin
+
+  // Valid METRICS event
+  val EVENT_17 =
+    """
+      |{"@timestamp":"2021-05-09T06:53:58.317Z","actor":{"id":"5e78cb4a62f5c60d3a007ff366c740727afa2aec42f9e63e26fb1a879b87513b","type":"User"},"context":{"cdata":[],"did":"5e78cb4a62f5c60d3a007ff366c740727afa2aec42f9e63e26fb1a879b87513b","channel":"desktop","env":"DesktopApp","pdata":{"id":"desktop,app","pid":"desktop.app","ver":"1.0"},"sid":"0e2dcdd2-e81c-4e9c-9c43-b41a6fdd6c48"},"edata":{"metrics":[{"metric":"minApiTime","value":0.002482144},{"metric":"maxApiTime","value":7.236265204},{"metric":"avgApiTime","value":0.5468935359999998},{"metric":"totalApiS","value":50.0},{"metric":"minAppStartupTime","value":6.566},{"metric":"maxAppStartupTime","value":11.422},{"metric":"avgAppStartupTime","value":9.755999999999998},{"metric":"totalAppStartupS","value":3.0},{"metric":"minImportTime","value":1.196166354944613},{"metric":"maxImportTime","value":1.196166354944613},{"metric":"avgImportTime","value":1.196166354944613},{"metric":"totalImportS","value":1.0},{"metric":"createdDate","value":1620431999999.0}],"subsystem":"DesktopApp","system":"DesktopApp"},"eid":"METRICS","ets":1620542437965.0,"mid":"METRICS:1711d2706507cbd2e22ec88f7660a569","object":{},"syncts":1620543238317,"tags":[],"ver":"3.0"}
+      |
+      |""".stripMargin
 }

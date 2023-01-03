@@ -1,0 +1,63 @@
+azure_account: "{{ sunbird_private_storage_account_name }}"
+azure_secret: "{{ sunbird_private_storage_account_key }}"
+azure_container_name: "telemetry-data-store"
+
+namespace: {{ secor_namespace }}
+storageClass: {{ secor_storage_class | default('default') }}
+imagepullsecrets: {{ imagepullsecrets }}
+
+secor_jobs:
+{% for item in secor_job_list %}
+  {{ item }}:
+    replicas: "{{ secor_jobs['%s'|format(item)].replicas }}"
+    consumer_group: "{{ secor_jobs['%s'|format(item)].consumer_group }}"
+    service_name: "{{ secor_jobs['%s'|format(item)].service_name }}"
+    base_path: "{{ secor_jobs['%s'|format(item)].base_path }}"
+    timestamp_key: "{{ secor_jobs['%s'|format(item)].timestamp_key }}"
+    fallback_timestamp_key: "{{ secor_jobs['%s'|format(item)].fallback_timestamp_key }}"
+    topic: "{{ secor_jobs['%s'|format(item)].topic }}"
+    kafka_broker_host: "{{ secor_jobs['%s'|format(item)].kafka_broker_host }}"
+    zookeeper_quorum: "{{ secor_jobs['%s'|format(item)].zookeeper_quorum }}"
+    max_file_size: "{{ secor_jobs['%s'|format(item)].max_file_size }}"
+    max_file_age: "{{ secor_jobs['%s'|format(item)].max_file_age }}"
+    partition_prefix_enabled: "{{ secor_jobs['%s'|format(item)].partition_prefix_enabled }}"
+    partition_prefix_key: "{{ secor_jobs['%s'|format(item)].partition_prefix_key }}"
+    partition_prefix_mapping: '{{ secor_jobs['%s'|format(item)].partition_prefix_mapping }}'
+    message_channel_identifier: "{{ secor_jobs['%s'|format(item)].message_channel_identifier }}"
+    output_file_pattern: "{{ secor_jobs['%s'|format(item)].output_file_pattern }}"
+    message_parser: "{{ secor_jobs['%s'|format(item)].message_parser }}"
+    storage:
+      size: "{{ secor_jobs['%s'|format(item)].storage.size }}"
+    requests:
+      cpu: "{{ secor_jobs['%s'|format(item)].requests.cpu }}"
+      memory: "{{ secor_jobs['%s'|format(item)].requests.memory }}"
+    lag_threshold_warning: "{{ secor_jobs['%s'|format(item)].lag_threshold_warning }}"
+    lag_threshold_critical: "{{ secor_jobs['%s'|format(item)].lag_threshold_critical }}"
+{% endfor %}
+    
+
+image:
+  prefix: {{ dockerhub }}
+  repository: {{ image_repository }}
+  tag: {{ image_tag }}
+  pullPolicy: {{ image_pullPolicy }}
+
+exporter:
+  image:
+    repository: prom/statsd-exporter
+    tag: latest
+    pullPolicy: IfNotPresent
+
+prometheus_rule_selector_app: prometheus-operator
+prometheus_rule_selector_release: prometheus-operator
+
+# If you enable this, secor lag alert rules will be created in the flink cluster.
+# In our case the consumer group lag metrics available in core prometheus.
+# So we need to create the secor lag alert rule in core prometheus.
+# By adding this condition we are avoiding creating the secor lag alert rule in flink cluster. 
+alertrules:
+  enabled: false
+
+# This condition is whether to create the secor lag alert rule or not.
+secor_alertrule:
+  enabled: {{ secor_alertrule_enabled | lower}}

@@ -81,7 +81,7 @@ object EventFixture {
       |"objecttype":"Content","mediatype":"content","status":"Live"}}
     """.stripMargin
 
-  val VALID_SERACH_EVENT: String =
+  val VALID_SEARCH_EVENT: String =
     """
       |{"eid":"SEARCH","ver":"3.0","syncts":1.59518415538E12,"ets":1.59518415538E12,"flags":
       |{"pp_validation_processed":true,"pp_duplicate":false,"device_denorm":false,"dialcode_denorm":true,
@@ -91,6 +91,23 @@ object EventFixture {
       |"edata":{"topn":[{"identifier":"do_312528046917705728246886"}],"query":"","size":7.0,"type":"content",
       |"filters":{"contentType":["TextBookUnit","Resource","TextBook","Collection","Course"],"mimeType":{},
       |"resourceType":{},"status":["Live"],"objectType":["Content"],"dialcodes":"KLQ2G7","framework":{},
+      |"compatibilityLevel":{"max":4.0,"min":1.0},"channel":{"ne":["0124433024890224640","0124446042259128320",
+      |"0124487522476933120","0125840271570288640","0124453662635048969"]}},"sort":{}},
+      |"@timestamp":"2020-07-19T18:42:41.524Z","context":{"pdata":{"ver":"1.0","id":"prod.diksha.portal",
+      |"pid":"search-service"},"did":"79838ccb0ff2c7d0a9dd05f5b337fbca","env":"search","channel":"ROOT_ORG"},
+      |"@version":"1","object":{"id":"KLQ2G7","type":"DialCode"}}
+    """.stripMargin
+
+  val SEARCH_EVENT_WITH_INCORRECT_DIALCODES_KEY: String =
+    """
+      |{"eid":"SEARCH","ver":"3.0","syncts":1.59518415538E12,"ets":1.59518415538E12,"flags":
+      |{"pp_validation_processed":true,"pp_duplicate":false,"device_denorm":false,"dialcode_denorm":true,
+      |"content_denorm":false},"dialcodedata":{"identifier":"KLQ2G7","channel":"0123221617357783046602",
+      |"publisher":"MHPUBLISHER","status":2.0},"mid":"invalid_dialcode_key",
+      |"type":"events","tags":["kp-events"],"actor":{"id":"org.sunbird.learning.platform","type":"System"},
+      |"edata":{"topn":[{"identifier":"do_312528046917705728246886"}],"query":"","size":7.0,"type":"content",
+      |"filters":{"contentType":["TextBookUnit","Resource","TextBook","Collection","Course"],"mimeType":{},
+      |"resourceType":{},"status":["Live"],"objectType":["Content"],"dialCodes":"KLQ2G7","framework":{},
       |"compatibilityLevel":{"max":4.0,"min":1.0},"channel":{"ne":["0124433024890224640","0124446042259128320",
       |"0124487522476933120","0125840271570288640","0124453662635048969"]}},"sort":{}},
       |"@timestamp":"2020-07-19T18:42:41.524Z","context":{"pdata":{"ver":"1.0","id":"prod.diksha.portal",

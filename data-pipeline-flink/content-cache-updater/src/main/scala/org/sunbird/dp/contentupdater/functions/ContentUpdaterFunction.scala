@@ -24,12 +24,12 @@ class ContentUpdaterFunction(config: ContentCacheUpdaterConfig)(implicit val map
     private lazy val gson = new Gson()
 
     override def metricsList(): List[String] = {
-        List(config.contentCacheHit)
+        List(config.contentCacheHit, config.skippedEventCount)
     }
 
     override def open(parameters: Configuration): Unit = {
         super.open(parameters)
-        dataCache = new DataCache(config, new RedisConnect(config.metaRedisHost, config.metaRedisPort, config), config.contentStore, List())
+        dataCache = new DataCache(config, new RedisConnect(config.contentRedisHost, config.contentRedisPort, config), config.contentStore, List())
         dataCache.init()
     }
 
@@ -41,29 +41,35 @@ class ContentUpdaterFunction(config: ContentCacheUpdaterConfig)(implicit val map
 
     override def processElement(event: Event, context: ProcessFunction[Event, Event]#Context, metrics: Metrics): Unit = {
         val nodeUniqueId = event.getNodeUniqueId()
-        val redisData = dataCache.getWithRetry(nodeUniqueId)
-        val finalProperties = event.extractProperties().filter(property => null != property._2)
+        if (null != nodeUniqueId) {
+            val redisData = dataCache.getWithRetry(nodeUniqueId)
+            val finalProperties = event.extractProperties().filter(property => null != property._2)
 
-        val newProperties = finalProperties.map { case (property, nv) =>
-            if (config.contentDateFields.contains(property))
-                (property, new SimpleDateFormat(config.contentDateFormat).parse(nv.toString).getTime)
-            else if (config.contentListFields.contains(property))
-                (property, nv match {
-                    case _: String => List(nv)
-                    case _: util.ArrayList[String] => nv
-                })
-            else
-                (property, nv)
-        }.filter(map => None != map._2)
-        redisData ++= newProperties.asInstanceOf[Map[String, AnyRef]]
+            val newProperties = finalProperties.map { case (property, nv) =>
+                if (config.contentDateFields.contains(property) && null != nv && nv.asInstanceOf[String].nonEmpty)
+                    (property, new SimpleDateFormat(config.contentDateFormat).parse(nv.toString).getTime)
+                else if (config.contentListFields.contains(property))
+                    (property, nv match {
+                        case _: String => List(nv)
+                        case _: util.ArrayList[String] => nv
+                    })
+                else
+                    (property, nv)
+            }.filter(map => None != map._2)
+            redisData ++= newProperties.asInstanceOf[Map[String, AnyRef]]
 
-        if (redisData.nonEmpty) {
-            dataCache.setWithRetry(event.getNodeUniqueId(), gson.toJson(redisData.asJava))
-            metrics.incCounter(config.contentCacheHit)
-            logger.info(nodeUniqueId + " Updated Successfully")
+            if (redisData.nonEmpty) {
+                dataCache.setWithRetry(event.getNodeUniqueId(), gson.toJson(redisData.asJava))
+                metrics.incCounter(config.contentCacheHit)
+                logger.info(nodeUniqueId + " Updated Successfully")
+            }
+
+            if (finalProperties.exists(p => config.dialCodeProperties.contains(p._1)))
+                context.output(config.withContentDailCodeEventsTag, event)
         }
-
-        if (finalProperties.exists(p => config.dialCodeProperties.contains(p._1)))
-            context.output(config.withContentDailCodeEventsTag, event)
+        else{
+            metrics.incCounter(config.skippedEventCount)
+            logger.info("Skipping as nodeUniqueId retrieved is null from event. Event json might be invalid")
+        }
     }
 }

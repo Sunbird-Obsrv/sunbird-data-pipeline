@@ -12,14 +12,5 @@ case class Pdata(ver: String, pid: String, id: String = "data-pipeline")
 
 case class  Object(id:String, ver: String, `type`:String, rollup: Option[Map[String, String]])
 
-case class LogEvent(actor: Actor,
-                    eid: String,
-                    edata: EData,
-                    ver: String = "3.0",
-                    syncts: Long,
-                    ets: Long = System.currentTimeMillis(),
-                    context: Context,
-                    mid: String,
-                    `object`: Object,
-                    tags: Seq[AnyRef]
-                   )
+case class LogEvent(actor: Actor, eid: String, edata: EData, ver: String = "3.0", syncts: Long, ets: Long = System.currentTimeMillis(),
+                    context: Context, mid: String, `object`: Object, tags: Seq[AnyRef])

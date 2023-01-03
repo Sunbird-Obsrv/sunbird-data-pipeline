@@ -10,17 +10,15 @@ today=$(date "+%Y-%m-%d")
 
 libs_path="{{ analytics.home }}/models-{{ model_version }}/data-products-1.0"
 
-telemetry_converter_ver=0.0.8
-
 get_report_job_model_name(){
 	case "$1" in
-		"assessment-dashboard-metrics") echo 'org.sunbird.analytics.job.report.AssessmentMetricsJob'
-		;;
-		"course-dashboard-metrics") echo 'org.sunbird.analytics.job.report.CourseMetricsJob'
-		;;
 		"course-enrollment-report") echo 'org.sunbird.analytics.job.report.CourseEnrollmentJob'
 		;;
 		"course-consumption-report") echo 'org.sunbird.analytics.job.report.CourseConsumptionJob'
+		;;
+		"funnel-report") echo 'org.sunbird.analytics.sourcing.FunnelReport'
+		;;
+		"sourcing-metrics") echo 'org.sunbird.analytics.sourcing.SourcingMetrics'
 		;;
 		"admin-geo-reports") echo 'org.sunbird.analytics.job.report.StateAdminGeoReportJob'
 		;;
@@ -28,22 +26,58 @@ get_report_job_model_name(){
 		;;
 		"admin-user-reports") echo 'org.sunbird.analytics.job.report.StateAdminReportJob'
 		;;
-		"textbook-progress-report") echo 'org.sunbird.analytics.job.report.TextbookProgressJob'
-        ;;
+		"userinfo-exhaust") echo 'org.sunbird.analytics.exhaust.collection.UserInfoExhaustJob'
+		;;
+		"response-exhaust") echo 'org.sunbird.analytics.exhaust.collection.ResponseExhaustJob'
+		;;
+    "response-exhaust-v2") echo 'org.sunbird.analytics.exhaust.collection.ResponseExhaustJobV2'
+		;;
+		"progress-exhaust") echo 'org.sunbird.analytics.exhaust.collection.ProgressExhaustJob'
+		;;
+		"progress-exhaust-v2") echo 'org.sunbird.analytics.exhaust.collection.ProgressExhaustJobV2'
+		;;
+		"cassandra-migration") echo 'org.sunbird.analytics.updater.CassandraMigratorJob'
+    ;;
+		"collection-summary-report") echo 'org.sunbird.analytics.job.report.CollectionSummaryJob'
+		;;
+		"program-collection-summary-report") echo 'org.sunbird.analytics.job.report.CollectionSummaryJob'
+		;;
+		"collection-summary-report-v2") echo 'org.sunbird.analytics.job.report.CollectionSummaryJobV2'
+		;;
+		"assessment-score-metric-correction") echo 'org.sunbird.analytics.audit.AssessmentScoreCorrectionJob'
+		;;
+		"course-batch-status-updater") echo 'org.sunbird.analytics.audit.CourseBatchStatusUpdaterJob'
+		;;
+		"collection-reconciliation-job") echo 'org.sunbird.analytics.audit.CollectionReconciliationJob'
+		;;
+		"assessment-correction") echo 'org.sunbird.analytics.job.report.AssessmentCorrectionJob'
+	  ;;
+	  "score-metric-migration-job") echo 'org.sunbird.analytics.audit.ScoreMetricMigrationJob'
+	  ;;
+    "assessment-archival") echo 'org.sunbird.analytics.job.report.AssessmentArchivalJob'
+    ;;
+    "assessment-archived-removal") echo 'org.sunbird.analytics.job.report.AssessmentArchivalJob'
+		;;
+    "uci-private-exhaust") echo 'org.sunbird.analytics.exhaust.uci.UCIPrivateExhaustJob'
+    ;;
+    "uci-response-exhaust") echo 'org.sunbird.analytics.exhaust.uci.UCIResponseExhaustJob'
+    ;;
 		*) echo $1
 		;;
-	esac		
+	esac
 }
 
 if [ ! -z "$1" ]; then job_id=$(get_report_job_model_name $1); fi
 
-if [ -z "$2" ]; then job_config=$(config $1); else job_config="$2"; fi
+if [ ! -z "$1" ]; then job_config=$(config $1 $2); else job_config="$2"; fi
+
+if [ ! -z "$2" ]; then batchIds=";$2"; else batchIds=""; fi
 
 
 echo "Starting the job - $1" >> "$DP_LOGS/$today-job-execution.log"
 
 echo "Job modelName - $job_id" >> "$DP_LOGS/$today-job-execution.log"
 
-nohup $SPARK_HOME/bin/spark-submit --master local[*] --jars $(echo ${libs_path}/lib/*.jar | tr ' ' ','),$MODELS_HOME/analytics-framework-2.0.jar,$MODELS_HOME/scruid_2.11-2.3.2.jar,$MODELS_HOME/batch-models-2.0.jar --class org.ekstep.analytics.job.JobExecutor $MODELS_HOME/batch-models-2.0.jar --model "$job_id" --config "$job_config" >> "$DP_LOGS/$today-job-execution.log" 2>&1
+nohup $SPARK_HOME/bin/spark-submit --master local[*] --jars $(echo ${libs_path}/lib/*.jar | tr ' ' ','),$MODELS_HOME/analytics-framework-2.0.jar,$MODELS_HOME/scruid_2.12-2.5.0.jar,$MODELS_HOME/batch-models-2.0.jar --class org.ekstep.analytics.job.JobExecutor $MODELS_HOME/batch-models-2.0.jar --model "$job_id" --config "$job_config$batchIds" >> "$DP_LOGS/$today-job-execution.log" 2>&1
 
 echo "Job execution completed - $1" >> "$DP_LOGS/$today-job-execution.log"

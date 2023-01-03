@@ -9,6 +9,8 @@ export azure_storage_key={{sunbird_private_storage_account_name}}
 export azure_storage_secret={{sunbird_private_storage_account_key}}
 export reports_azure_storage_key={{sunbird_private_storage_account_name}}
 export reports_azure_storage_secret={{sunbird_private_storage_account_key}}
+export druid_storage_account_key={{sunbird_public_storage_account_name}}
+export druid_storage_account_secret={{sunbird_public_storage_account_key}}
 
 export heap_conf_str={{ spark.heap_conf_str }}
 today=$(date "+%Y-%m-%d")
@@ -16,7 +18,7 @@ today=$(date "+%Y-%m-%d")
 kill_job_manager()
 {
     echo "Killing currently running job-manager process" >> "$SERVICE_LOGS/$today-job-manager.log"
-    kill $(ps aux | grep '[j]ob-manager' | awk '{print $2}') >> "$SERVICE_LOGS/$today-job-manager.log"
+    kill $(ps aux | grep 'JobManager' | awk '{print $2}') >> "$SERVICE_LOGS/$today-job-manager.log"
 }
 
 start_job_manager()
@@ -29,7 +31,7 @@ start_job_manager()
     echo "config: $job_config" >> "$SERVICE_LOGS/$today-job-manager.log"
     nohup java $heap_conf_str -cp "$SPARK_HOME/jars/*:$MODELS_HOME/*:$MODELS_HOME/data-products-1.0/lib/*" -Dconfig.file=$MODELS_HOME/{{ env }}.conf org.ekstep.analytics.job.JobManager --config "$job_config" >> $SERVICE_LOGS/$today-job-manager.log 2>&1 &
     
-    job_manager_pid=$(ps aux | grep '[j]ob-manager' | awk '{print $2}') # Once Job is started just we are making whether job is running or not.
+    job_manager_pid=$(ps aux | grep 'JobManager' | awk '{print $2}') # Once Job is started just we are making whether job is running or not.
     if [[ ! -z "$job_manager_pid" ]]; then
         echo "Job manager is started." >> "$SERVICE_LOGS/$today-job-manager.log"
     else

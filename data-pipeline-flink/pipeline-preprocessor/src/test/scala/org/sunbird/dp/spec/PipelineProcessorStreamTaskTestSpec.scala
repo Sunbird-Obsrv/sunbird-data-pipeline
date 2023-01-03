@@ -16,9 +16,14 @@ import org.mockito.Mockito.when
 import org.sunbird.dp.{BaseMetricsReporter, BaseTestSpec}
 import org.sunbird.dp.fixture.EventFixtures
 import org.sunbird.dp.core.job.FlinkKafkaConnector
+import org.sunbird.dp.core.util.JSONUtil
 import org.sunbird.dp.preprocessor.domain.Event
 import org.sunbird.dp.preprocessor.task.{PipelinePreprocessorConfig, PipelinePreprocessorStreamTask}
 import redis.embedded.RedisServer
+
+import scala.collection.JavaConverters._
+
+case class SHARE_ITEM_EVENT(objectId: String, objectType: String)
 
 class PipelineProcessorStreamTaskTestSpec extends BaseTestSpec {
 
@@ -53,7 +58,9 @@ class PipelineProcessorStreamTaskTestSpec extends BaseTestSpec {
     when(mockKafkaUtil.kafkaEventSink[Event](ppConfig.kafkaErrorRouteTopic)).thenReturn(new TelemetryErrorEventSink)
     when(mockKafkaUtil.kafkaEventSink[Event](ppConfig.kafkaFailedTopic)).thenReturn(new TelemetryFailedEventsSink)
     when(mockKafkaUtil.kafkaEventSink[Event](ppConfig.kafkaAuditRouteTopic)).thenReturn(new TelemetryAuditEventSink)
-    when(mockKafkaUtil.kafkaStringSink(ppConfig.kafkaPrimaryRouteTopic)).thenReturn(new ShareItemEventSink)
+
+    when(mockKafkaUtil.kafkaEventSink[Event](ppConfig.kafkaDenormSecondaryRouteTopic)).thenReturn(new TelemetryDenormSecondaryEventSink)
+    when(mockKafkaUtil.kafkaEventSink[Event](ppConfig.kafkaDenormPrimaryRouteTopic)).thenReturn(new TelemetryDenormPrimaryEventSink)
 
     flinkCluster.before()
   }
@@ -69,13 +76,17 @@ class PipelineProcessorStreamTaskTestSpec extends BaseTestSpec {
     val task = new PipelinePreprocessorStreamTask(ppConfig, mockKafkaUtil)
     task.process()
 
-    ShareItemEventSink.values.size() should be(3)
-    TelemetryPrimaryEventSink.values.size() should be(5)
-    TelemetryFailedEventsSink.values.size() should be(4)
+    // 5 telemetry and 3 SHARE_ITEM
+    TelemetryPrimaryEventSink.values.size() should be(10)
+    TelemetryPrimaryEventSink.values.asScala.count(event => event.eid().equals("SHARE_ITEM")) should be (3)
+    TelemetryFailedEventsSink.values.size() should be(7)
     DupEventsSink.values.size() should be(1)
     TelemetryAuditEventSink.values.size() should be(1)
     TelemetryLogEventSink.values.size() should be(1)
     TelemetryErrorEventSink.values.size() should be(1)
+
+    TelemetryDenormSecondaryEventSink.values.size() should be(4) // 1 INTERACT and 3 SHARE_ITEM
+    TelemetryDenormPrimaryEventSink.values.size() should be(6)
 
     /**
      * * 1. primary-route-success-count -> 05
@@ -90,22 +101,38 @@ class PipelineProcessorStreamTaskTestSpec extends BaseTestSpec {
      * * 10. unique-event-count -> 02
      * * 12. share-item-event-success-count -> 03
      */
-    
-    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.primaryRouterMetricCount}").getValue() should be(5)
+    val expectedShareItems: List[SHARE_ITEM_EVENT] = List(
+      SHARE_ITEM_EVENT(objectId = "do_312785709424099328114191", objectType = "CONTENT"),
+      SHARE_ITEM_EVENT(objectId = "do_31277435209002188818711", objectType = "CONTENT"),
+      SHARE_ITEM_EVENT(objectId = "do_31278794857559654411554", objectType = "TextBook")
+    )
+
+    val shareItems = TelemetryPrimaryEventSink.values.asScala.filter(event => event.eid().equals("SHARE_ITEM"))
+    shareItems.foreach {
+      event =>
+        val shareItemObject = event.getTelemetry.read[util.HashMap[String, AnyRef]]("object").getOrElse(new util.HashMap()).asScala
+        val actualShareItem = SHARE_ITEM_EVENT(objectId = shareItemObject("id").asInstanceOf[String], shareItemObject("type").asInstanceOf[String])
+        expectedShareItems should contain (actualShareItem)
+    }
+
+    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.primaryRouterMetricCount}").getValue() should be(7)
     BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.shareItemEventsMetircsCount}").getValue() should be(3)
     BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.auditEventRouterMetricCount}").getValue() should be(1)
     BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.shareEventsRouterMetricCount}").getValue() should be(1)
     BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.logEventsRouterMetricsCount}").getValue() should be(1)
     BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.errorEventsRouterMetricsCount}").getValue() should be(1)
 
+    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.validationSuccessMetricsCount}").getValue() should be(10)
+    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.validationFailureMetricsCount}").getValue() should be(7)
 
-    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.validationSuccessMetricsCount}").getValue() should be(8)
-    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.validationFailureMetricsCount}").getValue() should be(4)
-
-    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.unique-event-count").getValue() should be(7)
+    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.unique-event-count").getValue() should be(8) // ONLY LOG events are skipped from dedup
     BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.duplicate-event-count").getValue() should be(1)
+
+    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.denormSecondaryEventsRouterMetricsCount}").getValue() should be(4)
+    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.denormPrimaryEventsRouterMetricsCount}").getValue() should be(6)
+
   }
-}
+  }
 
 class PipeLineProcessorEventSource extends SourceFunction[Event] {
 
@@ -123,6 +150,11 @@ class PipeLineProcessorEventSource extends SourceFunction[Event] {
     val event10 = gson.fromJson(EventFixtures.EVENT_10, new util.LinkedHashMap[String, Any]().getClass)
     val event11 = gson.fromJson(EventFixtures.EVENT_11, new util.LinkedHashMap[String, Any]().getClass)
     val event12 = gson.fromJson(EventFixtures.EVENT_12, new util.LinkedHashMap[String, Any]().getClass)
+    val event13 = gson.fromJson(EventFixtures.EVENT_13, new util.LinkedHashMap[String, Any]().getClass)
+    val event14 = gson.fromJson(EventFixtures.EVENT_14, new util.LinkedHashMap[String, Any]().getClass)
+    val event15 = gson.fromJson(EventFixtures.EVENT_15, new util.LinkedHashMap[String, Any]().getClass)
+    val event16 = gson.fromJson(EventFixtures.EVENT_16, new util.LinkedHashMap[String, Any]().getClass)
+    val event17 = gson.fromJson(EventFixtures.EVENT_17, new util.LinkedHashMap[String, Any]().getClass)
     ctx.collect(new Event(event1))
     ctx.collect(new Event(event2))
     ctx.collect(new Event(event3))
@@ -135,23 +167,15 @@ class PipeLineProcessorEventSource extends SourceFunction[Event] {
     ctx.collect(new Event(event10))
     ctx.collect(new Event(event11))
     ctx.collect(new Event(event12))
+    ctx.collect(new Event(event13))
+    ctx.collect(new Event(event14))
+    ctx.collect(new Event(event15))
+    ctx.collect(new Event(event16))
+    ctx.collect(new Event(event17))
   }
 
   override def cancel() = {}
 
-}
-
-class ShareItemEventSink extends SinkFunction[String] {
-
-  override def invoke(value: String): Unit = {
-    synchronized {
-      ShareItemEventSink.values.add(value)
-    }
-  }
-}
-
-object ShareItemEventSink {
-  val values: util.List[String] = new util.ArrayList()
 }
 
 class TelemetryFailedEventsSink extends SinkFunction[Event] {
@@ -232,5 +256,31 @@ class DupEventsSink extends SinkFunction[Event] {
 }
 
 object DupEventsSink {
+  val values: util.List[Event] = new util.ArrayList()
+}
+
+class TelemetryDenormSecondaryEventSink extends SinkFunction[Event] {
+
+  override def invoke(value: Event): Unit = {
+    synchronized {
+      TelemetryDenormSecondaryEventSink.values.add(value)
+    }
+  }
+}
+
+object TelemetryDenormSecondaryEventSink {
+  val values: util.List[Event] = new util.ArrayList()
+}
+
+class TelemetryDenormPrimaryEventSink extends SinkFunction[Event] {
+
+  override def invoke(value: Event): Unit = {
+    synchronized {
+      TelemetryDenormPrimaryEventSink.values.add(value)
+    }
+  }
+}
+
+object TelemetryDenormPrimaryEventSink {
   val values: util.List[Event] = new util.ArrayList()
 }

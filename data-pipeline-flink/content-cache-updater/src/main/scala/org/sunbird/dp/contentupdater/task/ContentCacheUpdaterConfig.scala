@@ -17,10 +17,16 @@ class ContentCacheUpdaterConfig(override val config: Config) extends BaseJobConf
   // Kafka Topics Configuration
   val inputTopic: String = config.getString("kafka.input.topic")
 
+  val contentRedisHost: String = config.getString("redis-meta.content.host")
+  val dialcodeRedisHost: String = config.getString("redis-meta.dialcode.host")
+
+  val contentRedisPort: Int = config.getInt("redis-meta.content.port")
+  val dialcodeRedisPort: Int = config.getInt("redis-meta.dialcode.port")
+
   val contentStore: Int = config.getInt("redis-meta.database.contentstore.id")
   val dialcodeStore: Int = config.getInt("redis-meta.database.dialcodestore.id")
 
-  val contentListFields=List("gradeLevel","subject","medium","language")
+  val contentListFields=List("gradeLevel","subject","medium","language", "keywords")
   val contentDateFields=List("lastStatusChangedOn","lastUpdatedOn","createdOn")
   val dialcodeFields = List( "identifier", "channel", "publisher", "batchCode","status","generatedOn","publishedOn","metadata")
 
@@ -35,6 +41,7 @@ class ContentCacheUpdaterConfig(override val config: Config) extends BaseJobConf
   val withDialCodeEventsTag: OutputTag[Event] = OutputTag[Event](WITH_DIALCODE_EVENTS)
   val withContentDailCodeEventsTag: OutputTag[Event] = OutputTag[Event](WITH_CONTENT_EVENTS)
 
+  val skippedEventCount = "skipped-event-count"
   val contentCacheHit = "cache-hit-count"
   val dialCodeCacheHit = "dial-codes-cache-hit-count"
   val dialCodeApiHit = "dial-codes-api-hit-count"

@@ -1,13 +1,20 @@
 #!/usr/bin/env bash
 
+#$1 identifier: userid- Especially for UserCache indexer script to cache specific user id details
+#$2 date: YYYY-MM-DD- Especially for UserCache indexer script to cache all the user data from this specific updated date.
+#$3 populate_anonymous_user: true/false - Especially for UserCacheIndexer to read anonymous user's data
+#$4 refresh_user_data: true/false - Especially for UserCacheIndexer to refresh user's data of redis
+
 home=`echo $HOME`
 jobJarPath="{{ content_snapshot_jar_path }}/{{ content_snapshot_jar_name }}"
 jobConfPath="{{ job_config.cassandra_redis_path }}"
 today=$(date "+%Y-%m-%d")
+libs_path="{{ content_snapshot_path }}/jars/etl-jobs-1.0"
 
-echo "STARTED EXECUTING USER CACHE INDEXER..."
+echo "STARTED EXECUTING USER CACHE INDEXER... $1 $2 $3 $4"
 
 nohup {{ spark_home }}/bin/spark-submit \
 --conf spark.driver.extraJavaOptions="-Dconfig.file=${jobConfPath}" \
---class org.ekstep.analytics.jobs.CassandraRedisIndexer \
-${jobJarPath} >> "{{ content_snapshot_path }}/logs/$today-task-execution.log" 2>&1
+--jars $(echo ${libs_path}/lib/*.jar | tr ' ' ',') \
+--class org.sunbird.analytics.jobs.UserCacheIndexer \
+${jobJarPath} $1 $2 $3 $4 >> "{{ content_snapshot_path }}/logs/$today-task-execution.log" 2>&1

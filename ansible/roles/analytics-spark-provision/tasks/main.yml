@@ -10,12 +10,12 @@
   become_user: "{{ analytics_user }}"
   unarchive: src={{ analytics.home }}/spark-{{ spark_version }}-bin-hadoop2.7.tgz dest={{ analytics.home }}/ copy=no owner={{ analytics_user }} group={{ analytics_group }} creates={{ analytics.home }}/spark-{{ spark_version }}-bin-hadoop2.7
 
-- name: Download Scala 2.11.8
+- name: Download Scala 2.12.10
   become: yes
   become_user: "{{ analytics_user }}"
   shell: wget -O {{ analytics.soft_path }}/scala-{{ scala_version }}.tgz https://downloads.lightbend.com/scala/{{ scala_version }}/scala-{{ scala_version }}.tgz
 
-- name: Unarchive Scala 2.11.8
+- name: Unarchive Scala 2.12.10
   become: yes
   become_user: "{{ analytics_user }}"
   unarchive: src={{ analytics.soft_path }}/scala-{{ scala_version }}.tgz dest={{ analytics.soft_path }}/ copy=no owner={{ analytics_user }} group={{ analytics_group }} creates={{ analytics.soft_path }}/scala-{{ scala_version }}
@@ -82,51 +82,63 @@
   become_user: "{{ analytics_user }}"
   template: src=jets3t.j2 dest={{ analytics.home }}/spark-{{ spark_version }}-bin-hadoop2.7/conf/jets3t.properties mode=755 owner={{ analytics_user }} group={{ analytics_group }}
 
-
 ## Provision DS ##
 - name: Install packages
   become: yes
   apt:
-    name: "{{ item }}"
+    name: ["gcc", "autoconf", "curl", "g++", "gnupg", "automake", "bison", "libc6-dev", "libffi-dev", "libgdbm-dev", "libncurses5-dev", "libsqlite3-dev", "pkg-config", "sqlite3", "zlib1g-dev", "libtool", "libyaml-dev", "make", "libgmp-dev", "libreadline-dev", "libssl-dev", "gpgv2", "gem", "ruby", "gnupg2", "virtualenv"]
     state: installed
     update_cache: true
     cache_valid_time: 3600
-  with_items:
-    - gem
-    - ruby
-    - gnupg2
 
 - name: Import rvm keys
   become: yes
   become_user: "{{ analytics_user }}"
-  shell: command curl -sSL https://rvm.io/mpapis.asc | gpg2 --import - && curl -sSL https://rvm.io/pkuczynski.asc | gpg2 --import -
+  shell: gpg --keyserver hkp://keyserver.ubuntu.com --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB
 
 - name: Install rvm
   become: yes
   become_user: "{{ analytics_user }}"
-  shell: curl -sSL https://get.rvm.io | bash -s stable  
+  shell: curl -sSL https://get.rvm.io | bash -s stable
 
 - name: source ruby script
   become: yes
   become_user: "{{ analytics_user }}"
-  shell: echo "source {{ analytics.base_path }}/.rvm/scripts/rvm" >> ~/.bashrc
-  args:
-    executable: /bin/bash
+  lineinfile:
+    path: "{{ analytics.base_path }}/.bashrc"
+    line: source /home/analytics/.rvm/scripts/rvm
+    create: yes
+
+- name: Change ownership
+  file:
+    path: "{{ analytics.base_path }}"
+    owner: "{{ analytics_user }}"
+    group: "{{ analytics_user }}"
+    recurse: yes
+  become: yes
 
 - name: Install latest ruby
   become: yes
-  shell: "{{ analytics.base_path }}/.rvm/bin/rvm install ruby-2.6"
-
-- name: Set latest ruby as default
-  become: yes
   become_user: "{{ analytics_user }}"
-  shell: "{{ analytics.base_path }}/.rvm/bin/rvm --default use ruby-2.6"
+  shell: "export PATH=$PATH:/home/analytics/.rvm/bin && rvm install ruby-2.2"
+
+- name: Add ruby repository
+  become: yes
+  apt_repository:
+    repo: ppa:brightbox/ruby-ng
+
+- name: Install latest ruby-dev
+  become: yes
+  apt:
+    name: "ruby2.2-dev"
+    state: installed
+    update_cache: true
+    cache_valid_time: 3600
 
 - name: Install ruby-kafka
-  gem:
-     name: ruby-kafka
   become: yes
   become_user: "{{ analytics_user }}"
+  shell: "bash -ilc 'export PATH=$PATH:/home/analytics/.rvm/bin && rvm --default use ruby-2.2 && gem install ruby-kafka'"
 
 - name: Download Kafka-2.11
   become: yes
@@ -142,6 +154,15 @@
   tags:
     - kafka-provision
 
+- name: Add python ppa
+  become: yes
+  apt_repository:
+    repo: ppa:deadsnakes/ppa
 
-
-
+- name: Install python 3.6
+  become: yes
+  apt:
+    name: python3.6
+    state: present
+    update_cache: true
+    cache_valid_time: 3600

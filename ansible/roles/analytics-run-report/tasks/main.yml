@@ -1,5 +1,5 @@
 - name: Get the report_config
-  shell: 'curl -H "Content-Type: application/json" http://{{ analytics_host }}:9000/report/jobs/{{ report_id }}'
+  shell: 'curl -H "Content-Type: application/json" -H "Authorization: {{ druid_report_token }}" {{ druid_report_url_endpoint }}/{{ report_id }}'
   register : output
 
 - set_fact:
@@ -7,6 +7,22 @@
 
 - set_fact:
    report_config: "{{ config.result.config | to_json }}"
+
+- set_fact:
+    dynamic: true
+  when: report_start_date is defined  and report_end_date is defined  and report_start_date != ""  and report_end_date != ""
+
+- set_fact:
+    dateRange: "{{config.result.config.reportConfig.dateRange}}"
+  when: dynamic is defined and dynamic == true
+
+- name: Load the dynamic interval json
+  set_fact: {"dynamic_interval":"{{ lookup('template', 'interval.j2')}}"}
+  when: dynamic is defined and dynamic == true
+
+- set_fact:
+   report_config: "{{ config.result.config.reportConfig | combine(dynamic_interval) | to_json  }}"
+  when: dynamic is defined and dynamic == true
 
 - name: Update report config
   template: src=config.json.j2 dest={{ analytics.home }}/scripts/report_config.json mode=755 owner={{ analytics_user }} group={{ analytics_group }}

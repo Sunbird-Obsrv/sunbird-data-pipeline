@@ -26,7 +26,7 @@ node() {
                 jobName = sh(returnStdout: true, script: "echo $JOB_NAME").split('/')[-1].trim()
                 currentWs = sh(returnStdout: true, script: 'pwd').trim()
                 ansiblePlaybook = "${currentWs}/ansible/druid-run-report.yml"
-                ansibleExtraArgs = "--extra-vars \"report_id=${params.report_id}\" --vault-password-file /var/lib/jenkins/secrets/vault-pass -vv"
+                ansibleExtraArgs = "--extra-vars \"report_id=${params.report_id} report_start_date=${params.report_start_date} report_end_date=${params.report_end_date}\" --vault-password-file /var/lib/jenkins/secrets/vault-pass -vv"
                 values.put('currentWs', currentWs)
                 values.put('env', envDir)
                 values.put('module', module)

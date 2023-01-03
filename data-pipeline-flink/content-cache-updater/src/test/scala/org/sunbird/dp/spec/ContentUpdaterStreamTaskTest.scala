@@ -19,6 +19,7 @@ import org.sunbird.dp.contentupdater.domain.Event
 import org.sunbird.dp.contentupdater.task.{ContentCacheUpdaterConfig, ContentCacheUpdaterStreamTask}
 import org.sunbird.dp.core.cache.RedisConnect
 import org.sunbird.dp.core.job.FlinkKafkaConnector
+import org.sunbird.dp.core.util.JSONUtil
 import org.sunbird.dp.fixture.EventFixture
 import org.sunbird.dp.{BaseMetricsReporter, BaseTestSpec}
 import redis.embedded.RedisServer
@@ -92,8 +93,9 @@ class ContentUpdaterStreamTaskTest extends BaseTestSpec {
         when(mockKafkaUtil.kafkaEventSource[Event](contentConfig.inputTopic)).thenReturn(new ContentDialCodeSource)
         val task = new ContentCacheUpdaterStreamTask(contentConfig, mockKafkaUtil)
         task.process()
+        BaseMetricsReporter.gaugeMetrics(s"${contentConfig.jobName}.${contentConfig.skippedEventCount}").getValue() should be(1)
         BaseMetricsReporter.gaugeMetrics(s"${contentConfig.jobName}.${contentConfig.dialCodeApiHit}").getValue() should be(1)
-        BaseMetricsReporter.gaugeMetrics(s"${contentConfig.jobName}.${contentConfig.contentCacheHit}").getValue() should be(10)
+        BaseMetricsReporter.gaugeMetrics(s"${contentConfig.jobName}.${contentConfig.contentCacheHit}").getValue() should be(11)
         BaseMetricsReporter.gaugeMetrics(s"${contentConfig.jobName}.${contentConfig.dialCodeApiMissHit}").getValue() should be(1)
         BaseMetricsReporter.gaugeMetrics(s"${contentConfig.jobName}.${contentConfig.dialCodeCacheHit}").getValue() should be(2)
         BaseMetricsReporter.gaugeMetrics(s"${contentConfig.jobName}.${contentConfig.totaldialCodeCount}").getValue() should be(3)
@@ -106,6 +108,7 @@ class ContentUpdaterStreamTaskTest extends BaseTestSpec {
         assert(!contentJedis.get("do_312999792564027392148").contains("Class 12"))
         assert(contentJedis.get("do_312999792564027392148").contains("\"copyright\":\"Ekstep\""))
         assert(!contentJedis.get("do_312999792564027392148").contains("\"copyright\":\"EKSTEP\""))
+        assert(contentJedis.get("do_312999792564027392148").contains(""""keywords":["Story"]"""))
     }
 }
 
@@ -114,16 +117,18 @@ class ContentDialCodeSource extends SourceFunction[Event] {
 
     override def run(ctx: SourceContext[Event]) {
         val gson = new Gson()
-        val event1 = gson.fromJson(EventFixture.contentData1, new util.LinkedHashMap[String, Any]().getClass)
-        val event2 = gson.fromJson(EventFixture.contentData2, new util.LinkedHashMap[String, Any]().getClass)
-        val event3 = gson.fromJson(EventFixture.contentData3, new util.LinkedHashMap[String, Any]().getClass)
-        val event4 = gson.fromJson(EventFixture.dialcodedata1, new util.LinkedHashMap[String, Any]().getClass)
-        val event5 = gson.fromJson(EventFixture.invalid_dialcocedata, new util.LinkedHashMap[String, Any]().getClass)
-        val event6 = gson.fromJson(EventFixture.reserved_dialcocedata, new util.LinkedHashMap[String, Any]().getClass)
-        val event7 = gson.fromJson(EventFixture.dialcodedata2, new util.LinkedHashMap[String, Any]().getClass)
-        val event8 = gson.fromJson(EventFixture.invalid_data, new util.LinkedHashMap[String, Any]().getClass)
-        val event9 = gson.fromJson(EventFixture.empty_dialcode, new util.LinkedHashMap[String, Any]().getClass)
-        val event10 = gson.fromJson(EventFixture.contentUpdateData3, new util.LinkedHashMap[String, Any]().getClass)
+        val event1 = JSONUtil.deserialize[util.HashMap[String, Any]](EventFixture.contentData1)
+        val event2 = JSONUtil.deserialize[util.HashMap[String, Any]](EventFixture.contentData2)
+        val event3 = JSONUtil.deserialize[util.HashMap[String, Any]](EventFixture.contentData3)
+        val event4 = JSONUtil.deserialize[util.HashMap[String, Any]](EventFixture.dialcodedata1)
+        val event5 = JSONUtil.deserialize[util.HashMap[String, Any]](EventFixture.invalid_dialcocedata)
+        val event6 = JSONUtil.deserialize[util.HashMap[String, Any]](EventFixture.reserved_dialcocedata)
+        val event7 = JSONUtil.deserialize[util.HashMap[String, Any]](EventFixture.dialcodedata2)
+        val event8 = JSONUtil.deserialize[util.HashMap[String, Any]](EventFixture.invalid_data)
+        val event9 = JSONUtil.deserialize[util.HashMap[String, Any]](EventFixture.empty_dialcode)
+        val event10 = JSONUtil.deserialize[util.HashMap[String, Any]](EventFixture.contentUpdateData3)
+        val event11 = JSONUtil.deserialize[util.HashMap[String, Any]](EventFixture.invalidNewValueEvent)
+
         ctx.collect(new Event(event1))
         ctx.collect(new Event(event2))
         ctx.collect(new Event(event3))
@@ -134,7 +139,10 @@ class ContentDialCodeSource extends SourceFunction[Event] {
         ctx.collect(new Event(event8))
         ctx.collect(new Event(event9))
         ctx.collect(new Event(event10))
-
+        ctx.collect(new Event(event11))
+        // for invalid event check - EventSerializationSchema returns empty map for invalid JSON.
+        // EX: """Type":"DialCode"}""" and """reatedOn":"2021-02-11T07:41:59.691+0000","objectType":"DialCode"}"""
+        ctx.collect(new Event(new util.HashMap[String, Any]()))
     }
 
     override def cancel() = {

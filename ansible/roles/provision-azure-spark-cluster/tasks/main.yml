@@ -1,0 +1,64 @@
+- name: Adding azure blob variable to spark env file
+  lineinfile:
+    path: "{{spark_folder}}/conf/spark-env.sh"
+    line: '{{item.var}}={{item.value}}'
+    regexp: "{{ item.var }}.*"
+  with_items:
+    - {var: 'azure_storage_key', value: '{{ sunbird_private_storage_account_name }}'}
+    - {var: 'azure_storage_secret', value: '{{ sunbird_private_storage_account_key }}'}
+  no_log: true
+
+- name: Remove guava-jre, guice default jars
+  become: yes
+  file:
+    path: "{{ spark_folder }}/jars/{{item.var}}-{{item.value}}.jar"
+    state: absent
+  with_items:
+    - {var: 'guava', value: '{{ guava_default_jre_version }}'}
+    - {var: 'guice', value: '{{ guice_default_version }}'}
+    - {var: 'guice-servlet', value: '{{ guice_default_version }}'} 
+   
+- name: Download guava_jre_url and copy to Spark jars folder
+  become: yes
+  get_url: url={{ guava_jre_url }} dest={{ spark_folder }}/jars/guava-{{guava_jre_version}}.jar timeout=1000 force=no
+  
+- name: Download log4j api and copy to Spark jars folder
+  become: yes
+  get_url: url={{ log4j_api_url }} dest={{ spark_folder }}/jars/log4j-api-{{log4j_version}}.jar timeout=1000 force=no
+  
+- name: Download log4j core and copy to Spark jars folder
+  become: yes
+  get_url: url={{ log4j_core_url }} dest={{ spark_folder }}/jars/log4j-core-{{log4j_version}}.jar timeout=1000 force=no
+
+- name: Download spark-redis and copy to Spark jars folder
+  become: yes
+  get_url: url={{ spark_redis_url }} dest={{ spark_folder }}/jars/spark-redis_2.12-{{spark_redis_version}}.jar timeout=1000 force=no
+
+- name: Download jedis and copy to Spark jars folder
+  become: yes
+  get_url: url={{ jedis_url }} dest={{ spark_folder }}/jars/jedis-{{jedis_version}}.jar timeout=1000 force=no
+
+- name: Download zip4j and copy to Spark jars folder
+  become: yes
+  get_url: url={{ zip4j_url }} dest={{ spark_folder }}/jars/zip4j-{{zip4j_version}}.jar timeout=1000 force=no
+
+- name: Download guice and copy to Spark jars folder
+  become: yes
+  get_url: url={{ guice_url }} dest={{ spark_folder }}/jars/guice-{{guice_version}}.jar timeout=1000 force=no
+
+- name: Download guice-servlet and copy to Spark jars folder
+  become: yes
+  get_url: url={{ guice_servlet_url }} dest={{ spark_folder }}/jars/guice-servlet-{{guice_version}}.jar timeout=1000 force=no
+
+- name: Update log4j.properties
+  become: yes
+  blockinfile:
+    path: "{{ spark_folder }}/conf/log4j.properties"
+    block: |
+      log4j.logger.org.ekstep.analytics=INFO
+      log4j.appender.org.ekstep.analytics=org.apache.log4j.RollingFileAppender
+      log4j.appender.org.ekstep.analytics.File=./joblog.log
+      log4j.appender.org.ekstep.analytics.MaxFileSize=${log4jspark.log.maxfilesize}
+      log4j.appender.org.ekstep.analytics.MaxBackupIndex=${log4jspark.log.maxbackupindex}
+      log4j.appender.org.ekstep.analytics.layout=org.apache.log4j.PatternLayout
+      log4j.appender.org.ekstep.analytics.layout.ConversionPattern=%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n

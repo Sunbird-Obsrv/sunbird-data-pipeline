@@ -1,0 +1,20 @@
+---
+- hosts: local
+  gather_facts: no
+  vars_files:
+    - "{{inventory_dir}}/secrets.yml"
+  environment:
+    KUBECONFIG: "{{ kubeconfig_path }}"
+  roles:
+    - secor-deploy
+  tags: secor_deploy
+
+- hosts: local
+  gather_facts: no
+  vars_files:
+    - "{{inventory_dir}}/secrets.yml"
+  environment:
+    KUBECONFIG: "{{ core_kubeconfig_path }}"
+  roles:
+    - secor-deploy
+  tags: alertrule

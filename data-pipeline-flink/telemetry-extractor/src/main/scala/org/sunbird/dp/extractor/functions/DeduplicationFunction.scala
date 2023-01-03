@@ -2,7 +2,8 @@ package org.sunbird.dp.extractor.functions
 
 import java.util
 
-import com.google.gson.Gson
+import org.sunbird.dp.core.util.JSONUtil
+// import com.google.gson.Gson
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.configuration.Configuration
 import org.apache.flink.streaming.api.functions.ProcessFunction
@@ -53,13 +54,15 @@ class DeduplicationFunction(config: TelemetryExtractorConfig, @transient var ded
         throw jedisEx
       }
       case ex: Exception => {
+        logger.error("Unexpected Error", ex)
         metrics.incCounter(config.failedBatchCount)
         context.output(config.failedBatchEventOutputTag, batchEvents)
       }
     }
 
     def getMsgIdentifier(batchEvents: String): String = {
-      val event = new Gson().fromJson(batchEvents, new util.LinkedHashMap[String, AnyRef]().getClass)
+      // val event = new Gson().fromJson(batchEvents, new util.LinkedHashMap[String, AnyRef]().getClass)
+      val event = JSONUtil.deserialize[util.LinkedHashMap[String, AnyRef]](batchEvents)
       val paramsObj = Option(event.get("params"))
       val messageId = paramsObj.map {
         params => params.asInstanceOf[util.Map[String, AnyRef]].get("msgid").asInstanceOf[String]

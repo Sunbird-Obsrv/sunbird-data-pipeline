@@ -1,0 +1,67 @@
+---
+
+- name: Install supervisord
+  apt:
+    name: supervisor
+    state: present
+    update_cache: yes
+  become: true
+
+- name: copy supervisor conf
+  template: src="supervisor.conf.j2" dest="/etc/supervisor/conf.d/anomaly_detection.conf"
+  become: true
+
+- name: Start supervisord
+  service:
+    name: "supervisor"
+    state: started
+    enabled: yes
+  become: true
+
+- name: Add deadsnakes repo
+  apt_repository: repo="ppa:deadsnakes/ppa"
+  become: true
+
+- name: Install python
+  apt: 
+    name:
+      - python3.8-dev
+      - python3-pip
+      - python3-setuptools
+      - python3.8-venv
+    state: present
+  become: true
+
+- name: create module directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ analytics_user }}"
+    group: "{{ analytics_user }}"
+    mode: 0775
+  loop:
+    - "{{ anomaly_detection_module_path }}/anomaly_venv"
+    - "{{ anomaly_detection_module_path }}/data"
+  become_user: "{{ analytics_user }}"
+
+- name: Copy the anomaly detection artifact
+  copy: src={{ anomaly_detection_module_artifact }} dest={{ anomaly_detection_module_path }}
+  become_user: "{{ analytics_user }}"
+
+- name: Installing anomaly detection as a python module
+  pip:
+    name: "{{ anomaly_detection_module_path }}/{{ anomaly_detection_module_artifact }}"
+    virtualenv: "{{ virtualenv_path }}"
+    virtualenv_command: "/usr/bin/python3.8 -m venv"
+  become_user: "{{ analytics_user }}"
+
+- name: copy query config to config.json
+  template: src="config.json.j2" dest="{{ virtualenv_path }}/config.json"
+  with_items: "{{ anomaly_detection_queries | list }}"
+  become_user: "{{ analytics_user }}"
+
+- name: Start anomaly detection process
+  supervisorctl:
+    name: "anomaly_detection"
+    state: restarted
+  become: true

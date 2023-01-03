@@ -47,13 +47,13 @@
   tags:
     - deploy
 
-- name: Unarchive adhoc job script
+- name: Unarchive etl job script
   become: yes
   unarchive: src={{ content_snapshot_path }}/{{ content_snapshot_distribuction_name }} dest={{ content_snapshot_jar_path }} copy=no group={{ analytics_group }} owner={{ analytics_user }}
   tags:
     - deploy
 
-- name: Copy adhoc-jobs jar file
+- name: Copy etl-jobs jar file
   become: yes
   copy:
     src: "{{ content_snapshot_jar_name }}"
@@ -69,7 +69,7 @@
     path: '{{ content_snapshot_path }}/config'
     state: absent
   tags:
-    - deploy
+    - execute-script
 
 - name: Create config directory
   file:
@@ -77,7 +77,7 @@
     state: directory
   become: yes
   tags:
-    - deploy
+    - execute-script
 
 - name: Ensure copying all conf files from the templates/conf folder
   become: yes
@@ -88,7 +88,7 @@
     group: "{{ analytics_group }}"
   with_items: "{{ config_files }}"
   tags:
-    - deploy
+    - execute-script
 
 - name: Ensure removing scripts directory
   become: yes
@@ -97,7 +97,7 @@
     state: absent
   become_user: "{{ analytics_user }}"  
   tags:
-    - deploy
+    - execute-script
 
 - name: Create scripts directory
   become: yes
@@ -106,7 +106,7 @@
     state: directory
   become: yes
   tags:
-    - deploy
+    - execute-script
 
 - name: Ensure copying all script files from the templates/script dir
   become: yes
@@ -118,12 +118,12 @@
     mode: 0777
   with_items: "{{ script_files }}"
   tags:
-    - deploy
+    - execute-script
 
 - name: Run Script
   become: yes
   become_user: root
-  shell: "sh {{ content_snapshot_path }}/scripts/run-script.sh {{ script_to_run }} >> {{ content_snapshot_path }}/logs/{{ansible_date_time.date}}-shell-execution.log"
+  shell: "sh {{ content_snapshot_path }}/scripts/run-script.sh {{ script_to_run }} {{ identifier }} {{ date }} {{ populate_anonymous_user }} {{ refresh_data }} >> {{ content_snapshot_path }}/logs/{{ansible_date_time.date}}-shell-execution.log"
   poll: 0
   async: 45
   tags:

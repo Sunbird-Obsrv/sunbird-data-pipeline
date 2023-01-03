@@ -4,7 +4,7 @@ import java.util
 
 import org.apache.flink.streaming.api.functions.sink.SinkFunction
 import org.apache.flink.streaming.api.functions.source.SourceFunction
-import org.apache.flink.streaming.connectors.kafka.{FlinkKafkaConsumer, FlinkKafkaProducer}
+import org.apache.flink.streaming.connectors.kafka.{FlinkKafkaConsumer, FlinkKafkaProducer, KafkaDeserializationSchema}
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer.Semantic
 import org.sunbird.dp.core.domain.Events
 import org.sunbird.dp.core.serde._
@@ -23,6 +23,10 @@ class FlinkKafkaConnector(config: BaseJobConfig) extends Serializable {
     new FlinkKafkaConsumer[String](kafkaTopic, new StringDeserializationSchema, config.kafkaConsumerProperties)
   }
 
+  def kafkaBytesSource(kafkaTopic: String): SourceFunction[Array[Byte]] = {
+    new FlinkKafkaConsumer[Array[Byte]](kafkaTopic, new ByteDeserializationSchema, config.kafkaConsumerProperties)
+  }
+
   def kafkaStringSink(kafkaTopic: String): SinkFunction[String] = {
     new FlinkKafkaProducer[String](kafkaTopic, new StringSerializationSchema(kafkaTopic), config.kafkaProducerProperties, Semantic.AT_LEAST_ONCE)
   }
@@ -36,4 +40,7 @@ class FlinkKafkaConnector(config: BaseJobConfig) extends Serializable {
       new EventSerializationSchema[T](kafkaTopic), config.kafkaProducerProperties, Semantic.AT_LEAST_ONCE)
   }
 
+  def kafkaBytesSink(kafkaTopic: String): SinkFunction[Array[Byte]] = {
+    new FlinkKafkaProducer[Array[Byte]](kafkaTopic, new ByteSerializationSchema(kafkaTopic), config.kafkaProducerProperties, Semantic.AT_LEAST_ONCE)
+  }
 }

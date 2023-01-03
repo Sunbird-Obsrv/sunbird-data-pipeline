@@ -32,6 +32,9 @@ class PipelinePreprocessorConfig(override val config: Config) extends BaseJobCon
   val kafkaFailedTopic: String = config.getString("kafka.output.failed.topic")
   val kafkaDuplicateTopic: String = config.getString("kafka.output.duplicate.topic")
 
+  val kafkaDenormSecondaryRouteTopic: String = config.getString("kafka.output.denorm.secondary.route.topic")
+  val kafkaDenormPrimaryRouteTopic: String = config.getString("kafka.output.denorm.primary.route.topic")
+
   val defaultChannel: String = config.getString("default.channel")
 
   val includedProducersForDedup: List[String] = config.getStringList("dedup.producer.included.ids").asScala.toList
@@ -44,6 +47,10 @@ class PipelinePreprocessorConfig(override val config: Config) extends BaseJobCon
   // Router stream out put tags
   val primaryRouteEventsOutputTag: OutputTag[Event] = OutputTag[Event]("primary-route-events")
 
+  // Spliting events on priority for faster denorm processing
+  val denormSecondaryEventsRouteOutputTag: OutputTag[Event] = OutputTag[Event]("denorm-secondary-events")
+  val denormPrimaryEventsRouteOutputTag: OutputTag[Event] = OutputTag[Event]("denorm-primary-events")
+
   // Audit, Log & Error Events output tag
   val auditRouteEventsOutputTag: OutputTag[Event] = OutputTag[Event]("audit-route-events")
   val logEventsOutputTag: OutputTag[Event] = OutputTag[Event]("log-route-events")
@@ -51,12 +58,10 @@ class PipelinePreprocessorConfig(override val config: Config) extends BaseJobCon
 
   // Share events out put tags
   val shareRouteEventsOutputTag: OutputTag[Event] = OutputTag[Event]("share-route-events")
-  val shareItemEventOutputTag: OutputTag[String] = OutputTag[String]("share-item-events")
+  val shareItemEventOutputTag: OutputTag[Event] = OutputTag[Event]("share-item-events")
 
   override val kafkaConsumerParallelism: Int = config.getInt("task.consumer.parallelism")
-  val validationParallelism: Int = config.getInt("task.telemetry.validation.parallelism")
-  val routerParallelism: Int = config.getInt("task.telemetry.router.parallelism")
-  val shareEventsFlattnerParallelism: Int = config.getInt("task.share.events.flattener.parallelism")
+  val downstreamOperatorsParallelism: Int = config.getInt("task.downstream.operators.parallelism")
 
   val VALIDATION_FLAG_NAME = "pp_validation_processed"
   val DEDUP_FLAG_NAME = "pp_duplicate"
@@ -69,7 +74,8 @@ class PipelinePreprocessorConfig(override val config: Config) extends BaseJobCon
   val shareEventsRouterMetricCount = "share-route-success-count"
   val logEventsRouterMetricsCount = "log-route-success-count"
   val errorEventsRouterMetricsCount = "error-route-success-count"
-
+  val denormSecondaryEventsRouterMetricsCount = "denorm-secondary-route-success-count"
+  val denormPrimaryEventsRouterMetricsCount = "denorm-primary-route-success-count"
 
   // Validation job metrics
   val validationSuccessMetricsCount = "validation-success-event-count"
@@ -100,10 +106,12 @@ class PipelinePreprocessorConfig(override val config: Config) extends BaseJobCon
   val auditRouterProducer = "audit-route-sink"
   val invalidEventProducer = "invalid-events-sink"
   val duplicateEventProducer = "duplicate-events-sink"
+  val denormSecondaryEventProducer = "denorm-secondary-events-sink"
+  val denormPrimaryEventProducer = "denorm-primary-events-sink"
 
   val defaultSchemaFile = "envelope.json"
 
-
+  val secondaryEvents: List[String] = config.getStringList("secondary.events").asScala.toList
 
 
 }

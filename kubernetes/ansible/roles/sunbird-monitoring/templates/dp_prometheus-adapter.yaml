@@ -1,0 +1,146 @@
+# Default values for k8s-prometheus-adapter..
+
+# Url to access prometheus
+prometheus:
+  url: http://sunbird-monitoring-prometheus.monitoring.svc.cluster.local
+  port: 9090
+  path: ""
+
+rules:
+  default: true
+  custom: {}
+  existing:
+  external:
+  - seriesQuery: 'kafka_consumergroup_lag_sum'
+    resources:
+      overrides:
+        namespace:
+          resource: namespace
+        pod:
+          resource: pod
+    name:
+      matches: "^(.*)"
+      as: "telemetry-extractor_kafka_consumergroup_lag_sum"
+    metricsQuery: sum(kafka_consumergroup_lag_sum{consumergroup="{{ env_name }}-telemetry-extractor-group",topic="{{ env_name }}.telemetry.ingest"}) by (<<.GroupBy>>)
+  - seriesQuery: 'kafka_consumergroup_lag_sum'
+    resources:
+      overrides:
+        namespace:
+          resource: namespace
+        pod:
+          resource: pod
+    name:
+      matches: "^(.*)"
+      as: "ingest-router_kafka_consumergroup_lag_sum"
+    metricsQuery: sum(kafka_consumergroup_lag_sum{consumergroup="{{ env_name }}-ingest-router-group"}) by (consumergroup)
+  - seriesQuery: 'kafka_consumergroup_lag_sum'
+    resources:
+      overrides:
+        namespace:
+          resource: namespace
+        pod:
+          resource: pod
+    name:
+      matches: "^(.*)"
+      as: "pipeline-preprocessor_kafka_consumergroup_lag_sum"
+    metricsQuery: sum(kafka_consumergroup_lag_sum{consumergroup="{{ env_name }}-pipeline-preprocessor-group",topic="{{ env_name }}.telemetry.raw"}) by (<<.GroupBy>>)
+  - seriesQuery: 'kafka_consumergroup_lag_sum'
+    resources:
+      overrides:
+        namespace:
+          resource: namespace
+        pod:
+          resource: pod
+    name:
+      matches: "^(.*)"
+      as: "de-normalization-primary_kafka_consumergroup_lag_sum"
+    metricsQuery: sum(kafka_consumergroup_lag_sum{consumergroup="{{ env_name }}-telemetry-denorm-primary-group",topic="{{ env_name }}.telemetry.unique.primary"}) by (<<.GroupBy>>)
+  - seriesQuery: 'kafka_consumergroup_lag_sum'
+    resources:
+      overrides:
+        namespace:
+          resource: namespace
+        pod:
+          resource: pod
+    name:
+      matches: "^(.*)"
+      as: "de-normalization-secondary_kafka_consumergroup_lag_sum"
+    metricsQuery: sum(kafka_consumergroup_lag_sum{consumergroup="{{ env_name }}-telemetry-denorm-secondary-group",topic="{{ env_name }}.telemetry.unique.secondary"}) by (<<.GroupBy>>)
+  - seriesQuery: 'kafka_consumergroup_lag_sum'
+    resources:
+      overrides:
+        namespace:
+          resource: namespace
+        pod:
+          resource: pod
+    name:
+      matches: "^(.*)"
+      as: "druid-validator_kafka_consumergroup_lag_sum"
+    metricsQuery: sum(kafka_consumergroup_lag_sum{consumergroup="{{ env_name }}-druid-validator-group",topic="{{ env_name }}.telemetry.denorm"}) by (<<.GroupBy>>)
+  - seriesQuery: 'kafka_consumergroup_lag_sum'
+    resources:
+      overrides:
+        namespace:
+          resource: namespace
+        pod:
+          resource: pod
+    name:
+      matches: "^(.*)"
+      as: "error-denormalization_kafka_consumergroup_lag_sum"
+    metricsQuery: sum(kafka_consumergroup_lag_sum{consumergroup="{{ env_name }}-error-denorm-group",topic="{{ env_name }}.telemetry.error"}) by (<<.GroupBy>>)
+  - seriesQuery: 'kafka_consumergroup_lag_sum'
+    resources:
+      overrides:
+        namespace:
+          resource: namespace
+        pod:
+          resource: pod
+    name:
+      matches: "^(.*)"
+      as: "summary-denormalization_kafka_consumergroup_lag_sum"
+    metricsQuery: sum(kafka_consumergroup_lag_sum{consumergroup="{{ env_name }}-summmary-denorm-group",topic="{{ env_name }}.telemetry.derived"}) by (<<.GroupBy>>)
+  - seriesQuery: 'kafka_consumergroup_lag_sum'
+    resources:
+      overrides:
+        namespace:
+          resource: namespace
+        pod:
+          resource: pod
+    name:
+      matches: "^(.*)"
+      as: "content-cache-updater_kafka_consumergroup_lag_sum"
+    metricsQuery: sum(kafka_consumergroup_lag_sum{consumergroup="{{ env_name }}-content-cache-updater-group",topic="{{ env_name }}.learning.graph.events"}) by (<<.GroupBy>>)
+  - seriesQuery: 'kafka_consumergroup_lag_sum'
+    resources:
+      overrides:
+        namespace:
+          resource: namespace
+        pod:
+          resource: pod
+    name:
+      matches: "^(.*)"
+      as: "device-profile-updater_kafka_consumergroup_lag_sum"
+    metricsQuery: sum(kafka_consumergroup_lag_sum{consumergroup="{{ env_name }}-device-profile-updater-group",topic="{{ env_name }}.events.deviceprofile"}) by (<<.GroupBy>>)
+  - seriesQuery: 'kafka_consumergroup_lag_sum'
+    resources:
+      overrides:
+        namespace:
+          resource: namespace
+        pod:
+          resource: pod
+    name:
+      matches: "^(.*)"
+      as: "user-cache-updater-v2_kafka_consumergroup_lag_sum"
+    metricsQuery: sum(kafka_consumergroup_lag_sum{consumergroup="{{ env_name }}-user-cache-updater-consumer-group",topic="{{ env_name }}.telemetry.audit"}) by (<<.GroupBy>>)
+  - seriesQuery: 'kafka_consumergroup_lag_sum'
+    resources:
+      overrides:
+        namespace:
+          resource: namespace
+        pod:
+          resource: pod
+    name:
+      matches: "^(.*)"
+      as: "assessment-aggregator_kafka_consumergroup_lag_sum"
+    metricsQuery: sum(kafka_consumergroup_lag_sum{consumergroup="{{ env_name }}-assessment-aggregator-group",topic="{{ env_name }}.telemetry.assess"}) by (<<.GroupBy>>)
+  

@@ -1,6 +1,5 @@
-download_user: deployer
-download_group: deployer
-maxmind_geocity_db_url: "http://geolite.maxmind.com/download/geoip/database/GeoLite2-City-CSV.zip"
+download_user: "{{ ansible_ssh_user }}"
+download_group: "{{ ansible_ssh_user }}"
 maxmind_geoip2_csv_converter_url: "https://github.com/maxmind/geoip2-csv-converter/releases/download/v1.0.0/geoip2-csv-converter-v1.0.0-linux-amd64.tar.gz"
 maxmind_db_download_dir: /tmp
 maxmind_db_dir_name: "geoip2-city-csv"

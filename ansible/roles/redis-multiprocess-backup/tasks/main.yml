@@ -1,0 +1,31 @@
+- name: Create the directory
+  file: path={{ redis_backup_dir }}/{{ item.value.name }} state=directory recurse=yes
+  with_dict: "{{ redis.config }}"
+
+- set_fact:
+    redis_backup_file_name: "redis-backup-{{ lookup('pipe', 'date +%Y-%m-%d-%T') }}-{{ ansible_hostname }}.zip"
+ 
+- name: copy dump.rdb files
+  copy:
+    src: "{{ redis_data_dir }}/{{ item.value.name }}-dump.rdb"
+    dest: "{{ redis_backup_dir }}/{{ item.value.name }}/{{ item.value.name }}-dump.rdb"
+    remote_src: yes
+  with_dict: "{{ redis.config }}"
+
+- name: Create archive of backup directory
+  archive: path="{{ redis_backup_dir }}/{{ item.value.name }}/*" dest="{{ redis_backup_dir }}/{{ item.value.name }}/{{ redis_backup_file_name }}" format=zip
+  async: 3600
+  poll: 10
+  with_dict: "{{ redis.config }}"
+
+- name: upload to azure
+  include_role:
+    name: artifacts-upload-azure
+  vars:
+    artifact: "{{ item.value.name }}/{{ redis_backup_file_name }}"
+    artifact_path: "{{ redis_backup_dir }}/{{ item.value.name }}/{{ redis_backup_file_name }}"
+    artifacts_container: "{{ redis_backup_azure_container_name }}"
+  with_dict: "{{ redis.config }}"
+   
+- name: clean up backup dir after upload
+  file: path={{ redis_backup_dir }} state=absent

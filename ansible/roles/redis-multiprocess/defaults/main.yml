@@ -1,0 +1,28 @@
+redis_user: analytics
+analytics_redis_user_home: /home/{{ redis_user }}
+redis_home: "{{ analytics_redis_user_home }}/redis/redis-{{ redis_version }}"
+redis_tar_ball: "http://download.redis.io/releases/redis-{{ redis_version }}.tar.gz"
+redis_version: 6.2.5
+redis_dir: "{{ analytics_redis_user_home }}/redis"
+redis_dump_rdb_time_in_seconds: 900
+redis_dump_rdb_keys_to_save_state: 100
+redis_data_dir: /data
+
+redis:
+  config:
+    device:
+      port: "{{ device_port }}"
+      name: 'device'
+      max_memory: 100mb
+    user:
+      port: "{{ user_port }}"
+      name: 'user'
+      max_memory: 100mb
+    content:
+      port: "{{ content_port }}"
+      name: 'content'
+      max_memory: 100mb
+    dialcode:
+      port: "{{ dialcode_port }}"
+      name: 'dialcode'
+      max_memory: 100mb     

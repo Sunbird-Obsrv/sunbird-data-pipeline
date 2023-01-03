@@ -32,19 +32,24 @@ object EventFixture {
       |  event.output.topic = "local.telemetry.event.output"
       |  string.input.topic = "local.telemetry.string.input"
       |  string.output.topic = "local.telemetry.string.output"
-      |  broker-servers = "localhost:9093"
-      |  zookeeper = "localhost:2183"
+      |  producer.broker-servers = "localhost:9093"
+      |  consumer.broker-servers = "localhost:9093"
       |  groupId = "pipeline-preprocessor-group"
       |  auto.offset.reset = "earliest"
       |  producer {
       |     max-request-size = 102400
+      |     batch.size = 8192
+      |     linger.ms = 1
+      |     compression = "snappy"
       |  }
       |}
       |
       |task {
       |  parallelism = 2
       |  consumer.parallelism = 1
+      |  checkpointing.compressed = true
       |  checkpointing.interval = 60000
+      |  checkpointing.pause.between.seconds = 30000
       |  metrics.window.size = 100 # 3 min
       |  restart-strategy.attempts = 1 # retry once
       |  restart-strategy.delay = 1000 # in milli-seconds

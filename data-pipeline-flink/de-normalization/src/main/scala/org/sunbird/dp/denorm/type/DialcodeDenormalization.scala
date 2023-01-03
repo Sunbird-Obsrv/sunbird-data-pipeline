@@ -1,21 +1,16 @@
 package org.sunbird.dp.denorm.`type`
 
-import org.sunbird.dp.core.cache.{DataCache, RedisConnect}
 import org.sunbird.dp.core.job.Metrics
 import org.sunbird.dp.denorm.domain.Event
 import org.sunbird.dp.denorm.task.DenormalizationConfig
+import org.sunbird.dp.denorm.util.CacheResponseData
 
 class DialcodeDenormalization(config: DenormalizationConfig) {
 
-  private val dialcodeDataCache =
-    new DataCache(config, new RedisConnect(config.metaRedisHost, config.metaRedisPort, config),
-      config.dialcodeStore, config.dialcodeFields)
-  dialcodeDataCache.init()
-
-  def denormalize(event: Event, metrics: Metrics): Event = {
+  def denormalize(event: Event, cacheData: CacheResponseData, metrics: Metrics) = {
     if (null != event.objectType() && List("dialcode", "qr").contains(event.objectType().toLowerCase())) {
       metrics.incCounter(config.dialcodeTotal)
-      val dialcodeData = dialcodeDataCache.getWithRetry(event.objectID().toUpperCase()).map(f => {(f._1.toLowerCase().replace("_", ""), f._2)})
+      val dialcodeData = cacheData.dialCode.map(f => {(f._1.toLowerCase().replace("_", ""), f._2)})
 
       if (dialcodeData.nonEmpty) {
         metrics.incCounter(config.dialcodeCacheHit)
@@ -25,11 +20,6 @@ class DialcodeDenormalization(config: DenormalizationConfig) {
         event.setFlag("dialcode_denorm", value = false)
       }
     }
-    event
-  }
-
-  def closeDataCache() = {
-    dialcodeDataCache.close()
   }
 
 }

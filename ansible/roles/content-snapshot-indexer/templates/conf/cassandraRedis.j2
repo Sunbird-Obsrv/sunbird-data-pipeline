@@ -1,6 +1,6 @@
 # redis
 redis.host="{{ redis.host }}"
-redis.port="{{redis.port }}"
+redis.port="{{ user_port }}"
 redis.connection.max={{ redis.connection.max }}
 location.db.redis.key.expiry.seconds={{ redis.key_expiry_seconds }}
 redis.connection.idle.max={{ redis.connection.idle_max }}
@@ -15,4 +15,10 @@ spark.cassandra.connection.host="{{ cassandra.host }}"
 cassandra.user.keyspace="{{ cassandra.keyspace }}"
 cassandra.user.table="{{ cassandra.user.table }}"
 redis.user.database.index="{{ redis.user.index }}"
+redis.user.input.index="{{ redis.user.input_index }}"
+redis.user.backup.dir="/mount/data/analytics/content-snapshot/anonymous-user-backup"
+redis.scan.count="{{ redis.scan_count }}"
 redis.user.index.source.key="{{ redis.user.source_key }}" # this will be used as key for redis
+cassandra.read.timeoutMS="{{ cassandra.read_timeout }}"
+cassandra.query.retry.count="{{ cassandra.retry_count }}"
+cassandra.input.consistency.level="{{ cassandra.input_consistency_level }}"

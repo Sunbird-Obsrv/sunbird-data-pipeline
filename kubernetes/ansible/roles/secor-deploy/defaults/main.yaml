@@ -1,0 +1,571 @@
+secor_namespace: "secor"
+image_repository: "secor"
+image_tag: "0.29"
+image_pullPolicy: IfNotPresent
+imagepullsecrets: "{{ env }}-registry-secret"
+secor_storage_class: managed-premium
+
+# this varible is to control the monitoring deployment. override this value by adding into
+# private repo common.yml to not to create the secor lag alert rules. The scenorio is , if adopters does not have
+# monitoring stack then the secor deployment job will fail. To avoid that we introduced this var.
+secor_alertrule_enabled: true
+# image:
+#   prefix: {}
+#   repository: "secor"
+#   tag: "secor-0.29_cf79409_7018"
+#   pullPolicy: IfNotPresent
+
+secor_jobs:
+  raw-telemetry-backup:
+    replicas: 1
+    consumer_group: "{{env_name}}.telemetry.raw.backup"
+    service_name: "raw_telemetry_backup"
+    base_path: "raw"
+    timestamp_key: "syncts"
+    fallback_timestamp_key: "@timestamp"
+    topic: "{{env_name}}.telemetry.raw"
+    kafka_broker_host: "{{ groups['processing-cluster-kafka']|join(',') }}"
+    zookeeper_quorum: "{{ groups['processing-cluster-zookeepers']|join(':2181,')}}:2181"
+    max_file_size: 100000000
+    max_file_age: 14400
+    partition_prefix_enabled: "false"
+    partition_prefix_key: ""
+    partition_prefix_mapping: "{}"
+    message_channel_identifier: ""
+    output_file_pattern: "{partition}-{currentTimestamp}.json"
+    message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
+    storage:
+      size: 10Gi
+    requests:
+      cpu: 500m
+      memory: 500Mi
+    lag_threshold_warning: 50000
+    lag_threshold_critical: 100000
+  failed-telemetry-backup:
+    replicas: 1
+    service_name: "failed_telemetry_backup"
+    consumer_group: "{{ env_name }}.telemetry.failed.backup"
+    base_path: "failed"
+    timestamp_key: "syncts"
+    fallback_timestamp_key: "@timestamp"
+    topic: "{{ env_name }}.telemetry.failed"
+    kafka_broker_host: "{{groups['processing-cluster-kafka']|join(',')}}"
+    zookeeper_quorum: "{{groups['processing-cluster-zookeepers']|join(':2181,')}}:2181"
+    max_file_size: 100000000
+    max_file_age: 14400
+    partition_prefix_enabled: "false"
+    partition_prefix_key: ""
+    partition_prefix_mapping: "{}"
+    output_file_pattern: "{partition}-{currentTimestamp}.json"
+    message_channel_identifier: ""
+    message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
+    storage:
+      size: 10Gi
+    requests:
+      cpu: 500m
+      memory: 500Mi
+    lag_threshold_warning: 50000
+    lag_threshold_critical: 100000
+  unique-telemetry-backup:
+    replicas: 1
+    service_name: "unique_telemetry_backup"
+    consumer_group: "{{ env_name }}.telemetry.unique.backup"
+    base_path: "unique/raw"
+    timestamp_key: "syncts"
+    fallback_timestamp_key: "@timestamp"
+    topic: "{{ env_name }}.telemetry.unique"
+    kafka_broker_host: "{{groups['processing-cluster-kafka']|join(',')}}"
+    zookeeper_quorum: "{{groups['processing-cluster-zookeepers']|join(':2181,')}}:2181"
+    max_file_size: 100000000
+    max_file_age: 14400
+    partition_prefix_enabled: "false"
+    partition_prefix_key: ""
+    partition_prefix_mapping: "{}"
+    output_file_pattern: "{partition}-{kafkaPartition}-{currentTimestamp}.json"
+    message_channel_identifier: ""
+    message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
+    storage:
+      size: 10Gi
+    requests:
+      cpu: 500m
+      memory: 500Mi
+    lag_threshold_warning: 50000
+    lag_threshold_critical: 100000
+  denorm-events-backup:
+    replicas: 1
+    service_name: "denorm_events_backup"
+    consumer_group: "{{ env_name }}.telemetry.denorm.backup"
+    base_path: "telemetry-denormalized"
+    timestamp_key: "syncts"
+    fallback_timestamp_key: "@timestamp"
+    topic: "{{ env_name }}.telemetry.denorm"
+    kafka_broker_host: "{{groups['processing-cluster-kafka']|join(',')}}"
+    zookeeper_quorum: "{{groups['processing-cluster-zookeepers']|join(':2181,')}}:2181"
+    max_file_size: 100000000
+    max_file_age: 14400
+    partition_prefix_enabled: "true"
+    partition_prefix_key: "eid"
+    partition_prefix_mapping: '{"ME_WORKFLOW_SUMMARY":"summary","DEFAULT":"raw"}'
+    output_file_pattern: "{partition}-{kafkaPartition}-{currentTimestamp}.json"
+    message_channel_identifier: ""
+    message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
+    storage:
+      size: 10Gi
+    requests:
+      cpu: 500m
+      memory: 500Mi
+    lag_threshold_warning: 50000
+    lag_threshold_critical: 100000
+  derived-denorm-events-backup:
+    replicas: 1
+    service_name: "derived_denorm_events_backup"
+    consumer_group: "{{ env_name }}.summary.backup"
+    base_path: "telemetry-denormalized/summary"
+    timestamp_key: "syncts"
+    fallback_timestamp_key: "@timestamp"
+    topic: "{{ env_name }}.druid.events.summary"
+    kafka_broker_host: "{{groups['processing-cluster-kafka']|join(',')}}"
+    zookeeper_quorum: "{{groups['processing-cluster-zookeepers']|join(':2181,')}}:2181"
+    max_file_size: 100000000
+    max_file_age: 14400
+    partition_prefix_enabled: "false"
+    partition_prefix_key: ""
+    partition_prefix_mapping: "{}"
+    output_file_pattern: "{partition}-{kafkaPartition}-{currentTimestamp}.json"
+    message_channel_identifier: ""
+    message_parser: "com.pinterest.secor.parser.PatternDateMessageParser" 
+    storage:
+      size: 10Gi
+    requests:
+      cpu: 500m
+      memory: 500Mi
+    lag_threshold_warning: 50000
+    lag_threshold_critical: 100000
+  channel-telemetry-backup:
+    replicas: 1
+    service_name: "channel_telemetry_backup"
+    consumer_group: "{{ env_name }}.telemetry.channel.backup"
+    base_path: "data-exhaust/raw"
+    timestamp_key: "syncts"
+    fallback_timestamp_key: "@timestamp"
+    topic: "{{ env_name }}.telemetry.denorm"
+    kafka_broker_host: "{{groups['processing-cluster-kafka']|join(',')}}"
+    zookeeper_quorum: "{{groups['processing-cluster-zookeepers']|join(':2181,')}}:2181"
+    max_file_size: 100000000
+    max_file_age: 14400
+    partition_prefix_enabled: "false"
+    partition_prefix_key: "eid"
+    partition_prefix_mapping: "{}"
+    output_file_pattern: "{partition}-{kafkaPartition}-{currentTimestamp}.json"
+    message_channel_identifier: "derivedlocationdata.state"
+    message_parser: "com.pinterest.secor.parser.ChannelDateMessageParser"
+    storage:
+      size: 10Gi
+    requests:
+      cpu: 500m
+      memory: 500Mi
+    lag_threshold_warning: 50000
+    lag_threshold_critical: 100000
+  channel-summary-backup:
+    replicas: 1
+    service_name: "channel_summary_backup"
+    consumer_group: "{{ env_name }}.summary.channel.backup"
+    base_path: "data-exhaust/summary"
+    timestamp_key: "syncts"
+    fallback_timestamp_key: "@timestamp"
+    topic: "{{ env_name }}.druid.events.summary"
+    kafka_broker_host: "{{groups['processing-cluster-kafka']|join(',')}}"
+    zookeeper_quorum: "{{groups['processing-cluster-zookeepers']|join(':2181,')}}:2181"
+    max_file_size: 100000000
+    max_file_age: 14400
+    partition_prefix_enabled: "false"
+    partition_prefix_key: ""
+    partition_prefix_mapping: "{}"
+    output_file_pattern: "{partition}-{kafkaPartition}-{currentTimestamp}.json"
+    message_channel_identifier: "derivedlocationdata.state"
+    message_parser: "com.pinterest.secor.parser.ChannelDateMessageParser"
+    storage:
+      size: 10Gi
+    requests:
+      cpu: 500m
+      memory: 500Mi
+    lag_threshold_warning: 50000
+    lag_threshold_critical: 100000
+  extractor-failed-backup:
+    replicas: 1
+    service_name: "extractor_failed_backup"
+    consumer_group: "{{ env_name }}.extractor.failed.backup"
+    base_path: "extractor-failed"
+    timestamp_key: "syncts"
+    fallback_timestamp_key: "@timestamp"
+    topic: "{{ env_name }}.telemetry.extractor.failed"
+    kafka_broker_host: "{{groups['processing-cluster-kafka']|join(',')}}"
+    zookeeper_quorum: "{{groups['processing-cluster-zookeepers']|join(':2181,')}}:2181"
+    max_file_size: 100000000
+    max_file_age: 21600
+    partition_prefix_enabled: "false"
+    partition_prefix_key: ""
+    partition_prefix_mapping: "{}"
+    output_file_pattern: "{partition}-{currentTimestamp}.json"
+    message_channel_identifier: ""
+    message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
+    storage:
+      size: 10Gi
+    requests:
+      cpu: 500m
+      memory: 500Mi
+    lag_threshold_warning: 50000
+    lag_threshold_critical: 100000
+  assess-raw-events-backup:
+    replicas: 1
+    service_name: "assess_raw_events_backup"
+    consumer_group: "{{ env_name }}.telemetry.assess.raw"
+    base_path: "telemetry-raw-assess"
+    timestamp_key: "syncts"
+    fallback_timestamp_key: "@timestamp"
+    topic: "{{ env_name }}.telemetry.assess.raw"
+    kafka_broker_host: "{{groups['processing-cluster-kafka']|join(',')}}"
+    zookeeper_quorum: "{{groups['processing-cluster-zookeepers']|join(':2181,')}}:2181"
+    max_file_size: 100000000
+    max_file_age: 21600
+    partition_prefix_enabled: "false"
+    partition_prefix_key: ""
+    partition_prefix_mapping: "{}"
+    output_file_pattern: "{partition}-{currentTimestamp}.json"
+    message_channel_identifier: ""
+    message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
+    storage:
+      size: 10Gi
+    requests:
+      cpu: 500m
+      memory: 500Mi
+    lag_threshold_warning: 50000
+    lag_threshold_critical: 100000
+  telemetry-duplicate-backup:
+    replicas: 1
+    service_name: "telemetry_duplicate_backup"
+    consumer_group: "{{ env_name }}.telemetry.duplicate.backup"
+    base_path: "telemetry-duplicate"
+    timestamp_key: "syncts"
+    fallback_timestamp_key: "@timestamp"
+    topic: "{{ env_name }}.telemetry.duplicate"
+    kafka_broker_host: "{{groups['processing-cluster-kafka']|join(',')}}"
+    zookeeper_quorum: "{{groups['processing-cluster-zookeepers']|join(':2181,')}}:2181"
+    max_file_size: 100000000
+    max_file_age: 14400
+    partition_prefix_enabled: "false"
+    partition_prefix_key: ""
+    partition_prefix_mapping: "{}"
+    output_file_pattern: "{partition}-{currentTimestamp}.json"
+    message_channel_identifier: ""
+    message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
+    storage:
+      size: 10Gi
+    requests:
+      cpu: 500m
+      memory: 500Mi
+    lag_threshold_warning: 50000
+    lag_threshold_critical: 100000
+  extractor-duplicate-backup:
+    replicas: 1
+    service_name: "extractor_duplicate_backup"
+    consumer_group: "{{ env_name }}.extractor.duplicate.backup"
+    base_path: "extractor-duplicate"
+    timestamp_key: "syncts"
+    fallback_timestamp_key: "@timestamp"
+    topic: "{{ env_name }}.telemetry.extractor.duplicate"
+    kafka_broker_host: "{{groups['processing-cluster-kafka']|join(',')}}"
+    zookeeper_quorum: "{{groups['processing-cluster-zookeepers']|join(':2181,')}}:2181"
+    max_file_size: 100000000
+    max_file_age: 14400
+    partition_prefix_enabled: "false"
+    partition_prefix_key: ""
+    partition_prefix_mapping: "{}"
+    output_file_pattern: "{partition}-{currentTimestamp}.json"
+    message_channel_identifier: ""
+    message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
+    storage:
+      size: 10Gi
+    requests:
+      cpu: 500m
+      memory: 500Mi
+    lag_threshold_warning: 50000
+    lag_threshold_critical: 100000
+  derived-telemetry-backup:
+    replicas: 1
+    service_name: "derived_telemetry_backup"
+    consumer_group: "{{ env_name }}.telemetry.derived.unique.backup"
+    base_path: "unique/summary"
+    timestamp_key: "syncts"
+    fallback_timestamp_key: "@timestamp"
+    topic: "{{ env_name }}.telemetry.derived.unique"
+    kafka_broker_host: "{{groups['processing-cluster-kafka']|join(',')}}"
+    zookeeper_quorum: "{{groups['processing-cluster-zookeepers']|join(':2181,')}}:2181"
+    max_file_size: 100000000
+    max_file_age: 600
+    partition_prefix_enabled: "true"
+    partition_prefix_key: "eid"
+    partition_prefix_mapping: '{"ME_WORKFLOW_SUMMARY":"workflow_summary","DEFAULT":"me"}'
+    output_file_pattern: "{partition}-{currentTimestamp}.json"
+    message_channel_identifier: ""
+    message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
+    storage:
+      size: 10Gi
+    requests:
+      cpu: 500m
+      memory: 500Mi
+    lag_threshold_warning: 50000
+    lag_threshold_critical: 100000
+  device-profile-backup:
+    replicas: 1
+    service_name: "device_profile_backup"
+    consumer_group: "{{ env_name }}.events.device.profile.backup"
+    base_path: "device-profile-events"
+    timestamp_key: "updated_date"
+    fallback_timestamp_key: "updated_date"
+    topic: "{{ env_name }}.events.deviceprofile"
+    kafka_broker_host: "{{ secor_ingestion_kafka_brokers }}"
+    zookeeper_quorum: "{{ ingestion_zookeepers }}"
+    max_file_size: 100000000
+    max_file_age: 14400
+    partition_prefix_enabled: "false"
+    partition_prefix_key: ""
+    partition_prefix_mapping: "{}"
+    output_file_pattern: "{partition}-{currentTimestamp}.json"
+    message_channel_identifier: ""
+    message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
+    storage:
+      size: 10Gi
+    requests:
+      cpu: 500m
+      memory: 500Mi
+    lag_threshold_warning: 50000
+    lag_threshold_critical: 100000
+  learning-events-backup:
+    replicas: 1
+    service_name: "learning_events_backup"
+    consumer_group: "{{ env_name }}.learning.graph.events.backup"
+    base_path: "learning-events"
+    timestamp_key: "createdOn"
+    fallback_timestamp_key: "@timestamp"
+    topic: "{{ env_name }}.learning.graph.events"
+    kafka_broker_host: "{{ secor_ingestion_kafka_brokers }}"
+    zookeeper_quorum: "{{ ingestion_zookeepers }}"
+    max_file_size: 100000000
+    max_file_age: 14400
+    partition_prefix_enabled: "false"
+    partition_prefix_key: ""
+    partition_prefix_mapping: "{}"
+    output_file_pattern: "{partition}-{currentTimestamp}.json"
+    message_channel_identifier: ""
+    message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
+    storage:
+      size: 10Gi
+    requests:
+      cpu: 500m
+      memory: 500Mi
+    lag_threshold_warning: 50000
+    lag_threshold_critical: 100000
+  learning-failed-backup:
+    replicas: 1
+    service_name: "learning_failed_backup"
+    consumer_group: "{{ env_name }}.failed.learning.events.backup"
+    base_path: "learning-failed-events"
+    timestamp_key: "ets"
+    fallback_timestamp_key: "@timestamp"
+    azure_account_name: "{{ secor.azure.account_name }}"
+    container_name: "{{ secor.azure.container_name }}"
+    azure_account_key: "{{ secor.azure.account_key }}"
+    topic: "{{ env_name }}.learning.events.failed"
+    kafka_broker_host: "{{ secor_ingestion_kafka_brokers }}"
+    zookeeper_quorum: "{{ ingestion_zookeepers }}"
+    max_file_size: 100000000
+    max_file_age: 3600
+    partition_prefix_enabled: "true"
+    partition_prefix_key: "jobName"
+    partition_prefix_mapping: '{"publish-pipeline":"publish_pipeline","composite-search-indexer":"cs_index","DEFAULT":"failed_events"}'
+    output_file_pattern: "{partition}-{currentTimestamp}.json"
+    message_channel_identifier: ""
+    message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
+    storage:
+      size: 10Gi
+    requests:
+      cpu: 500m
+      memory: 500Mi
+    lag_threshold_warning: 50000
+    lag_threshold_critical: 100000
+  assess-events-backup:
+    replicas: 1
+    service_name: "assess_events_backup"
+    consumer_group: "{{ env_name }}.telemetry.assess.events.backup"
+    base_path: "telemetry-batch-assess"
+    timestamp_key: "assessmentTs"
+    fallback_timestamp_key: "assessmentTs"
+    topic: "{{ env_name }}.telemetry.assess"
+    kafka_broker_host: "{{ secor_ingestion_kafka_brokers }}"
+    zookeeper_quorum: "{{ ingestion_zookeepers }}"
+    max_file_size: 100000000
+    max_file_age: 21600
+    partition_prefix_enabled: "false"
+    partition_prefix_key: ""
+    partition_prefix_mapping: "{}"
+    output_file_pattern: "{partition}-{currentTimestamp}.json"
+    message_channel_identifier: ""
+    message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
+    storage:
+      size: 10Gi
+    requests:
+      cpu: 500m
+      memory: 500Mi
+    lag_threshold_warning: 50000
+    lag_threshold_critical: 100000
+  batch-assess-failed-events-backup:
+    replicas: 1
+    service_name: "batch_assess_failed_events_backup"
+    consumer_group: "{{ env_name }}.telemetry.assess.failed.events.backup"
+    base_path: "telemetry-batch-assess-failed"
+    timestamp_key: "assessmentTs"
+    fallback_timestamp_key: "assessmentTs"
+    topic: "{{ env_name }}.telemetry.assess.failed"
+    kafka_broker_host: "{{ secor_ingestion_kafka_brokers }}"
+    zookeeper_quorum: "{{ ingestion_zookeepers }}"
+    max_file_size: 100000000
+    max_file_age: 21600
+    partition_prefix_enabled: "false"
+    partition_prefix_key: ""
+    partition_prefix_mapping: "{}"
+    output_file_pattern: "{partition}-{currentTimestamp}.json"
+    message_channel_identifier: ""
+    message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
+    storage:
+      size: 10Gi
+    requests:
+      cpu: 500m
+      memory: 500Mi
+    lag_threshold_warning: 50000
+    lag_threshold_critical: 100000  
+  ingestion-telemetry-backup:
+    replicas: 1
+    service_name: "ingestion_telemetry_backup"
+    consumer_group: "{{ env_name }}.telemetry.ingestion.events.backup"
+    base_path: "ingestion-telemetry"
+    timestamp_key: "syncts"
+    fallback_timestamp_key: "@timestamp"
+    topic: "{{ env_name }}.telemetry.ingestion"
+    kafka_broker_host: "{{ secor_ingestion_kafka_brokers }}"
+    zookeeper_quorum: "{{ ingestion_zookeepers }}"
+    max_file_size: 100000000
+    max_file_age: 14400
+    partition_prefix_enabled: "false"
+    partition_prefix_key: ""
+    partition_prefix_mapping: "{}"
+    output_file_pattern: "{partition}-{currentTimestamp}.json"
+    message_channel_identifier: ""
+    message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
+    storage:
+      size: 10Gi
+    requests:
+      cpu: 500m
+      memory: 500Mi
+    lag_threshold_warning: 50000
+    lag_threshold_critical: 100000
+  content-consumption-events-backup:
+    replicas: 1
+    service_name: "content_consumption_events_backup"
+    consumer_group: "{{ env_name }}.coursebatch.job.request.backup"
+    base_path: "content-consumption-events"
+    timestamp_key: "ets"
+    fallback_timestamp_key: "@timestamp"
+    topic: "{{ env_name }}.coursebatch.job.request"
+    kafka_broker_host: "{{ secor_ingestion_kafka_brokers }}"
+    zookeeper_quorum: "{{ ingestion_zookeepers }}"
+    max_file_size: 100000000
+    max_file_age: 14400
+    partition_prefix_enabled: "false"
+    partition_prefix_key: ""
+    partition_prefix_mapping: "{}"
+    output_file_pattern: "{partition}-{currentTimestamp}.json"
+    message_channel_identifier: ""
+    message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
+    storage:
+      size: 10Gi
+    requests:
+      cpu: 500m
+      memory: 500Mi
+    lag_threshold_warning: 50000
+    lag_threshold_critical: 100000
+  issue-certificate-events-backup:
+    replicas: 1
+    service_name: "issue_certificate_events_backup"
+    consumer_group: "{{ env_name }}.issue.certificate.request.backup"
+    base_path: "issue-certificate-events"
+    timestamp_key: "ets"
+    fallback_timestamp_key: "@timestamp"
+    topic: "{{ env_name }}.issue.certificate.request"
+    kafka_broker_host: "{{ secor_ingestion_kafka_brokers }}"
+    zookeeper_quorum: "{{ ingestion_zookeepers }}"
+    max_file_size: 100000000
+    max_file_age: 14400
+    partition_prefix_enabled: "false"
+    partition_prefix_key: ""
+    partition_prefix_mapping: "{}"
+    output_file_pattern: "{partition}-{currentTimestamp}.json"
+    message_channel_identifier: ""
+    message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
+    storage:
+      size: 10Gi
+    requests:
+      cpu: 500m
+      memory: 500Mi
+    lag_threshold_warning: 50000
+    lag_threshold_critical: 100000
+  content-auto-creation-events-backup:
+    replicas: 1
+    service_name: "content_auto_creation_events_backup"
+    consumer_group: "{{ env_name }}.auto.creation.job.request.backup"
+    base_path: "content-auto-creation-events"
+    timestamp_key: "ets"
+    fallback_timestamp_key: "@timestamp"
+    topic: "{{ env_name }}.auto.creation.job.request"
+    kafka_broker_host: "{{ secor_ingestion_kafka_brokers }}"
+    zookeeper_quorum: "{{ ingestion_zookeepers }}"
+    max_file_size: 100000000
+    max_file_age: 14400
+    partition_prefix_enabled: "false"
+    partition_prefix_key: ""
+    partition_prefix_mapping: "{}"
+    output_file_pattern: "{partition}-{currentTimestamp}.json"
+    message_channel_identifier: ""
+    message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
+    storage:
+      size: 10Gi
+    requests:
+      cpu: 500m
+      memory: 500Mi
+    lag_threshold_warning: 50000
+    lag_threshold_critical: 100000
+  error-telemetry-backup:
+    replicas: 1
+    service_name: "error_events_backup"
+    consumer_group: '{{ env_name }}.druid.events.error.backup'
+    base_path: "error_events"
+    timestamp_key: "syncts"
+    fallback_timestamp_key: '@timestamp'
+    topic: '{{ env_name }}.druid.events.error'
+    kafka_broker_host: "{{groups['processing-cluster-kafka']|join(',')}}"
+    zookeeper_quorum: "{{groups['processing-cluster-zookeepers']|join(':2181,')}}:2181"
+    max_file_size: 100000000
+    max_file_age: 14400
+    partition_prefix_enabled: "false"
+    partition_prefix_key: ""
+    partition_prefix_mapping: "{}"
+    output_file_pattern: "{partition}-{currentTimestamp}.json"
+    message_channel_identifier: ""
+    message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
+    storage:
+      size: 10Gi
+    requests:
+      cpu: 500m
+      memory: 500Mi
+    lag_threshold_warning: 50000
+    lag_threshold_critical: 100000
