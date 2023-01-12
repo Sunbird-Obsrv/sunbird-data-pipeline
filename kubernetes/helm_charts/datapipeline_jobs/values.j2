@@ -8,7 +8,12 @@ azure_account: {{ azure_account }}
 azure_secret: {{ azure_secret }}
 s3_access_key: {{ s3_storage_key }}
 s3_secret_key: {{ s3_storage_secret }}
+{% if cloud_service_provider == "oci" %}
+s3_endpoint: {{ oci_flink_s3_storage_endpoint }}
+{% else %}
 s3_endpoint: {{ s3_storage_endpoint }}
+{% endif %}
+
 s3_path_style_access: {{ s3_path_style_access }}
 
 serviceMonitor:
@@ -158,7 +163,8 @@ base_config: |
 {% if checkpoint_store_type == "azure" %}
         base.url = "wasbs://"${job.statebackend.blob.storage.container}"@"${job.statebackend.blob.storage.account}"/"${job.statebackend.blob.storage.checkpointing.dir}
 {% elif checkpoint_store_type == "s3" %}
-        base.url = "s3://"${job.statebackend.blob.storage.account}"/"${job.statebackend.blob.storage.container}"/"${job.statebackend.blob.storage.checkpointing.dir}
+        # base.url = "s3://"${job.statebackend.blob.storage.account}"/"${job.statebackend.blob.storage.container}"/"${job.statebackend.blob.storage.checkpointing.dir}
+        base.url = "s3://"${job.statebackend.blob.storage.container}"/"${job.statebackend.blob.storage.checkpointing.dir}
 {% endif %}
       }
     }
@@ -236,7 +242,6 @@ ingest-router:
     taskmanager.memory.process.size: {{ flink_job_names['ingest-router'].taskmanager_process_memory }}
     jobmanager.memory.process.size: {{ flink_job_names['ingest-router'].jobmanager_process_memory }}
 
-
 telemetry-extractor:
   telemetry-extractor: |+
     include file("/data/flink/conf/base-config.conf")
@@ -286,6 +291,7 @@ telemetry-extractor:
     heartbeat.interval: 5000
     taskmanager.memory.process.size: {{ flink_job_names['telemetry-extractor'].taskmanager_process_memory }}
     jobmanager.memory.process.size: {{ flink_job_names['telemetry-extractor'].jobmanager_process_memory }}
+
 
 pipeline-preprocessor:
   pipeline-preprocessor: |+
