@@ -144,6 +144,13 @@ default_druid_configs:
    #Logging the indexing logs to s3
    s3_logging_bucket: "{{ cloud_storage_telemetry_bucketname }}"
    s3_indexer_logs_dir: "druid/raw/stage/indexing_logs"
+   #Druid GCS Details
+   gcloud_bucket: "{{ cloud_storage_telemetry_bucketname }}"
+   gcloud_prefix: ""
+   gcloud_max_list_length: 1024
+   #Logging the indexing logs to GCS
+   gcloud_logging_bucket: "{{ cloud_storage_telemetry_bucketname }}"
+   gcloud_indexer_logs_dir: "druid/raw/stage/indexing_logs"
    #Druid coordinator node configuration
    druid_coordinator_heap_size: 128m
    druid_coordinator_period: PT30S
@@ -218,6 +225,13 @@ default_druid_configs:
    #Logging the indexing logs to s3
    s3_logging_bucket: "{{ cloud_storage_telemetry_bucketname }}"
    s3_indexer_logs_dir: "druid/rollup/stage/indexing_logs"
+   #Druid GCS Details
+   druid.google.bucket: "{{ cloud_storage_telemetry_bucketname }}"
+   druid.google.prefix: ""
+   druid.google.maxListingLength: 1024
+   #Logging the indexing logs to gcs
+   gcloud_logging_bucket: "{{ cloud_storage_telemetry_bucketname }}"
+   gcloud_indexer_logs_dir: "druid/rollup/stage/indexing_logs"
    #Druid coordinator node configuration
    druid_coordinator_heap_size: 128m
    druid_coordinator_period: PT30S

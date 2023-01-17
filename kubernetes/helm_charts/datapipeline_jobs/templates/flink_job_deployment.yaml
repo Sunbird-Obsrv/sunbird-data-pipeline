@@ -122,7 +122,7 @@ spec:
 {{- if eq .Values.checkpoint_store_type "gcloud" }}
                "-Dfs.gs.auth.client.id={{ .Values.cloud_storage_key }}",
                "-Dfs.gs.auth.client.secret={{ .Values.cloud_storage_secret }}",
-               "-Dfs.gs.project.id={{ .Values.cloud_storage_project_id }}"
+               "-Dfs.gs.project.id={{ .Values.cloud_storage_project_id }}",
 {{- end }}
                "-Dweb.submit.enable=false",
                "-Dmetrics.reporter.prom.class=org.apache.flink.metrics.prometheus.PrometheusReporter",
@@ -208,7 +208,7 @@ spec:
 {{- if eq .Values.checkpoint_store_type "gcloud" }}
           "-Dfs.gs.auth.client.id={{ .Values.cloud_storage_key }}",
           "-Dfs.gs.auth.client.secret={{ .Values.cloud_storage_secret }}",
-          "-Dfs.gs.project.id={{ .Values.cloud_storage_project_id }}"
+          "-Dfs.gs.project.id={{ .Values.cloud_storage_project_id }}",
 {{- end }}
           "-Dweb.submit.enable=false",
           "-Dmetrics.reporter.prom.class=org.apache.flink.metrics.prometheus.PrometheusReporter",
