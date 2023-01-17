@@ -115,6 +115,7 @@ druid_router_gc_logfile: "{{ druid_crash_logdir }}/gc.router.log"
 druid_router_heap_dump_file: "{{ druid_crash_logdir }}/router.hprof"
 
 default_druid_configs:
+<<<<<<< HEAD
    raw:
       #Druid Postgres Details
       druid_postgres_db: "druid"
@@ -260,5 +261,166 @@ default_druid_configs:
       druid_router_http_numMaxThreads: 100
       druid_server_http_numThreads: 100
       druid_router_managementProxy_enabled: true
+=======
+  raw:
+   #Druid Postgres Details
+   druid_postgres_db: "druid"
+   druid_postgres_host: "{{ postgres.db_url }}"
+   druid_postgres_port: "{{ postgres.db_port }}"
+   druid_postgres_user: "{{ druid_postgres_user | default('druid@' + postgres.db_url) }}"
+   #Druid Azure Details 
+   druid_postgres_pass: "{{ dp_vault_druid_postgress_pass }}"
+   azure_account_name: "{{ cloud_private_storage_accountname }}"
+   azure_storage_secret: "{{ cloud_private_storage_secret }}"
+   azure_container: "{{ cloud_storage_telemetry_bucketname }}"
+   #Logging the indexing logs to azure
+   druid_log_azure_container: "{{ cloud_storage_telemetry_bucketname }}"
+   druid_log_azure_folder: "druidlogs"
+   #Druid S3 Details
+   druid_storage_type: "{{ cloud_storage_telemetry_type }}"
+   s3_access_key: "{{ cloud_private_storage_accountname }}"
+   s3_secret_key: "{{ cloud_private_storage_secret }}"
+   s3_bucket: "{{ cloud_storage_telemetry_bucketname }}"
+   s3_endpoint: "{{ cloud_private_storage_endpoint }}"
+   s3_segment_dir: "druid/raw/segments"
+   s3_path_like_access: "{{ cloud_storage_pathstyle_access }}"
+   s3_v4_sign_region: "{{ cloud_private_storage_region }}"
+   #Logging the indexing logs to s3
+   s3_logging_bucket: "{{ cloud_storage_telemetry_bucketname }}"
+   s3_indexer_logs_dir: "druid/raw/stage/indexing_logs"
+   #Druid GCS Details
+   gcloud_bucket: "{{ cloud_storage_telemetry_bucketname }}"
+   gcloud_prefix: ""
+   gcloud_max_list_length: 1024
+   #Logging the indexing logs to GCS
+   gcloud_logging_bucket: "{{ cloud_storage_telemetry_bucketname }}"
+   gcloud_indexer_logs_dir: "druid/raw/stage/indexing_logs"
+   #Druid coordinator node configuration
+   druid_coordinator_heap_size: 128m
+   druid_coordinator_period: PT30S
+   druid_coordinator_startDelay: PT30S
+   druid_coordinator_balance_strategy: diskNormalized
+   #Druid overlord node configuration
+   druid_overlord_heap_size: 256m
+   #Druid broker node configuration
+   druid_broker_min_heap_size: 128m
+   druid_broker_max_heap_size: 128m
+   druid_broker_max_direct_size: 800m
+   druid_broker_http_numConnections: 5
+   druid_broker_server_http_numThread: 25
+   druid_broker_processing_bufferBytes: 134217728
+   druid_broker_processing_threads: 2
+   #Druid historical node configuration
+   druid_historical_min_heap_size: 1048m
+   druid_historical_max_heap_size: 1048m
+   druid_historical_max_direct_size: 800m
+   druid_historical_http_numConnections: 5
+   druid_historical_server_http_numThread: 25
+   druid_historical_processing_bufferBytes: 134217728
+   druid_historical_processing_threads: 2
+   druid_historical_enable_cache: false
+   druid_historical_segmentcache_size: 10000000000
+   druid_historical_server_maxsize: 10000000000
+   druid_historical_processing_num_merge_buffers: 2
+   druid_query_ondiskstorage_enabled: true
+   druid_historical_maxMergingDictionarySize: 100000000
+   druid_historical_segmentcache_numloadingthreads: 4
+   druid_historical_segmentcache_path: "/var/segmentstore"
+   druid.query.groupBy.maxOnDiskStorage: 10737418240
+   #Druid middlemanager configuration
+   druid_middlemanager_heap_size: 128m
+   druid_middlemanager_worker_cap: 4
+   druid_mm_java_opts_array: "-server -Xmx900m -XX:+UseG1GC -XX:HeapDumpPath={{ druid_mm_heap_dump_file }} -XX:MaxGCPauseMillis=100 -XX:+PrintGCDetails -XX:+PrintGCTimeStamps"
+   druid_middlemanager_peon_server_http_numThread: 25
+   druid_middlemanager_peon_processing_bufferBytes: 25000000
+   druid_middlemanager_peon_processing_threads: 2
+   druid_middlemanager_peon_server_maxsize: 0
+   druid_indexing_queue_startDelay: PT30S
+   druid_router_heap_size: 1g
+   druid_router_http_numConnections: 50
+   druid_router_http_readTimeout: PT5M
+   druid_router_http_numMaxThreads: 100
+   druid_server_http_numThreads: 100
+   druid_router_managementProxy_enabled: true
+   druid_historical_maxOnDiskStorage: 10737418240
+  rollup:
+   #Druid Postgres Details
+   druid_postgres_db: "druid"
+   druid_postgres_host: "{{ postgres.db_url }}"
+   druid_postgres_port: "{{ postgres.db_port }}"
+   druid_postgres_user: "{{ druid_postgres_user | default('druid@' + postgres.db_url) }}"
+   #Druid Azure Details
+   druid_postgres_pass: "{{ dp_vault_druid_postgress_pass }}"
+   azure_account_name: "{{ cloud_private_storage_accountname }}"
+   azure_storage_secret: "{{ cloud_private_storage_secret }}"
+   azure_container: "{{ cloud_storage_telemetry_bucketname }}"
+   #Logging the indexing logs to azure
+   druid_log_azure_container: "{{ cloud_storage_telemetry_bucketname }}"
+   druid_log_azure_folder: "druidlogs"
+   #Druid S3 Details
+   druid_storage_type: "{{ cloud_storage_telemetry_type }}"
+   s3_access_key: "{{ s3_storage_key }}"
+   s3_secret_key: "{{ s3_storage_secret }}"
+   s3_bucket: "{{ s3_storage_container }}"
+   s3_endpoint: "{{ s3_storage_endpoint }}"
+   s3_segment_dir: "druid/rollup/segments"
+   s3_path_like_access: "{{ cloud_storage_pathstyle_access }}"
+   s3_v4_sign_region: "{{ cloud_private_storage_region }}"
+   #Logging the indexing logs to s3
+   s3_logging_bucket: "{{ cloud_storage_telemetry_bucketname }}"
+   s3_indexer_logs_dir: "druid/rollup/stage/indexing_logs"
+   #Druid GCS Details
+   druid.google.bucket: "{{ cloud_storage_telemetry_bucketname }}"
+   druid.google.prefix: ""
+   druid.google.maxListingLength: 1024
+   #Logging the indexing logs to gcs
+   gcloud_logging_bucket: "{{ cloud_storage_telemetry_bucketname }}"
+   gcloud_indexer_logs_dir: "druid/rollup/stage/indexing_logs"
+   #Druid coordinator node configuration
+   druid_coordinator_heap_size: 128m
+   druid_coordinator_period: PT30S
+   druid_coordinator_startDelay: PT30S
+   druid_coordinator_balance_strategy: cost
+   #Druid overlord node configuration
+   druid_overlord_heap_size: 256m
+   #Druid broker node configuration
+   druid_broker_min_heap_size: 128m
+   druid_broker_max_heap_size: 128m
+   druid_broker_max_direct_size: 700m
+   druid_broker_http_numConnections: 5
+   druid_broker_server_http_numThread: 25
+   druid_broker_processing_bufferBytes: 134217728
+   druid_broker_processing_threads: 2
+   #Druid historical node configuration
+   druid_historical_min_heap_size: 1048m
+   druid_historical_max_heap_size: 1048m
+   druid_historical_max_direct_size: 800m
+   druid_historical_http_numConnections: 5
+   druid_historical_server_http_numThread: 25
+   druid_historical_processing_bufferBytes: 134217728
+   druid_historical_processing_threads: 2
+   druid_historical_enable_cache: false
+   druid_historical_segmentcache_size: 2000000000
+   druid_historical_server_maxsize: 10000000000
+   druid_historical_processing_num_merge_buffers: 2
+   druid_query_ondiskstorage_enabled: false
+   druid_historical_segmentcache_numloadingthreads: 4
+   druid_historical_segmentcache_path: "/var/segmentstore"
+   #Druid middlemanager configuration
+   druid_middlemanager_heap_size: 128m
+   druid_middlemanager_worker_cap: 4
+   druid_mm_java_opts_array: "-server -Xmx900m -XX:+UseG1GC -XX:HeapDumpPath={{ druid_mm_heap_dump_file }} -XX:MaxGCPauseMillis=100 -XX:+PrintGCDetails -XX:+PrintGCTimeStamps"
+   druid_middlemanager_peon_server_http_numThread: 25
+   druid_middlemanager_peon_processing_bufferBytes: 25000000
+   druid_middlemanager_peon_processing_threads: 2
+   druid_middlemanager_peon_server_maxsize: 0
+   druid_indexing_queue_startDelay: PT30S
+   druid_router_heap_size: 1g
+   druid_router_http_numConnections: 50
+   druid_router_http_readTimeout: PT5M
+   druid_router_http_numMaxThreads: 100
+   druid_server_http_numThreads: 100
+   druid_router_managementProxy_enabled: true
+>>>>>>> 5faa25b0c (csp migration variables update)
 
 enable_druid_sql: true
