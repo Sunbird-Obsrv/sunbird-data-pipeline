@@ -34,7 +34,7 @@ azure_account: "{{ cloud_private_storage_accountname }}"
 azure_secret: "{{ cloud_private_storage_secret }}"
 flink_container_name: dev-data-store
 flink_dp_storage_container: ""
-checkpoint_store_type: azure
+checkpoint_store_type: gcloud
 checkpoint_interval: 60000
 checkpoint_pause_between_seconds: 5000
 checkpoint_compression_enabled: true
