@@ -40,7 +40,7 @@ config() {
 	    echo '{"search":{"type":"none"},"model":"org.sunbird.analytics.job.report.AssessmentArchivalJob","modelParams":{"deleteArchivedBatch":true,"azureFetcherConfig":{"store":"azure","blobExt":"csv.gz","reportPath":"archived-data/","container":"reports"},"sparkCassandraConnectionHost":"{{ core_cassandra_host }}","fromDate":"$(date --date yesterday '+%Y-%m-%d')","toDate":"$(date --date yesterday '+%Y-%m-%d')"},"parallelization":8,"appName":"Assessment Archival Removal Job"}'
 	    ;;
 {% elif (dp_object_store_type == "oci" or dp_object_store_type == "s3") %}
-	    echo '{"search":{"type":"none"},"model":"org.sunbird.analytics.job.report.AssessmentArchivalJob","modelParams":{"deleteArchivedBatch":true,"azureFetcherConfig":{"store":"s3","blobExt":"csv.gz","reportPath":"archived-data/","container":"reports"},"sparkCassandraConnectionHost":"{{ core_cassandra_host }}","fromDate":"$(date --date yesterday '+%Y-%m-%d')","toDate":"$(date --date yesterday '+%Y-%m-%d')"},"parallelization":8,"appName":"Assessment Archival Removal Job"}'
+	    echo '{"search":{"type":"none"},"model":"org.sunbird.analytics.job.report.AssessmentArchivalJob","modelParams":{"deleteArchivedBatch":true,"azureFetcherConfig":{"store":"{{dp_object_store_type}}","blobExt":"csv.gz","reportPath":"archived-data/","container":"reports"},"sparkCassandraConnectionHost":"{{ core_cassandra_host }}","fromDate":"$(date --date yesterday '+%Y-%m-%d')","toDate":"$(date --date yesterday '+%Y-%m-%d')"},"parallelization":8,"appName":"Assessment Archival Removal Job"}'
 	    ;;
 {% endif %}
         "collection-reconciliation-job")

@@ -16,7 +16,7 @@ reports.storage.key.config="{{ dp_reports_storage_key_config }}"
 reports.storage.secret.config="{{ dp_reports_storage_secret_config }}"
 {% if dp_object_store_type == "azure" %}
 cloud_storage_type="azure"
-{% elif (dp_object_store_type == "cephs3" or dp_object_store_type == "s3") %}
+{% elif (dp_object_store_type == "cephs3" or dp_object_store_type == "s3" or dp_object_store_type == "oci") %}
 {% if cloud_service_provider == "oci" %}
 cloud_storage_type="oci"
 {% else %}
