@@ -24,6 +24,7 @@ cloud_storage_type="s3"
 {% endif %}
 cloud_storage_endpoint="{{ s3_storage_endpoint | regex_replace('^[a-z]+://(.*)$', '\\1') }}"
 cloud_storage_endpoint_with_protocol="{{ s3_storage_endpoint_with_protocol }}"
+storage.endpoint.config="{{ s3_storage_endpoint_with_protocol }}"
 aws_storage_key="{{ s3_storage_key }}"
 aws_storage_secret="{{ s3_storage_secret }}"
 {% endif %}
