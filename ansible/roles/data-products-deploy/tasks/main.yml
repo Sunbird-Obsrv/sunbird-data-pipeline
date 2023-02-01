@@ -8,13 +8,13 @@
 - name: Ensure oci oss bucket exists
   command: "/home/{{analytics_user}}/bin/oci os bucket get --name {{ bucket }}"
   register: check_bucket
-  when: dp_object_store_type == "s3" and cloud_service_provider == "oci"
+  when: dp_object_store_type == "oci"
   tags:
     - always
       
 - name: Create oci oss bucket 
   command: "/home/{{analytics_user}}/bin/oci os bucket create -c {{oci_bucket_compartment}} --name {{bucket}}"
-  when: dp_object_store_type == "s3" and cloud_service_provider == "oci" and check_bucket.rc !=0
+  when: dp_object_store_type == "oci" and check_bucket.rc !=0
   tags:
     - always
 
@@ -35,7 +35,7 @@
   command: /home/{{analytics_user}}/bin/oci os object put -bn {{ bucket }} --name models-{{ model_version }}/{{ analytics_batch_module_artifact }} --file {{ analytics.home }}/models-{{ model_version }}/{{ analytics_batch_module_artifact }} --force
   async: 3600
   poll: 10
-  when: dp_object_store_type == "s3" and cloud_service_provider == "oci"
+  when: dp_object_store_type == "oci"
   tags:
     - dataproducts-spark-cluster 
 
@@ -57,7 +57,7 @@
   command: /home/{{analytics_user}}/bin/oci os object put -bn {{ bucket }} --name models-{{ model_version }}/data-products-1.0.jar --file {{ analytics.home }}/models-{{ model_version }}/data-products-1.0/data-products-1.0.jar --force
   async: 3600
   poll: 10
-  when: dp_object_store_type == "s3" and cloud_service_provider == "oci"
+  when: dp_object_store_type == "oci"
   tags:
     - ed-dataproducts-spark-cluster     
 
@@ -78,7 +78,7 @@
   command: /home/{{analytics_user}}/bin/oci os object put -bn {{ bucket }} --name models-{{ model_version }}/{{ analytics_core_artifact }} --file {{ analytics.home }}/models-{{ model_version }}/{{ analytics_core_artifact }} --force
   async: 3600
   poll: 10
-  when: dp_object_store_type == "s3" and cloud_service_provider == "oci"
+  when: dp_object_store_type == "oci"
   tags:
     - framework-spark-cluster
 
@@ -99,7 +99,7 @@
   command: /home/{{analytics_user}}/bin/oci os object put -bn {{ bucket }} --name models-{{ model_version }}/{{ scruid_artifact }} --file {{ analytics.home }}/models-{{ model_version }}/{{ scruid_artifact }} --force
   async: 3600
   poll: 10
-  when: dp_object_store_type == "s3" and cloud_service_provider == "oci"
+  when: dp_object_store_type == "oci"
   tags:
     - framework-spark-cluster  
 
@@ -157,7 +157,7 @@
   command: /home/{{analytics_user}}/bin/oci os object put -bn {{ bucket }} --file {{ analytics.home }}/models-{{ model_version }}/application.conf --name models-{{ model_version }}/application.conf --force
   async: 3600
   poll: 10
-  when: dp_object_store_type == "s3" and cloud_service_provider == "oci"
+  when: dp_object_store_type == "oci"
   tags:
     - framework-spark-cluster  
 
