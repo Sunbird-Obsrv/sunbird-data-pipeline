@@ -251,8 +251,12 @@ dcetextbook.filename="DCE_textbook_data.csv"
 etbtextbook.filename="ETB_textbook_data.csv"
 etb.dialcode.druid.length={{ etb_dialcode_list_druid_length }}
 
-
+{% if dp_object_store_type == "azure" %}
 druid.report.default.storage="azure"
+{% elif (dp_object_store_type == "oci" or dp_object_store_type == "s3") %}
+druid.report.default.storage="s3"
+{% endif %}
+
 druid.report.date.format="yyyy-MM-dd"
 druid.report.default.container="report-verification"
 

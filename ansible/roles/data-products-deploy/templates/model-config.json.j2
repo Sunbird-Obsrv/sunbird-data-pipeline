@@ -1,7 +1,7 @@
 {
   "wfs": {
     "search": {
-      "type": "azure",
+      "type": "{{dp_object_store_type}}",
       "queries": [
         {
           "bucket": "{{ bucket }}",
@@ -24,7 +24,7 @@
     },
     "output": [
       {
-        "to": "azure",
+        "to": "{{dp_object_store_type}}",
         "params": {
           "bucket": "{{ bucket }}",
           "key": "{{ job_manager_tmp_dir }}/wfs/$(date --date yesterday '+%Y-%m-%d')"
@@ -44,7 +44,7 @@
   },
   "video-streaming": {
     "search": {
-      "type": "azure"
+      "type": "{{dp_object_store_type}}"
     },
     "model": "org.ekstep.analytics.job.VideoStreamingJob",
     "modelParams": {
@@ -297,7 +297,7 @@
   			"tenantId": "",
   			"slugName": ""
   		},
-  		"store": "azure",
+  		"store": "{{dp_object_store_type}}",
   		"format": "csv",
   		"key": "druid-reports/",
   		"filePath": "druid-reports/",
@@ -346,7 +346,7 @@
                 "limit": 10000
             }
         },
-        "store": "azure",
+        "store": "{{dp_object_store_type}}",
         "format":"csv",
         "key": "druid-reports/",
         "filePath": "druid-reports/",
@@ -457,7 +457,7 @@
         }],
         "queryType": "groupBy"
       },
-      "store": "azure",
+      "store": "{{dp_object_store_type}}",
       "format":"csv",
       "key": "druid-reports/",
       "filePath": "druid-reports/",
@@ -486,7 +486,7 @@
           {
             "name": "denorm",
             "search": {
-              "type": "azure",
+              "type": "{{dp_object_store_type}}",
               "queries": [
                 {
                   "bucket": "{{ bucket }}",
@@ -532,7 +532,7 @@
           {
             "name": "failed",
             "search": {
-              "type": "azure",
+              "type": "{{dp_object_store_type}}",
               "queries": [
                 {
                   "bucket": "{{ bucket }}",
@@ -546,7 +546,7 @@
           {
             "name": "unique",
             "search": {
-              "type": "azure",
+              "type": "{{dp_object_store_type}}",
               "queries": [
                 {
                   "bucket": "{{ bucket }}",
@@ -560,7 +560,7 @@
           {
             "name": "raw",
             "search": {
-              "type": "azure",
+              "type": "{{dp_object_store_type}}",
               "queries": [
                 {
                   "bucket": "{{ bucket }}",
@@ -574,7 +574,7 @@
           {
             "name": "channel-raw",
             "search": {
-              "type": "azure",
+              "type": "{{dp_object_store_type}}",
               "queries": [
                 {
                   "folder": true,
@@ -589,7 +589,7 @@
           {
             "name": "channel-summary",
             "search": {
-              "type": "azure",
+              "type": "{{dp_object_store_type}}",
               "queries": [
                 {
                   "folder": true,
@@ -604,7 +604,7 @@
           {
             "name": "derived",
             "search": {
-              "type": "azure",
+              "type": "{{dp_object_store_type}}",
               "queries": [
                 {
                   "bucket": "{{ bucket }}",
