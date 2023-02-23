@@ -8,11 +8,16 @@
   tags:
     - common
 
+- name: Install virtualenv via pip
+  pip:
+    name: virtualenv
+    executable: pip3
+
 - name: Installing package
   pip:
     name: "{{library_path}}"
     virtualenv: "{{ virtualenv_path }}"
-    virtualenv_python: "python3.10"
+    virtualenv_python: "python3.6"
   tags:
     - common
 
