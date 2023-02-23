@@ -12,7 +12,7 @@
   pip:
     name: "{{library_path}}"
     virtualenv: "{{ virtualenv_path }}"
-    virtualenv_python: "python3.6"
+    virtualenv_python: "python3.10"
   tags:
     - common
 
