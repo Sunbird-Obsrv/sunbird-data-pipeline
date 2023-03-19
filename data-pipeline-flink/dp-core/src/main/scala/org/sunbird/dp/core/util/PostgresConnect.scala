@@ -26,6 +26,9 @@ class PostgresConnect(config: PostgresConnectionConfig) {
     source.setPassword(config.password)
     source.setDatabaseName(config.database)
     source.setMaxConnections(config.maxConnections)
+    source.setSsl(true);
+    source.setSslMode("require");
+    source.setSslFactory("org.postgresql.ssl.NonValidatingFactory");
   }
 
   @throws[Exception]
