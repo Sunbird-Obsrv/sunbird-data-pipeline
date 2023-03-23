@@ -3,6 +3,7 @@ package org.sunbird.dp.core.util
 import java.sql.{Connection, ResultSet, SQLException}
 
 import org.postgresql.ds.PGPoolingDataSource
+import org.postgresql.ssl.NonValidatingFactory
 
 final case class PostgresConnectionConfig(user: String, password: String, database: String, host: String, port: Int, maxConnections: Int)
 
@@ -26,9 +27,9 @@ class PostgresConnect(config: PostgresConnectionConfig) {
     source.setPassword(config.password)
     source.setDatabaseName(config.database)
     source.setMaxConnections(config.maxConnections)
-    source.setSsl(true);
-    source.setSslMode("require");
-    source.setSslFactory("org.postgresql.ssl.NonValidatingFactory");
+    source.setProperty("ssl", "true")
+    source.setProperty("sslmode", "require")
+    source.setProperty("sslfactory", "org.postgresql.ssl.NonValidatingFactory")
   }
 
   @throws[Exception]
