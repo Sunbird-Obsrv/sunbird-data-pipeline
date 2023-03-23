@@ -594,7 +594,13 @@ device-profile-updater:
       port = {{ redis_meta_device_port }}
     }
     postgres {
+
+{% if dp_ssl == "true" %}
+      database = "{{ postgres.dp_db_name }}",
+{% else %}
       database = "{{ postgres.db_name }}",
+{% endif %}
+
       table = "{{ device_profile_table }}"
     }
 
