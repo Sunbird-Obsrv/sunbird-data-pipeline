@@ -595,7 +595,7 @@ device-profile-updater:
     }
     postgres {
 
-{% if postgres.dp_ssl == "true" %}
+{% if postgres.dp_ssl_mode == "require" %}
       database = "{{ postgres.dp_db_name }}",
 {% else %}
       database = "{{ postgres.db_name }}",
