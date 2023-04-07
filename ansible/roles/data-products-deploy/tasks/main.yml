@@ -6,14 +6,14 @@
     - always
 
 - name: Ensure oci oss bucket exists
-  command: "/home/{{analytics_user}}/bin/oci os bucket get --name {{ bucket }}"
+  command: "oci os bucket get --name {{ bucket }}"
   register: check_bucket
   when: dp_object_store_type == "oci"
   tags:
     - always
       
 - name: Create oci oss bucket 
-  command: "/home/{{analytics_user}}/bin/oci os bucket create -c {{oci_bucket_compartment}} --name {{bucket}}"
+  command: "oci os bucket create -c {{oci_bucket_compartment}} --name {{bucket}}"
   when: dp_object_store_type == "oci" and check_bucket.rc !=0
   tags:
     - always
@@ -32,7 +32,7 @@
     - dataproducts-spark-cluster 
 
 - name: Copy Core Data Products to oci oss
-  command: /home/{{analytics_user}}/bin/oci os object put -bn {{ bucket }} --name models-{{ model_version }}/{{ analytics_batch_module_artifact }} --file {{ analytics.home }}/models-{{ model_version }}/{{ analytics_batch_module_artifact }} --force
+  command: oci os object put -bn {{ bucket }} --name models-{{ model_version }}/{{ analytics_batch_module_artifact }} --file {{ analytics.home }}/models-{{ model_version }}/{{ analytics_batch_module_artifact }} --force
   async: 3600
   poll: 10
   when: dp_object_store_type == "oci"
@@ -54,7 +54,7 @@
     - ed-dataproducts-spark-cluster   
 
 - name: Copy Ed Data Products to oci oss
-  command: /home/{{analytics_user}}/bin/oci os object put -bn {{ bucket }} --name models-{{ model_version }}/data-products-1.0.jar --file {{ analytics.home }}/models-{{ model_version }}/data-products-1.0/data-products-1.0.jar --force
+  command: oci os object put -bn {{ bucket }} --name models-{{ model_version }}/data-products-1.0.jar --file {{ analytics.home }}/models-{{ model_version }}/data-products-1.0/data-products-1.0.jar --force
   async: 3600
   poll: 10
   when: dp_object_store_type == "oci"
@@ -75,7 +75,7 @@
     - framework-spark-cluster
 
 - name: Copy Framework Library to oci oss
-  command: /home/{{analytics_user}}/bin/oci os object put -bn {{ bucket }} --name models-{{ model_version }}/{{ analytics_core_artifact }} --file {{ analytics.home }}/models-{{ model_version }}/{{ analytics_core_artifact }} --force
+  command: oci os object put -bn {{ bucket }} --name models-{{ model_version }}/{{ analytics_core_artifact }} --file {{ analytics.home }}/models-{{ model_version }}/{{ analytics_core_artifact }} --force
   async: 3600
   poll: 10
   when: dp_object_store_type == "oci"
@@ -96,7 +96,7 @@
     - framework-spark-cluster  
 
 - name: Copy Scruid Library to oci oss
-  command: /home/{{analytics_user}}/bin/oci os object put -bn {{ bucket }} --name models-{{ model_version }}/{{ scruid_artifact }} --file {{ analytics.home }}/models-{{ model_version }}/{{ scruid_artifact }} --force
+  command: oci os object put -bn {{ bucket }} --name models-{{ model_version }}/{{ scruid_artifact }} --file {{ analytics.home }}/models-{{ model_version }}/{{ scruid_artifact }} --force
   async: 3600
   poll: 10
   when: dp_object_store_type == "oci"
@@ -154,7 +154,7 @@
     - framework-spark-cluster    
 
 - name: Copy configuration file to oci oss
-  command: /home/{{analytics_user}}/bin/oci os object put -bn {{ bucket }} --file {{ analytics.home }}/models-{{ model_version }}/application.conf --name models-{{ model_version }}/application.conf --force
+  command: oci os object put -bn {{ bucket }} --file {{ analytics.home }}/models-{{ model_version }}/application.conf --name models-{{ model_version }}/application.conf --force
   async: 3600
   poll: 10
   when: dp_object_store_type == "oci"

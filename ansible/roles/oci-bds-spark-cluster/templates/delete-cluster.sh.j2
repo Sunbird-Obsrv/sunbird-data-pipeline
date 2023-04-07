@@ -1,0 +1,34 @@
+#!/bin/bash
+
+compartment_id="{{compartment_id}}"
+display_name="{{display_name}}"
+
+
+echo "DELETE STARTED"
+echo $display_name
+echo $compartment_id
+
+
+function get_bdsid() {
+    list_param=`oci bds instance list --compartment-id $compartment_id`
+    bdsid="NULL"
+    # echo $list_param | jq '.data'
+    state="ACTIVE"
+    disname="NULL"
+    for k in $(jq '.data | keys | .[]' <<< "$list_param"); do
+        # echo $k
+        cstate=`echo $list_param | jq -r '.data['$k']["lifecycle-state"]'`
+        if [ $cstate = $state ]; then
+            disname=`echo $list_param | jq -r '.data['$k']["display-name"]'`
+            if [ $disname = $display_name ]; then
+                bdsid=`echo $list_param | jq -r '.data['$k']["id"]'`            
+            fi
+
+        fi    
+        echo $bdsid
+    done
+}
+
+get_bdsid
+
+yes Y | oci bds instance delete --bds-instance-id $bdsid
