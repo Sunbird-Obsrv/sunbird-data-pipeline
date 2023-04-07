@@ -1,6 +1,7 @@
 #! /bin/bash
 # Subnet id will generate from env variable
-# Version 1 Running Fine
+# Version 1 Author Nikesh Gogia and Ali Shemshadi
+
 ambari_user="{{ambari_user}}"
 cluster_password="{{cluster_password}}"
 key_alias="{{key_alias}}"
@@ -227,18 +228,6 @@ function create_api(){
    oci bds bds-api-key create --bds-instance-id $bds_instance_id --key-alias $key_alias --passphrase $passphrase --user-id $user_id --wait-for-state $capi --max-wait-seconds $cwait
 }
 
-function restart_bds_cluster() {
-    # oci cli command to stop
-    echo "STOPPING CLUSTER"
-    cstate='SUCCEEDED'
-    cwait=2000
-    oci bds instance stop --bds-instance-id $bds_instance_id --cluster-admin-password $b64p --is-force-stop-jobs true --wait-for-state=$cstate --max-wait-seconds $cwait
-    # oci cli command to start
-    echo "STARTING CLUSTER"
-    cstate='SUCCEEDED'
-    oci bds instance start --bds-instance-id $bds_instance_id --cluster-admin-password $b64p --wait-for-state=$cstate --max-wait-seconds $cwait
-}
-
 
 # Below is tenancy
 
@@ -326,4 +315,3 @@ get_apidetails
 
 update_bds_config
 
-# restart_bds_cluster
