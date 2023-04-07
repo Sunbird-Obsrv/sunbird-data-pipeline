@@ -38,8 +38,6 @@ node('build-slave') {
                    ansibleplaybook="$currentws/ansible/oci-bds-spark.provision.yml"
                    cd /tmp
                    ./create-cluster.sh
-                   export inventory_dir=/var/lib/jenkins/workspace/Provision/dev/DataPipeline/__SparkBDSCluster3/ansible/inventory/env
-
                    export ANSIBLE_HOST_KEY_CHECKING=False
                    ansible-playbook -i $currentws/ansible/inventory/env $ansibleplaybook --extra-vars "oci_namespace=$oci_namespace" --tags spark-provision --vault-password-file /var/lib/jenkins/secrets/vault-pass
                    '''
