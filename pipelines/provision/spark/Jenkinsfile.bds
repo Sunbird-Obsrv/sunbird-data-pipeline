@@ -14,7 +14,6 @@ node('build-slave') {
             }
             
             stage('copy cluster creation script') {
-                withCredentials([usernamePassword(credentialsId: 'oci-bds-credential', passwordVariable: 'cluster_password', usernameVariable: 'ambari_user')]) {
                 values = [:]
                 envDir = sh(returnStdout: true, script: "echo $JOB_NAME").split('/')[-3].trim()
                 module = sh(returnStdout: true, script: "echo $JOB_NAME").split('/')[-2].trim()
@@ -30,7 +29,7 @@ node('build-slave') {
                 values.put('ansibleExtraArgs', ansibleExtraArgs)
                 println values
                 ansible_playbook_run(values)
-                }
+            
             }
             // stage('create and provision spark OCI BDS') {
             //     oci_namespace=params.oci_namespace
