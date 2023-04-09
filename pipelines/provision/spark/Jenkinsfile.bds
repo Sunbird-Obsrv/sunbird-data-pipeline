@@ -14,13 +14,14 @@ node('build-slave') {
             }
             
             stage('copy cluster creation script') {
+                withCredentials([usernamePassword(credentialsId: 'oci-bds-credential', passwordVariable: 'cluster_password', usernameVariable: 'ambari_user')]) {
                 values = [:]
                 envDir = sh(returnStdout: true, script: "echo $JOB_NAME").split('/')[-3].trim()
                 module = sh(returnStdout: true, script: "echo $JOB_NAME").split('/')[-2].trim()
                 jobName = sh(returnStdout: true, script: "echo $JOB_NAME").split('/')[-1].trim()
                 currentWs = sh(returnStdout: true, script: 'pwd').trim()
                 ansiblePlaybook = "${currentWs}/ansible/oci-bds-spark.provision.yml"
-                ansibleExtraArgs = "--extra-vars \"compartment_id=${params.compartment_id} ambari_user=${params.ambari_user} cluster_password=${params.cluster_password} key_alias=${params.key_alias} user_id=${params.user_id} subnet_id=${params.subnet_id} display_name=${params.display_name} workernode=${params.workernode} public_key=${params.public_key} cluster_state=${params.cluster_state}\" --tags copy-script,copy-creation-script --vault-password-file /var/lib/jenkins/secrets/vault-pass"
+                ansibleExtraArgs = "--extra-vars \"compartment_id=${params.compartment_id} ambari_user=$ambari_user cluster_password=$cluster_password key_alias=${params.key_alias} user_id=${params.user_id} subnet_id=${params.subnet_id} display_name=${params.display_name} workernode=${params.workernode} public_key=${params.public_key} cluster_state=${params.cluster_state}\" --tags copy-script,copy-creation-script --vault-password-file /var/lib/jenkins/secrets/vault-pass"
                 values.put('currentWs', currentWs)
                 values.put('env', envDir)
                 values.put('module', module)
@@ -29,21 +30,22 @@ node('build-slave') {
                 values.put('ansibleExtraArgs', ansibleExtraArgs)
                 println values
                 ansible_playbook_run(values)
+                }
             }
-            stage('create and provision spark OCI BDS') {
-                oci_namespace=params.oci_namespace
-                //withCredentials([usernamePassword(credentialsId: 'azure-service-principal', passwordVariable: 'sppass', usernameVariable: 'spuser')]) {
-                   sh '''
-                   currentws=$(pwd)
-                   ansibleplaybook="$currentws/ansible/oci-bds-spark.provision.yml"
-                   cd /tmp
-                   ./create-cluster.sh
-                   export ANSIBLE_HOST_KEY_CHECKING=False
-                   ansible-playbook -i $currentws/ansible/inventory/env $ansibleplaybook --extra-vars "oci_namespace=$oci_namespace" --tags spark-provision --vault-password-file /var/lib/jenkins/secrets/vault-pass
-                   '''
-                //}   
+            // stage('create and provision spark OCI BDS') {
+            //     oci_namespace=params.oci_namespace
+            //     //withCredentials([usernamePassword(credentialsId: 'azure-service-principal', passwordVariable: 'sppass', usernameVariable: 'spuser')]) {
+            //        sh '''
+            //        currentws=$(pwd)
+            //        ansibleplaybook="$currentws/ansible/oci-bds-spark.provision.yml"
+            //        cd /tmp
+            //        ./create-cluster.sh
+            //        export ANSIBLE_HOST_KEY_CHECKING=False
+            //        ansible-playbook -i $currentws/ansible/inventory/env $ansibleplaybook --extra-vars "oci_namespace=$oci_namespace" --tags spark-provision --vault-password-file /var/lib/jenkins/secrets/vault-pass
+            //        '''
+            //     //}   
                
-            }
+            // }
                 
         }
     }
