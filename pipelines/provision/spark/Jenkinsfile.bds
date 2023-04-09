@@ -31,20 +31,20 @@ node('build-slave') {
                 ansible_playbook_run(values)
             
             }
-            // stage('create and provision spark OCI BDS') {
-            //     oci_namespace=params.oci_namespace
-            //     //withCredentials([usernamePassword(credentialsId: 'azure-service-principal', passwordVariable: 'sppass', usernameVariable: 'spuser')]) {
-            //        sh '''
-            //        currentws=$(pwd)
-            //        ansibleplaybook="$currentws/ansible/oci-bds-spark.provision.yml"
-            //        cd /tmp
-            //        ./create-cluster.sh
-            //        export ANSIBLE_HOST_KEY_CHECKING=False
-            //        ansible-playbook -i $currentws/ansible/inventory/env $ansibleplaybook --extra-vars "oci_namespace=$oci_namespace" --tags spark-provision --vault-password-file /var/lib/jenkins/secrets/vault-pass
-            //        '''
-            //     //}   
+            stage('create and provision spark OCI BDS') {
+                oci_namespace=params.oci_namespace
+                withCredentials([usernamePassword(credentialsId: 'oci-bds-credential', passwordVariable: 'cluster_password', usernameVariable: 'ambari_user')]) {
+                   sh '''
+                   currentws=$(pwd)
+                   ansibleplaybook="$currentws/ansible/oci-bds-spark.provision.yml"
+                   cd /tmp
+                   ./create-cluster.sh $ambari_user $cluster_password
+                   export ANSIBLE_HOST_KEY_CHECKING=False
+                   ansible-playbook -i $currentws/ansible/inventory/env $ansibleplaybook --extra-vars "oci_namespace=$oci_namespace" --tags spark-provision --vault-password-file /var/lib/jenkins/secrets/vault-pass
+                   '''
+                }   
                
-            // }
+            }
                 
         }
     }
