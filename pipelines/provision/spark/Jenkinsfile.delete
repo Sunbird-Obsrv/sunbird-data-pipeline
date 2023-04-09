@@ -20,7 +20,7 @@ node('build-slave') {
                 jobName = sh(returnStdout: true, script: "echo $JOB_NAME").split('/')[-1].trim()
                 currentWs = sh(returnStdout: true, script: 'pwd').trim()
                 ansiblePlaybook = "${currentWs}/ansible/oci-bds-spark.provision.yml"
-                ansibleExtraArgs = "--extra-vars \"compartment_id=${params.compartment_id} ambari_user=${params.ambari_user} cluster_password=${params.cluster_password} key_alias=${params.key_alias} user_id=${params.user_id} subnet_id=${params.subnet_id} display_name=${params.display_name} workernode=${params.workernode} public_key=${params.public_key} cluster_state=${params.cluster_state}\" --tags copy-script,copy-creation-script --vault-password-file /var/lib/jenkins/secrets/vault-pass"
+                ansibleExtraArgs = "--extra-vars \"compartment_id=${params.compartment_id} key_alias=${params.key_alias} user_id=${params.user_id} subnet_id=${params.subnet_id} display_name=${params.display_name} workernode=${params.workernode} public_key=${params.public_key} cluster_state=${params.cluster_state}\" --tags copy-script,copy-creation-script --vault-password-file /var/lib/jenkins/secrets/vault-pass"
                 values.put('currentWs', currentWs)
                 values.put('env', envDir)
                 values.put('module', module)
@@ -30,18 +30,18 @@ node('build-slave') {
                 println values
                 ansible_playbook_run(values)
             }
-            stage('create and provision spark OCI BDS') {
-                storage_container=params.storage_container
-                //withCredentials([usernamePassword(credentialsId: 'azure-service-principal', passwordVariable: 'sppass', usernameVariable: 'spuser')]) {
-                   sh '''
-                   currentws=$(pwd)
-                   ansibleplaybook="$currentws/ansible/oci-bds-spark.provision.yml"
-                   cd /tmp
-                   ./delete-cluster.sh
-                   '''
-                //}   
+            // stage('create and provision spark OCI BDS') {
+            //     storage_container=params.storage_container
+            //     //withCredentials([usernamePassword(credentialsId: 'azure-service-principal', passwordVariable: 'sppass', usernameVariable: 'spuser')]) {
+            //        sh '''
+            //        currentws=$(pwd)
+            //        ansibleplaybook="$currentws/ansible/oci-bds-spark.provision.yml"
+            //        cd /tmp
+            //        ./delete-cluster.sh
+            //        '''
+            //     //}   
                
-            }
+            // }
                 
         }
     }
