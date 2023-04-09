@@ -20,7 +20,7 @@ node('build-slave') {
                 jobName = sh(returnStdout: true, script: "echo $JOB_NAME").split('/')[-1].trim()
                 currentWs = sh(returnStdout: true, script: 'pwd').trim()
                 ansiblePlaybook = "${currentWs}/ansible/oci-bds-spark.provision.yml"
-                ansibleExtraArgs = "--extra-vars \"compartment_id=${params.compartment_id} key_alias=${params.key_alias} user_id=${params.user_id} subnet_id=${params.subnet_id} display_name=${params.display_name} workernode=${params.workernode} public_key=${params.public_key} cluster_state=${params.cluster_state}\" --tags copy-script,copy-creation-script --vault-password-file /var/lib/jenkins/secrets/vault-pass"
+                ansibleExtraArgs = "--extra-vars \"compartment_id=${params.compartment_id} key_alias=${params.key_alias} user_id=${params.user_id} subnet_id=${params.subnet_id} display_name=${params.display_name} public_key=${params.public_key} cluster_state=${params.cluster_state}\" --tags copy-script,copy-creation-script --vault-password-file /var/lib/jenkins/secrets/vault-pass"
                 values.put('currentWs', currentWs)
                 values.put('env', envDir)
                 values.put('module', module)
