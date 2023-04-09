@@ -30,18 +30,18 @@ node('build-slave') {
                 println values
                 ansible_playbook_run(values)
             }
-            // stage('create and provision spark OCI BDS') {
-            //     storage_container=params.storage_container
-            //     //withCredentials([usernamePassword(credentialsId: 'azure-service-principal', passwordVariable: 'sppass', usernameVariable: 'spuser')]) {
-            //        sh '''
-            //        currentws=$(pwd)
-            //        ansibleplaybook="$currentws/ansible/oci-bds-spark.provision.yml"
-            //        cd /tmp
-            //        ./delete-cluster.sh
-            //        '''
-            //     //}   
+            stage('create and provision spark OCI BDS') {
+                storage_container=params.storage_container
+                //withCredentials([usernamePassword(credentialsId: 'azure-service-principal', passwordVariable: 'sppass', usernameVariable: 'spuser')]) {
+                   sh '''
+                   currentws=$(pwd)
+                   ansibleplaybook="$currentws/ansible/oci-bds-spark.provision.yml"
+                   cd /tmp
+                   ./delete-cluster.sh
+                   '''
+                //}   
                
-            // }
+            }
                 
         }
     }
