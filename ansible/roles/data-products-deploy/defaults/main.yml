@@ -1,6 +1,7 @@
 analytics_user: analytics
 analytics_group: analytics
 spark_output_temp_dir: /mount/data/analytics/tmp/
+oci_install_loc: /home/{{analytics_user}}/bin/
 
 bucket: "telemetry-data-store"
 secor_bucket: "telemetry-data-store"

@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 ## Job to run daily
+
 cd "{{ analytics_cluster.home }}"
 source model-config.sh
 today=$(date "+%Y-%m-%d")
@@ -79,7 +80,15 @@ submit_cluster_job() {
    requestBody=${clusterConfig/'"className": "org.ekstep.analytics.job.JobExecutor"'/$argsStr}
    finalRequestBody=${requestBody/'org.ekstep.analytics.job.JobExecutor'/$classVariable}
    echo $finalRequestBody
-   response=$(curl -k --user "{{ admin_name }}:{{ admin_password }}" -v -H "Content-Type: application/json" -X POST -d "$finalRequestBody" 'https://{{ spark_cluster_name }}.azurehdinsight.net/livy/batches' -H "X-Requested-By: admin_name }}")
+{% if dp_object_store_type == "azure" %}
+{
+    curl -k --user "{{ admin_name }}:{{ admin_password }}" -v -H "Content-Type: application/json" -X POST -d "$finalRequestBody" 'https://{{ spark_cluster_name }}.azurehdinsight.net/livy/batches' -H "X-Requested-By: {{ admin_name }}"
+}
+{% elif (dp_object_store_type == "oci") %}
+{
+    curl -k --user "{{ admin_name }}:{{ admin_password }}" -v -H "Content-Type: application/json" -X POST -d "$finalRequestBody" 'https://{{ spark_bds_url }}:8998/batches' -H "X-Requested-By: {{ admin_name }}"
+}
+{% endif %}
    echo "Submitted job for batchNumer $i below is the response"
    echo $response
 }
@@ -118,7 +127,15 @@ if [ "$mode" = "via-partition" ]; then
             requestBody=${clusterConfig/'"className": "org.ekstep.analytics.job.JobExecutor"'/$argsStr}
             finalRequestBody=${requestBody/'org.ekstep.analytics.job.JobExecutor'/$classVariable}
             echo $finalRequestBody
+{% if dp_object_store_type == "azure" %}
+{
             curl -k --user "{{ admin_name }}:{{ admin_password }}" -v -H "Content-Type: application/json" -X POST -d "$finalRequestBody" 'https://{{ spark_cluster_name }}.azurehdinsight.net/livy/batches' -H "X-Requested-By: {{ admin_name }}"
+}
+{% elif (dp_object_store_type == "oci") %}
+{
+            curl -k --user "{{ admin_name }}:{{ admin_password }}" -v -H "Content-Type: application/json" -X POST -d "$finalRequestBody" 'https://{{ spark_bds_url }}:8998/batches' -H "X-Requested-By: {{ admin_name }}"
+}
+{% endif %}
         done
 
 elif [ "$mode" = "parallel-jobs" ]; then
@@ -157,8 +174,15 @@ elif [ "$mode" = "selected-partition" ]; then
      requestBody=${clusterConfig/'"className": "org.ekstep.analytics.job.JobExecutor"'/$argsStr}
      finalRequestBody=${requestBody/'org.ekstep.analytics.job.JobExecutor'/$classVariable}
      echo $finalRequestBody
+{% if dp_object_store_type == "azure" %}
+{
      curl -k --user "{{ admin_name }}:{{ admin_password }}" -v -H "Content-Type: application/json" -X POST -d "$finalRequestBody" 'https://{{ spark_cluster_name }}.azurehdinsight.net/livy/batches' -H "X-Requested-By: {{ admin_name }}"
-
+}
+{% elif (dp_object_store_type == "oci") %}
+{
+     curl -k --user "{{ admin_name }}:{{ admin_password }}" -v -H "Content-Type: application/json" -X POST -d "$finalRequestBody" 'https://{{ spark_bds_url }}:8998/batches' -H "X-Requested-By: {{ admin_name }}"
+}
+{% endif %}
 else
     if [ -z "$start_date" ]; then
         echo "Running $job without partition via run-job."
@@ -179,5 +203,14 @@ else
     requestBody=${clusterConfig/'"className": "org.ekstep.analytics.job.JobExecutor"'/$argsStr}
     finalRequestBody=${requestBody/'org.ekstep.analytics.job.JobExecutor'/$classVariable}
     echo $finalRequestBody
-    curl -k --user "{{ admin_name }}:{{ admin_password }}" -v -H "Content-Type: application/json" -X POST -d "$finalRequestBody" 'https://{{ spark_cluster_name }}.azurehdinsight.net/livy/batches' -H "X-Requested-By: {{ admin_name }}"    
+{% if dp_object_store_type == "azure" %}
+{
+    curl -k --user "{{ admin_name }}:{{ admin_password }}" -v -H "Content-Type: application/json" -X POST -d "$finalRequestBody" 'https://{{ spark_cluster_name }}.azurehdinsight.net/livy/batches' -H "X-Requested-By: {{ admin_name }}"
+}
+{% elif (dp_object_store_type == "oci") %}
+{
+    curl -k --user "{{ admin_name }}:{{ admin_password }}" -v -H "Content-Type: application/json" -X POST -d "$finalRequestBody" 'https://{{ spark_bds_url }}:8998/batches' -H "X-Requested-By: {{ admin_name }}"
+}
+{% endif %}
+
 fi
