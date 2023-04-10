@@ -94,7 +94,7 @@ def main(batchSize, jobId,jobType,table):
     port={{postgres.db_port}}
     user="{{postgres.db_username}}"
     password="{{postgres.db_password}}"
-    database="{{postgres.db_name}}"
+    database="{{postgres.spark_db_name}}"
     url_connect = "jdbc:postgresql://{0}:{1}/{2}".format(host, port, database)
 
     db = psycopg2.connect(host=host, user=user, password=password, database=database, port=port)
