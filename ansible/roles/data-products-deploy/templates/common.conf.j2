@@ -223,7 +223,7 @@ metric.kafka.broker="{{groups['processing-cluster-kafka']|join(':9092,')}}:9092"
 metric.kafka.topic="{{ env }}.prom.monitoring.metrics"
 
 //Postgres Config
-postgres.db="{{postgres.db_name}}"
+postgres.db="{{postgres.spark_db_name}}"
 postgres.url="jdbc:postgresql://{{postgres.db_url}}:{{postgres.db_port}}/"
 postgres.user="{{postgres.db_username}}"
 postgres.pass="{{postgres.db_password}}"
