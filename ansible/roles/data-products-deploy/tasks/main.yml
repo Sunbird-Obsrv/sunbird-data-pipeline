@@ -430,6 +430,18 @@
   tags:
     - parallel-jobs-submit
 
+- name: Check python version
+  shell: python --version
+  register: python_version
+  tags:
+    - parallel-jobs-submit
+
+- name: Check python version
+  debug: |
+    msg: {{python_version.stdout}}
+  tags:
+    - parallel-jobs-submit
+
 - name: Execute python script to populate batch numbers
   shell: |
     if echo "{{jobs}}" | grep 'druid'
