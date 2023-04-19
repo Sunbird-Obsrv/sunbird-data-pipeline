@@ -393,6 +393,24 @@
     - run-job
     - config-update
 
+- name: Copy jets3t.properties file
+  template: src=jets3t.j2 dest={{ analytics_cluster.home }}/jets3t.properties
+  delegate_to: localhost  
+  tags:
+    - replay-job
+    - run-job
+    - config-update
+
+- name: Copy JetS3t.properties to oci oss
+  command: "{{oci_install_loc}}/oci os object put -bn {{ bucket }} --name models-{{ model_version }}/jets3t.properties --file {{ analytics_cluster.home }}/jets3t.properties --content-type auto --force"
+  async: 3600
+  poll: 10
+  when: dp_object_store_type == "oci"
+  tags:
+    - replay-job
+    - run-job
+    - config-update 
+
 - name: Replay Job
   shell: "nohup {{ analytics_cluster.home }}/submit-script.sh --job {{ job_id }} --mode {{ mode }} --partitions {{ partitions }} --parallelisation {{ parallelisation }} --startDate {{ start_date }} --endDate {{ end_date }} --sparkMaster {{ sparkMaster }} --selectedPartitions {{ selected_partitions }} &"
   async: "{{ (pause_min * 60) }}"

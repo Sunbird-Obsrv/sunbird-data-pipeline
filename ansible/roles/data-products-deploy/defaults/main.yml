@@ -281,3 +281,11 @@ assessment_metric_primary_category: "{{ exhaust_job_assessment_primary_category 
 # Default s3 variables
 sunbird_private_s3_storage_key: ""
 sunbird_private_s3_storage_secret: ""
+
+
+# jets3t s3 config, allows us to configure for s3-like object stores
+jets3t_s3_request_signature_version: "{{ s3_request_signature_version }}"
+jets3t_s3_endpoint_host: "{% if s3_storage_endpoint %}{{ s3_storage_endpoint | regex_replace('^[a-z]+://(.*)$', '\\1') }}{% endif %}"
+jets3t_s3_disable_dns_buckets: "{{ s3_path_style_access }}"
+jets3t_s3_https_only: "{{ s3_https_only }}"
+jets3t_s3_default_bucket_location: "{{ s3_default_bucket_location }}"
