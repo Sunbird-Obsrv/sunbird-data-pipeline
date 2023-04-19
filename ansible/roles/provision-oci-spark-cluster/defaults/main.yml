@@ -19,9 +19,11 @@ jedis_version: 3.2.0
 zip4j_version: 2.6.2
 guice_version: 3.0
 
-jets3t_version: 0.9.4
+jets3t_version: 0.9.7
 hadoop_aws_version: 2.7.3
 java_xmlbuilder_version: 1.1
+cassandra_connector_version: 3.2.0
+commons_pool_version: 2.0
 
 guava_url: https://repo1.maven.org/maven2/com/google/guava/guava/{{guava_version}}/guava-{{guava_version}}.jar
 guava_jre_url: https://repo1.maven.org/maven2/com/google/guava/guava/{{guava_jre_version}}/guava-{{guava_jre_version}}.jar
@@ -33,7 +35,10 @@ zip4j_url: https://repo1.maven.org/maven2/net/lingala/zip4j/zip4j/{{zip4j_versio
 guice_url: https://repo1.maven.org/maven2/com/google/inject/guice/{{guice_version}}/guice-{{guice_version}}.jar
 guice_servlet_url: https://repo1.maven.org/maven2/com/google/inject/extensions/guice-servlet/{{guice_version}}/guice-servlet-{{guice_version}}.jar
 
-jets3t_url: https://repo1.maven.org/maven2/net/java/dev/jets3t/jets3t/{{jets3t_version}}/jets3t-{{jets3t_version}}.jar
+# jets3t_url: https://repo1.maven.org/maven2/net/java/dev/jets3t/jets3t/{{jets3t_version}}/jets3t-{{jets3t_version}}.jar
+jets3t_url: https://repo1.maven.org/maven2/org/jets3t/jets3t/{{jets3t_version}}/jets3t-{{jets3t_version}}.jar
 hadoop_aws_url: https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/{{hadoop_aws_version}}/hadoop-aws-{{hadoop_aws_version}}.jar
 java_xmlbuilder_url: https://repo1.maven.org/maven2/com/jamesmurty/utils/java-xmlbuilder/{{java_xmlbuilder_version}}/java-xmlbuilder-{{java_xmlbuilder_version}}.jar
+common_pool_url: "https://repo1.maven.org/maven2/org/apache/commons/commons-pool2/{{commons_pool_version}}/commons-pool2-{{commons_pool_version}}.jar"
+spark_cassandra_connector_assembly_url: "https://repo1.maven.org/maven2/com/datastax/spark/spark-cassandra-connector-assembly_2.12/{{cassandra_connector_version}}/spark-cassandra-connector-assembly_2.12-{{cassandra_connector_version}}.jar"
 

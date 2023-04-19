@@ -69,6 +69,14 @@
   become: yes
   get_url: url={{ java_xmlbuilder_url }} dest={{ spark_folder }}/jars/java-xmlbuilder-{{java_xmlbuilder_version}}.jar timeout=1000 force=no
 
+- name: Download spark_cassandra_connector and copy to Spark jars folder
+  become: yes
+  get_url: url={{ spark_cassandra_connector_assembly_url }} dest={{ spark_folder }}/jars/spark-cassandra-connector-assembly_2.12-{{cassandra_connector_version}}.jar timeout=1000 force=no
+
+- name: Download common_pool_url and copy to Spark jars folder
+  become: yes
+  get_url: url={{ common_pool_url }} dest={{ spark_folder }}/jars/commons-pool2-{{commons_pool_version}}.jar timeout=1000 force=no
+
 
 - name: Download config to livy
   command: hdfs dfs -get -f oci://{{ bucket }}@{{ oci_namespace }}/models-{{ model_version }}/application.conf {{ spark_folder }}/conf/application.conf
