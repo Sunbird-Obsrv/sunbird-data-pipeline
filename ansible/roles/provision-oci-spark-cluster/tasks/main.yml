@@ -73,6 +73,8 @@
 - name: Download config to livy
   command: hdfs dfs -get -f oci://{{ bucket }}@{{ oci_namespace }}/models-{{ model_version }}/application.conf {{ spark_folder }}/conf/application.conf
 
+- name: Download jets3t config to livy
+  command: hdfs dfs -get -f oci://{{ bucket }}@{{ oci_namespace }}/models-{{ model_version }}/jets3t.properties {{ spark_folder }}/conf/jets3t.properties
 
 
 - name: Update log4j.properties
