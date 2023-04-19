@@ -246,17 +246,17 @@ function create_cluster() {
 
    for i in `seq 1 $master`
    do
-      json="$json{\"blockVolumeSizeInGBs\": 1000,\"nodeType\": \"MASTER\",\"shape\": \"VM.Standard.E4.Flex\",\"shapeConfig\": {  \"memoryInGBs\": "{{head_node_memory}}",  \"ocpus\": "{{head_node_cpu}}"},\"subnetId\": \"$subnet\"   }"
+      json="$json{\"blockVolumeSizeInGBs\": 1000,\"nodeType\": \"MASTER\",\"shape\": \"VM.Standard.E4.Flex\",\"shapeConfig\": {  \"memoryInGBs\": {{head_node_memory}},  \"ocpus\": {{head_node_cpu}}},\"subnetId\": \"$subnet\"   }"
    done
 
    for i in `seq 1 $utility`
    do
-      json="$json,{\"blockVolumeSizeInGBs\": 1000,\"nodeType\": \"UTILITY\",\"shape\": \"VM.Standard.E4.Flex\",\"shapeConfig\": {  \"memoryInGBs\": "{{head_node_memory}}",  \"ocpus\": "{{head_node_cpu}}"},\"subnetId\": \"$subnet\"   }"
+      json="$json,{\"blockVolumeSizeInGBs\": 1000,\"nodeType\": \"UTILITY\",\"shape\": \"VM.Standard.E4.Flex\",\"shapeConfig\": {  \"memoryInGBs\": {{head_node_memory}},  \"ocpus\": {{head_node_cpu}}},\"subnetId\": \"$subnet\"   }"
    done
 
    for i in `seq 1 $worker`
    do
-      json="$json,{\"blockVolumeSizeInGBs\": 1000,\"nodeType\": \"WORKER\",\"shape\": \"VM.Standard.E4.Flex\",\"shapeConfig\": {  \"memoryInGBs\": "{{worker_node_memory}}",  \"ocpus\": "{{worker_node_cpu}}"},\"subnetId\": \"$subnet\"   }"
+      json="$json,{\"blockVolumeSizeInGBs\": 1000,\"nodeType\": \"WORKER\",\"shape\": \"VM.Standard.E4.Flex\",\"shapeConfig\": {  \"memoryInGBs\": {{worker_node_memory}},  \"ocpus\": {{worker_node_cpu}}},\"subnetId\": \"$subnet\"   }"
    done
 
    json="$json]"
