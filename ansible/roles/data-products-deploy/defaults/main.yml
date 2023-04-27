@@ -289,3 +289,6 @@ jets3t_s3_endpoint_host: "{% if s3_storage_endpoint %}{{ s3_storage_endpoint | r
 jets3t_s3_disable_dns_buckets: "{{ s3_path_style_access }}"
 jets3t_s3_https_only: "{{ s3_https_only }}"
 jets3t_s3_default_bucket_location: "{{ s3_default_bucket_location }}"
+
+
+spark_pg_db_name: "analytics"
