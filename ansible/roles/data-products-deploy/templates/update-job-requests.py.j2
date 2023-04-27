@@ -92,7 +92,7 @@ def get_columns_names(db,table):
 def main(batchSize, jobId,jobType,table):
     host="{{postgres.db_url}}"
     port={{postgres.db_port}}
-    user="{{postgres.db_username}}"
+    user="{{spark_pg_db_name}}"
     password="{{postgres.db_password}}"
     database="{{postgres.spark_db_name}}"
     url_connect = "jdbc:postgresql://{0}:{1}/{2}".format(host, port, database)
