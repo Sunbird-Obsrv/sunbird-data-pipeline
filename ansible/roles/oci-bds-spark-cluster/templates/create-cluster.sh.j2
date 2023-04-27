@@ -146,6 +146,7 @@ function update_bds_config(){
       add_properties "fs.oci.client.auth.tenantId" $tenid
       add_properties "fs.oci.client.auth.userId" $usid
       add_properties "fs.oci.client.regionCodeOrId" $region
+      add_properties "fs.s3.buffer.dir" /tmp
       #Update it to ambari
       echo "updating ambari config"
       update_ambari_config
