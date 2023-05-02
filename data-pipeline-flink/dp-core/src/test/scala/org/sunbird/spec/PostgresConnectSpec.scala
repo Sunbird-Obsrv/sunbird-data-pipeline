@@ -17,7 +17,8 @@ class PostgresConnectSpec extends BaseSpec with Matchers with MockitoSugar {
       database = "postgres",
       host = config.getString("postgres.host"),
       port = config.getInt("postgres.port"),
-      maxConnections = config.getInt("postgres.maxConnections")
+      maxConnections = config.getInt("postgres.maxConnections"),
+      sslMode = config.getBoolean("postgres.sslMode")
     )
     val postgresConnect = new PostgresConnect(postgresConfig)
     val connection = postgresConnect.getConnection
@@ -46,7 +47,8 @@ class PostgresConnectSpec extends BaseSpec with Matchers with MockitoSugar {
       database = "postgres",
       host = config.getString("postgres.host"),
       port = config.getInt("postgres.port"),
-      maxConnections = config.getInt("postgres.maxConnections")
+      maxConnections = config.getInt("postgres.maxConnections"),
+      sslMode = config.getBoolean("postgres.sslMode")
     )
     val postgresConnect = new PostgresConnect(postgresConfig)
     val connection = postgresConnect.getConnection

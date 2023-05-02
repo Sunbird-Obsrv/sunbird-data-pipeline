@@ -5,7 +5,7 @@ import java.sql.{Connection, ResultSet, SQLException}
 import org.postgresql.ds.PGPoolingDataSource
 import org.postgresql.ssl.NonValidatingFactory
 
-final case class PostgresConnectionConfig(user: String, password: String, database: String, host: String, port: Int, maxConnections: Int)
+final case class PostgresConnectionConfig(user: String, password: String, database: String, host: String, port: Int, maxConnections: Int,sslMode: Boolean = true)
 
 class PostgresConnect(config: PostgresConnectionConfig) {
 
@@ -27,9 +27,11 @@ class PostgresConnect(config: PostgresConnectionConfig) {
     source.setPassword(config.password)
     source.setDatabaseName(config.database)
     source.setMaxConnections(config.maxConnections)
-    source.setProperty("ssl", "true")
-    source.setProperty("sslmode", "require")
-    source.setProperty("sslfactory", "org.postgresql.ssl.NonValidatingFactory")
+    if (config.sslMode) {
+      source.setProperty("ssl", "true")
+      source.setProperty("sslmode", "require")
+      source.setProperty("sslfactory", "org.postgresql.ssl.NonValidatingFactory")
+    }
   }
 
   @throws[Exception]
