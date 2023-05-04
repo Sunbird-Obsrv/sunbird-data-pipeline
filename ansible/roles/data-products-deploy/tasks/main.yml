@@ -340,7 +340,7 @@
     - spark-jobs
 
 - name: Copy collection-summary ingestion spec
-  copy: src="collection-summary-ingestion-spec.json" dest={{ analytics.home }}/scripts/ mode=755 owner={{ analytics_user }} group={{ analytics_group }}
+  copy: src="collection-summary-ingestion-spec.j2" dest={{ analytics.home }}/scripts/ mode=755 owner={{ analytics_user }} group={{ analytics_group }}
   tags:
     - ed-dataproducts
 
@@ -369,7 +369,7 @@
     - spark-jobs 
 
 - name: Copy sourcing-summary ingestion spec
-  copy: src="sourcing-ingestion-spec.json" dest={{ analytics.home }}/scripts/ mode=755 owner={{ analytics_user }} group={{ analytics_group }}
+  copy: src="sourcing-ingestion-spec.j2" dest={{ analytics.home }}/scripts/ mode=755 owner={{ analytics_user }} group={{ analytics_group }}
   tags:
     - ed-dataproducts
 
