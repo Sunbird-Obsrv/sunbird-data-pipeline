@@ -20,7 +20,12 @@
     "model": "org.ekstep.analytics.model.WorkflowSummary",
     "modelParams": {
       "apiVersion": "v2",
-      "parallelization": 32
+      "parallelization": 32,
+      "storageKeyConfig":"storage.key.config",
+      "storageSecretConfig":"storage.secret.config",
+      "storageContainer":"{{reports_container}}",
+      "storageEndpoint":"{{dp_storage_endpoint_config}}",
+      "store":"{{ dp_object_store_type }}"
     },
     "output": [
       {
@@ -347,6 +352,10 @@
             }
         },
         "store": "{{dp_object_store_type}}",
+        "storageKeyConfig":"storage.key.config",
+        "storageSecretConfig":"storage.secret.config",
+        "storageContainer":"{{reports_container}}",
+        "storageEndpoint":"{{dp_storage_endpoint_config}}",
         "format":"csv",
         "key": "druid-reports/",
         "filePath": "druid-reports/",
@@ -458,6 +467,10 @@
         "queryType": "groupBy"
       },
       "store": "{{dp_object_store_type}}",
+      "storageKeyConfig":"storage.key.config",
+      "storageSecretConfig":"storage.secret.config",
+      "storageContainer":"{{reports_container}}",
+      "storageEndpoint":"{{dp_storage_endpoint_config}}",
       "format":"csv",
       "key": "druid-reports/",
       "filePath": "druid-reports/",
