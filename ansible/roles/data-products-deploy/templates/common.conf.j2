@@ -236,7 +236,7 @@ druid.ingestion.path="/druid/indexer/v1/task"
 druid.segment.path="/druid/coordinator/v1/metadata/datasources/"
 druid.deletesegment.path="/druid/coordinator/v1/datasources/"
 
-postgres.druid.db="{{ spark_postgres_db_name }}"
+postgres.druid.db="{{ druid_report_postgres_db_name }}"
 postgres.druid.url="jdbc:postgresql://{{postgres.db_url}}:{{postgres.db_port}}/"
 postgres.druid.user="{{ druid_report_postgres_db_username }}"
 postgres.druid.pass="{{ dp_vault_druid_postgress_pass }}"
