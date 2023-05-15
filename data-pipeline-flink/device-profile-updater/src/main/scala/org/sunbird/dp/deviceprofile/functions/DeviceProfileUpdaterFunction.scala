@@ -51,7 +51,7 @@ class DeviceProfileUpdaterFunction(config: DeviceProfileUpdaterConfig,
         database = config.postgresDb,
         host = config.postgresHost,
         port = config.postgresPort,
-        maxConnections = config.postgresMaxConnections
+        maxConnections = config.postgresMaxConnections,
         sslMode = config.postgresSslMode
       ))
     }
