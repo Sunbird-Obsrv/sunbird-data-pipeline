@@ -51,7 +51,9 @@ class PostgresConnect(config: PostgresConnectionConfig) {
     connection.close()
     println("****Closed connection****")
     println("****Closing source****")
-    source.close()
+    if (source != null) {
+        source.close()
+    }
   }
 
   @throws[Exception]
