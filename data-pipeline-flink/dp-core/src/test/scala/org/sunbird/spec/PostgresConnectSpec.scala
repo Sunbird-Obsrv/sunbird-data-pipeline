@@ -23,10 +23,8 @@ class PostgresConnectSpec extends BaseSpec with Matchers with MockitoSugar {
     val postgresConnect = new PostgresConnect(postgresConfig)
     val connection = postgresConnect.getConnection
     connection should not be (null)
-    println("****Got valid connection****")
     postgresConnect.execute("CREATE TABLE device_table(id text PRIMARY KEY, channel text);")
     postgresConnect.execute("INSERT INTO device_table(id,channel)  VALUES('12345','custchannel');")
-    println("****Query executed****")
     val st = connection.createStatement
     val rs = postgresConnect.executeQuery("SELECT * FROM device_table where id='12345';")
     while ( {

@@ -47,13 +47,10 @@ class PostgresConnect(config: PostgresConnectionConfig) {
 
   @throws[Exception]
   def closeConnection(): Unit = {
-    println("****Closing connection****")
     connection.close()
-    println("****Closed connection****")
-    println("****Closing source****")
-    if (source != null) {
-        source.close()
-    }
+    // if (source != null) {
+    //     source.close()
+    // }
   }
 
   @throws[Exception]
