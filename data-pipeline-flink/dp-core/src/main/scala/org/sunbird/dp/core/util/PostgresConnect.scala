@@ -48,7 +48,7 @@ class PostgresConnect(config: PostgresConnectionConfig) {
   @throws[Exception]
   def closeConnection(): Unit = {
     connection.close()
-    if (Option(source).isDefined) {
+    if (Option(source).isEmpty) {
         source.close()
     }
   }
