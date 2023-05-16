@@ -8,7 +8,7 @@
         "blobs": [
           {
             "container": "{{container_name}}",
-            "path": "/observation/domain_criteria/ml_observation_domain_criteria.json"
+            "path": "/observation/domain/ml_observation_domain.json"
           }
         ],
         "fetchTimeout": 300000
@@ -24,7 +24,7 @@
       }
     },
     "dataSchema": {
-      "dataSource": "ml-obs-domain-criteria",
+      "dataSource": "ml-obs-domain",
       "granularitySpec": {
         "type": "uniform",
         "queryGranularity": "none",
@@ -70,6 +70,14 @@
             "name": "district_externalId"
           },
           {
+            "type":"string",
+            "name":"block_externalId"
+          },
+          {
+            "type":"string",
+            "name":"organisation_name"
+          },
+          {
             "type": "string",
             "name": "organisation_name"
           },
@@ -102,18 +110,6 @@
             "name": "domain_level"
           },
           {
-            "type": "string",
-            "name": "criteria_name"
-          },
-          {
-            "type": "string",
-            "name": "criteria_score"
-          },
-          {
-            "type": "string",
-            "name": "criteria_id"
-          },
-          {
             "type": "long",
             "name": "unique_submissions"
           },
@@ -124,6 +120,10 @@
           {
             "type": "long",
             "name": "unique_users"
+          },
+          {
+            "type":"long",
+            "name":"unique_solution"
           },
           {
             "type": "string",

@@ -8,7 +8,7 @@
         "blobs": [
           {
             "container": "{{container_name}}",
-            "path": "/projects/program_level/ml_projects_programLevel.json"
+            "path": "/projects/ml_projects.json"
           }
         ],
         "fetchTimeout": 300000
@@ -24,7 +24,7 @@
       }
     },
     "dataSchema": {
-      "dataSource": "ml-project-programLevel-status",
+      "dataSource": "ml-project-status",
       "granularitySpec": {
         "type": "uniform",
         "queryGranularity": "none",
@@ -47,6 +47,14 @@
           },
           {
             "type": "string",
+            "name": "project_title"
+          },
+          {
+            "type": "string",
+            "name": "solution_id"
+          },
+          {
+            "type": "string",
             "name": "status_of_project"
           },
           {
@@ -56,6 +64,30 @@
           {
             "type": "string",
             "name": "state_externalId"
+          },
+          {
+            "type": "string",
+            "name": "district_name"
+          },
+          {
+            "type": "string",
+            "name": "district_externalId"
+          },
+          {
+            "type":"string",
+            "name":"block_name"
+          },
+          {
+            "type":"string",
+            "name":"block_externalId"
+          },
+          {
+            "type": "string",
+            "name": "organisation_name"
+          },
+          {
+            "type": "string",
+            "name": "organisation_id"
           },
           {
             "type": "string",
@@ -78,13 +110,21 @@
             "name": "unique_users"
           },
           {
+            "type":"long",
+            "name":"unique_solution"
+          },
+          {
             "type": "long",
             "name": "no_of_imp_with_evidence"
           },
           {
             "type": "string",
             "name": "time_stamp"
-          }
+          },
+          {
+            "type":"long",
+            "name":"no_of_certificate_issued"
+          }            
         ]
       },
       "metricsSpec": []

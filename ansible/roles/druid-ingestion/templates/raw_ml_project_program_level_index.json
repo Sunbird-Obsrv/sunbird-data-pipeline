@@ -8,7 +8,7 @@
         "blobs": [
           {
             "container": "{{container_name}}",
-            "path": "/observation/domain/ml_observation_domain.json"
+            "path": "/projects/program_level/ml_projects_programLevel.json"
           }
         ],
         "fetchTimeout": 300000
@@ -24,7 +24,7 @@
       }
     },
     "dataSchema": {
-      "dataSource": "ml-obs-domain",
+      "dataSource": "ml-project-programLevel-status",
       "granularitySpec": {
         "type": "uniform",
         "queryGranularity": "none",
@@ -47,11 +47,7 @@
           },
           {
             "type": "string",
-            "name": "solution_name"
-          },
-          {
-            "type": "string",
-            "name": "solution_id"
+            "name": "status_of_project"
           },
           {
             "type": "string",
@@ -63,59 +59,35 @@
           },
           {
             "type": "string",
-            "name": "district_name"
+            "name": "private_program"
           },
           {
             "type": "string",
-            "name": "district_externalId"
-          },
-          {
-            "type": "string",
-            "name": "organisation_name"
-          },
-          {
-            "type": "string",
-            "name": "organisation_id"
+            "name": "project_created_type"
           },
           {
             "type": "string",
             "name": "parent_channel"
           },
           {
-            "type": "string",
-            "name": "solution_type"
-          },
-          {
-            "type": "string",
-            "name": "private_program"
-          },
-          {
-            "type": "string",
-            "name": "domain_name"
-          },
-          {
-            "type": "string",
-            "name": "domain_externalId"
-          },
-          {
-            "type": "string",
-            "name": "domain_level"
-          },
-          {
             "type": "long",
-            "name": "unique_submissions"
-          },
-          {
-            "type": "long",
-            "name": "unique_entities"
+            "name": "unique_projects"
           },
           {
             "type": "long",
             "name": "unique_users"
           },
           {
+            "type": "long",
+            "name": "no_of_imp_with_evidence"
+          },
+          {
             "type": "string",
             "name": "time_stamp"
+          },
+          {
+            "type":"long",
+            "name":"no_of_certificate_issued"
           }
         ]
       },

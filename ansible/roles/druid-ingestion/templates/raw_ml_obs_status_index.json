@@ -74,6 +74,14 @@
             "name": "district_externalId"
           },
           {
+            "type":"string",
+            "name":"block_name"
+          },
+          {
+            "type":"string",
+            "name":"block_externalId"
+          },
+          {
             "type": "string",
             "name": "organisation_name"
           },
@@ -104,6 +112,10 @@
           {
             "type": "long",
             "name": "unique_users"
+          },
+          {
+            "type":"long",
+            "name":"unique_solution"
           },
           {
             "type": "string",

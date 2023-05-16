@@ -42,10 +42,6 @@
             },
             {
               "type": "string",
-              "name": "entityTypeId"
-            },
-            {
-              "type": "string",
               "name": "observationId"
             },
             {
@@ -471,6 +467,10 @@
             {
               "type": "string",
               "name": "cluster_code"
+            },
+            {
+              "type":"boolean",
+              "name":"isRubricDriven"
             }
           ]
         }
