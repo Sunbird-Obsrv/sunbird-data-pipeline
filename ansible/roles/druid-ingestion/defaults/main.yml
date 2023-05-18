@@ -3,6 +3,9 @@ broker_port: 8082
 druid_home: /home/druid
 desktop_pdata_id: "{{env}}.sunbird.desktop"
 
+druid_mm_heap_dump_file: /var/log/druid/crash_logs/middlemanager.hprof
+druid_overlord_port: 8090
+
 ingestion_spec_configs:
   raw_telemetry_events:
     minTaskMemory: 200m
@@ -24,5 +27,15 @@ ml_observation_evidence_task_count: 1
 ml_survey_task_count: 1
 ml_survey_evidence_task_count: 1
 rollup_ml_project_taskcount: 1
-rollup_course_completion_audit_syncts_taskcount: 1 
+rollup_course_completion_audit_syncts_taskcount: 1
 container_name: "telemetry-data-store"
+sl_survey_evidence_task_count: 1
+sl_observation_task_count: 1
+sl_observation_evidence_task_count: 1
+sl_survey_task_count: 1
+rollup_course_completion_audit_syncts_taskcount: 1
+rollup_ml_project_taskcount: 1
+rollup_ml_observation_status_taskcount: 1
+rollup_ml_project_status_taskcount: 1
+rollup_ml_survey_status_taskcount: 1
+

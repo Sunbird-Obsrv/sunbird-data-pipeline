@@ -1,3 +1,8 @@
-storage-service.request-signature-version=AWS4-HMAC-SHA256
-s3service.s3-endpoint=s3-ap-south-1.amazonaws.com
+storage-service.request-signature-version={{ jets3t_s3_request_signature_version }}
+s3service.s3-endpoint={% if jets3t_s3_endpoint_host %}{{ jets3t_s3_endpoint_host }}{% else %}s3-ap-south-1.amazonaws.com{% endif %}
+s3service.disable-dns-buckets={{ jets3t_s3_disable_dns_buckets }}
+s3service.https-only={{ jets3t_s3_https_only }}
+{% if jets3t_s3_default_bucket_location %}
+s3service.default-bucket-location={{ jets3t_s3_default_bucket_location }}
+{% endif %}
 uploads.stream-retry-buffer-size=2147483646

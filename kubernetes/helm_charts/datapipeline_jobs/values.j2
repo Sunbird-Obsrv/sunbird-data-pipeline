@@ -3,11 +3,17 @@ imagepullsecrets: {{ imagepullsecrets }}
 dockerhub: {{ dockerhub }}
 repository: {{flink_repository|default('sunbird-datapipeline')}}
 image_tag: {{ image_tag }}
+checkpoint_store_type: {{ checkpoint_store_type }}
 azure_account: {{ azure_account }}
 azure_secret: {{ azure_secret }}
+s3_access_key: {{ s3_storage_key }}
+s3_secret_key: {{ s3_storage_secret }}
+s3_endpoint: {{ s3_storage_endpoint }}
+s3_path_style_access: {{ s3_path_style_access }}
+
 serviceMonitor:
   enabled: {{ service_monitor_enabled | lower}}
-replicaCount: {{taskmana_replicacount|default(1)}}
+replicaCount: {{taskmanager_replicacount|default(1)}}
 
 scale_properties:
   telemetry-extractor:
@@ -135,6 +141,7 @@ base_config: |
         max-request-size = {{ producer_max_request_size }}
         batch.size = {{ producer_batch_size }}
         linger.ms = {{ producer_linger_ms }}
+        compression = {{ producer_compression }}
       }
     }
     job {
@@ -143,12 +150,16 @@ base_config: |
       statebackend {
         blob {
           storage {
-            account = "{{ azure_account }}.blob.core.windows.net"
+            account = "{% if checkpoint_store_type == "azure" %}{{ azure_account }}.blob.core.windows.net{% elif checkpoint_store_type == "s3" %}{{ flink_dp_storage_container }}{% endif %}"
             container = "{{ flink_container_name }}"
             checkpointing.dir = "checkpoint"
           }
         }
+{% if checkpoint_store_type == "azure" %}
         base.url = "wasbs://"${job.statebackend.blob.storage.container}"@"${job.statebackend.blob.storage.account}"/"${job.statebackend.blob.storage.checkpointing.dir}
+{% elif checkpoint_store_type == "s3" %}
+        base.url = "s3://"${job.statebackend.blob.storage.account}"/"${job.statebackend.blob.storage.container}"/"${job.statebackend.blob.storage.checkpointing.dir}
+{% endif %}
       }
     }
     task {

@@ -1,5 +1,4 @@
 redis_backup_dir: /tmp/redis-backup
-redis_backup_azure_container_name: dp-redis-backup
 redis_data_dir: /data
 redis:
   config:
@@ -11,3 +10,6 @@ redis:
       name: 'content'
     dialcode:
       name: 'dialcode'
+
+cloud_storage_dpredisbackup_bucketname: "{{ cloud_storage_management_bucketname }}"
+cloud_storage_dpredisbackup_foldername: dp-redis-backup

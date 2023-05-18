@@ -10,11 +10,14 @@ druid_url: "https://archive.apache.org/dist/druid/{{druid_version}}/apache-druid
 druid_folder: "{{ druid_directory }}/apache-druid-{{ druid_version }}"
 druid_symlink: "{{ druid_directory }}/druid"
 druid_path: "{{ druid_symlink }}/"
-druid_checksum: "807581d54fa4c5a90eec2a230e2a7fc4c6daf18eb8136009bf36a775d793d6f6"
+druid_checksum: "716b83e07a76b5c9e0e26dd49028ca088bde81befb070989b41e71f0e8082d11a26601f4ac1e646bf099a4bc7420bdfeb9f7450d6da53d2a6de301e08c3cab0d"
 
+druid_open_file_limit: 65535
+druid_process_limit: 128596
 #Common Varibles
 
 druid_zookeeper_host: "{{ groups[cluster+'-zookeeper']|join(':2181,')}}:2181"
+druid_postgres_user: druid
 #druid_postgres_host: "{{ groups['druid-postgres'][0] }}"
 
 
@@ -28,9 +31,9 @@ druid_request_logging_type: "file"
 
 #Druid Extensions
 
-druid_storge_type: "azure"
+druid_storage_type: "azure"
 
-druid_extensions_list : '"druid-azure-extensions", "graphite-emitter", "postgresql-metadata-storage", "druid-kafka-indexing-service"'
+druid_extensions_list : '"druid-azure-extensions", "graphite-emitter", "postgresql-metadata-storage", "druid-kafka-indexing-service", "druid-datasketches"'
 
 druid_community_extensions:
   - graphite-emitter
@@ -105,6 +108,15 @@ druid_middlemanager_gc_logdir: "{{ druid_crash_logdir }}/gc.log"
 druid_middlemanager_peon_segmentcache_path: "/var/segment_cache"
 druid_azure_container_name: "telemetry-data-store"
 
+# Router Configuration
+druid_router_port: 8888
+druid_router_service: druid/router
+
+druid_router_tmp_dir: "{{ druid_default_tmp_dir }}"
+druid_router_gc_logfile: "{{ druid_crash_logdir }}/gc.router.log"
+druid_router_heap_dump_file: "{{ druid_crash_logdir }}/router.hprof"
+
+
 default_druid_configs:
   raw:
    #Druid Postgres Details
@@ -120,6 +132,19 @@ default_druid_configs:
    #Logging the indexing logs to azure
    druid_log_azure_container: "{{ druid_azure_container_name }}"
    druid_log_azure_folder: "druidlogs"
+   #Druid S3 Details
+   druid_storage_type: "{{ druid_storage_type }}"
+   s3_access_key: "{{ s3_storage_key }}"
+   s3_secret_key: "{{ s3_storage_secret }}"
+   s3_bucket: "{{ s3_storage_container }}"
+   s3_endpoint: "{{ s3_storage_endpoint }}"
+   s3_segment_dir: "druid/raw/segments"
+   s3_path_like_access: "{{ s3_path_style_access }}"
+   s3_v4_sign_region: "{{ s3_default_bucket_location }}"
+   #Logging the indexing logs to s3
+   s3_logging_bucket: "{{ s3_storage_container }}"
+   s3_indexer_logs_dir: "druid/raw/stage/indexing_logs"
+   #Druid coordinator node configuration
    druid_coordinator_heap_size: 128m
    druid_coordinator_period: PT30S
    druid_coordinator_startDelay: PT30S
@@ -181,6 +206,19 @@ default_druid_configs:
    #Logging the indexing logs to azure
    druid_log_azure_container: "{{ druid_azure_container_name }}"
    druid_log_azure_folder: "druidlogs"
+   #Druid S3 Details
+   druid_storage_type: "{{ druid_storage_type }}"
+   s3_access_key: "{{ s3_storage_key }}"
+   s3_secret_key: "{{ s3_storage_secret }}"
+   s3_bucket: "{{ s3_storage_container }}"
+   s3_endpoint: "{{ s3_storage_endpoint }}"
+   s3_segment_dir: "druid/rollup/segments"
+   s3_path_like_access: "{{ s3_path_style_access }}"
+   s3_v4_sign_region: "{{ s3_default_bucket_location }}"
+   #Logging the indexing logs to s3
+   s3_logging_bucket: "{{ s3_storage_container }}"
+   s3_indexer_logs_dir: "druid/rollup/stage/indexing_logs"
+   #Druid coordinator node configuration
    druid_coordinator_heap_size: 128m
    druid_coordinator_period: PT30S
    druid_coordinator_startDelay: PT30S

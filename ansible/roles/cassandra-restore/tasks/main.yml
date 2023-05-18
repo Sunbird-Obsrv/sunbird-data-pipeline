@@ -3,12 +3,44 @@
 
 - set_fact:
     artifact_path: "/tmp/{{ artifact }}"
-    artifacts_container: "{{ cassandra_backup_azure_container_name }}"
     cassandra_restore_dir: /tmp/cassandra_backup
 
-- name: download from azure
+- name: download a file from azure storage
+  become: true
   include_role:
-    name: artifacts-download-azure
+    name: azure-cloud-storage
+    tasks_from: blob-download.yml
+  vars:
+    blob_container_name: "{{ cloud_storage_dpcassandrabackup_foldername }}"
+    blob_file_name: "{{ artifact }}"
+    local_file_or_folder_path: "{{ artifact_path }}"
+    storage_account_name: "{{ cloud_management_storage_accountname }}"
+    storage_account_key: "{{ cloud_management_storage_secret }}"
+  when: cloud_service_provider == "azure"
+
+- name: download a file from aws s3
+  become: true
+  include_role:
+    name: aws-cloud-storage
+    tasks_from: download.yml
+  vars:
+    s3_bucket_name: "{{ cloud_storage_dpcassandrabackup_bucketname }}"
+    aws_access_key_id: "{{ cloud_management_storage_accountname }}"
+    aws_secret_access_key: "{{ cloud_management_storage_secret }}"
+    aws_default_region: "{{ cloud_public_storage_region }}"
+    local_file_or_folder_path: "{{ artifact_path  }}"
+    s3_path: "{{ cloud_storage_dpcassandrabackup_foldername }}/{{ artifact }}"
+  when: cloud_service_provider == "aws"
+
+- name: download file from gcloud storage
+  include_role:
+    name: gcp-cloud-storage
+    tasks_from: download.yml
+  vars:
+    gcp_bucket_name: "{{ cloud_storage_dpcassandrabackup_bucketname }}"
+    gcp_path: "{{ cloud_storage_dpcassandrabackup_foldername }}/{{ artifact }}"
+    local_file_or_folder_path: "{{ artifact_path }}"
+  when: cloud_service_provider == "gcloud"
 
 - name: extract the archive
   unarchive: src=/tmp/{{ artifact }} dest=/tmp remote_src=yes

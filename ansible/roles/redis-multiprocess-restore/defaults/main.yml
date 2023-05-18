@@ -1,9 +1,11 @@
 redis_user: analytics
 redis_restore_user: analytics
-redis_backup_azure_container_name: dp-redis-backup
 analytics_user_home: /home/analytics
 
 device_port: "{{ device_port }}"
 user_port: "{{ user_port }}"
 content_port: "{{ content_port }}"
 dialcode_port: "{{ dialcode_port }}"
+
+cloud_storage_dpredisbackup_bucketname: "{{ cloud_storage_management_bucketname }}"
+cloud_storage_dpredisbackup_foldername: dp-redis-backup

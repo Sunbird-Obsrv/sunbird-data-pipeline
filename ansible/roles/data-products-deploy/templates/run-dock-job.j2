@@ -36,6 +36,6 @@ echo "Starting the job - $1" >> "$DP_LOGS/$today-job-execution.log"
 
 echo "Job modelName - $job_id" >> "$DP_LOGS/$today-job-execution.log"
 
-nohup $SPARK_HOME/bin/spark-submit  --conf spark.driver.extraJavaOptions="-Dconfig.file=$MODELS_HOME/$file_path" --conf spark.executor.extraJavaOptions="-Dconfig.file=$MODELS_HOME/$file_path" --master local[*] --jars $(echo ${libs_path}/lib/*.jar | tr ' ' ','),$MODELS_HOME/analytics-framework-2.0.jar,$MODELS_HOME/scruid_2.11-2.4.0.jar,$MODELS_HOME/batch-models-2.0.jar --class org.ekstep.analytics.job.JobExecutor $MODELS_HOME/batch-models-2.0.jar --model "$job_id" --config "$job_config$batchIds" \ >> "$DP_LOGS/$today-job-execution.log" 2>&1
+nohup $SPARK_HOME/bin/spark-submit  --conf spark.driver.extraJavaOptions="-Dconfig.file=$MODELS_HOME/$file_path" --conf spark.executor.extraJavaOptions="-Dconfig.file=$MODELS_HOME/$file_path" --master local[*] --jars $(echo ${libs_path}/lib/*.jar | tr ' ' ','),$MODELS_HOME/analytics-framework-2.0.jar,$MODELS_HOME/scruid_2.12-2.5.0.jar,$MODELS_HOME/batch-models-2.0.jar --class org.ekstep.analytics.job.JobExecutor $MODELS_HOME/batch-models-2.0.jar --model "$job_id" --config "$job_config$batchIds" \ >> "$DP_LOGS/$today-job-execution.log" 2>&1
 
 echo "Job execution completed - $1" >> "$DP_LOGS/$today-job-execution.log"

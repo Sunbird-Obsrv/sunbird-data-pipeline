@@ -71,6 +71,7 @@ class DenormalizationWindowFunction(config: DenormalizationConfig)(implicit val 
         val eventsList = elements.asScala.toList
         val filteredEventsList: List[Event] = eventsList.filter { event =>
             if (event.isOlder(config.ignorePeriodInMonths)) { // Skip events older than configured value (default: 3 months)
+                logger.info(s"Event Dropped: Event older than configured value (default: 3 months)")
                 metrics.incCounter(config.eventsExpired)
                 false
             } else {

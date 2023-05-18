@@ -9,10 +9,20 @@ spark.cassandra.connection.host="{{groups['dp-cassandra'][0]}}"
 cassandra.keyspace_prefix="{{ cassandra_keyspace_prefix }}"
 cassandra.hierarchy_store_prefix="{{ cassandra_hierarchy_store_prefix }}"
 
-storage.key.config="azure_storage_key"
-storage.secret.config="azure_storage_secret"
-reports.storage.key.config="reports_azure_storage_key"
-reports.storage.secret.config="reports_azure_storage_secret"
+
+storage.key.config="{{ dp_storage_key_config }}"
+storage.secret.config="{{ dp_storage_secret_config }}"
+reports.storage.key.config="{{ dp_reports_storage_key_config }}"
+reports.storage.secret.config="{{ dp_reports_storage_secret_config }}"
+{% if dp_object_store_type == "azure" %}
+cloud_storage_type="azure"
+{% elif (dp_object_store_type == "cephs3" or dp_object_store_type == "s3") %}
+cloud_storage_type="s3"
+cloud_storage_endpoint="{{ s3_storage_endpoint | regex_replace('^[a-z]+://(.*)$', '\\1') }}"
+cloud_storage_endpoint_with_protocol="{{ s3_storage_endpoint }}"
+aws_storage_key="{{ s3_storage_key }}"
+aws_storage_secret="{{ s3_storage_secret }}"
+{% endif %}
 
 lp.contentmodel.versionkey="jd5ECm/o0BXwQCe8PfZY1NoUkB9HN41QjA80p22MKyRIcP5RW4qHw8sZztCzv87M"
 
@@ -49,8 +59,6 @@ monitor {
 default.consumption.app.id="no_value"
 default.channel.id="in.ekstep"
 default.creation.app.id="no_value"
-
-cloud_storage_type="azure"
 
 
 # Media Service Type
@@ -109,7 +117,7 @@ cloud.container.reports="reports"
 # course metrics container in azure
 course.metrics.cassandra.sunbirdKeyspace="sunbird"
 course.metrics.cassandra.sunbirdCoursesKeyspace="sunbird_courses"
-course.metrics.cassandra.sunbirdHierarchyStore="{{ cassandra_hierarchy_store_keyspace }}"
+course.metrics.cassandra.sunbirdHierarchyStore="{{ cassandra_hierarchy_store_keyspace }}"
 course.metrics.cloud.objectKey=""
 course.metrics.cassandra.input.consistency="QUORUM"
 es.host="http://{{groups['core-es'][0]}}"
@@ -135,7 +143,7 @@ spark.sql.caseSensitive=true
 druid.sql.host="http://{{druid_broker_host}}:8082/druid/v2/sql/"
 druid.unique.content.query="{\"query\":\"SELECT DISTINCT \\\"object_id\\\" AS \\\"Id\\\"\\nFROM \\\"druid\\\".\\\"summary-events\\\" WHERE \\\"__time\\\"  BETWEEN TIMESTAMP '%s' AND TIMESTAMP '%s'\"}"
 druid.content.rating.query="{\"query\":\"SELECT \\\"object_id\\\" AS contentId, COUNT(*) AS \\\"totalRatingsCount\\\", SUM(edata_rating) AS \\\"Total Ratings\\\", SUM(edata_rating)/COUNT(*) AS \\\"averageRating\\\" FROM \\\"druid\\\".\\\"telemetry-feedback-events\\\" WHERE \\\"eid\\\" = 'FEEDBACK' AND \\\"edata_rating\\\">0 GROUP BY \\\"object_id\\\"\"}"
-druid.content.consumption.query="{\"query\":\"SELECT COUNT(*) as \\\"play_sessions_count\\\", object_id as \\\"contentId\\\", SUM(total_time_spent) as \\\"total_time_spent\\\", dimensions_pdata_id, object_id\\nFROM \\\"summary-events\\\"\\nWHERE \\\"dimensions_mode\\\" = 'play' AND \\\"dimensions_type\\\" ='content'\\nGROUP BY object_id, dimensions_pdata_id\"}"
+druid.content.consumption.query="{\"query\":\"SELECT COUNT(*) as \\\"play_sessions_count\\\", object_id as \\\"contentId\\\", SUM(total_time_spent) as \\\"total_time_spent\\\", dimensions_pdata_id, object_id\\nFROM \\\"summary-events\\\"\\nWHERE \\\"dimensions_mode\\\" = 'play' AND \\\"dimensions_type\\\" ='content' AND \\\"dimensions_pdata_pid\\\" != 'creation-portal' \\nGROUP BY object_id, dimensions_pdata_id\"}"
 lp.system.update.base.url="{{lp_url}}/system/v3/content/update"
 
 
@@ -169,7 +177,7 @@ druid = {
 	url = "/druid/v2/"
 	datasource = "telemetry-events"
 	response-parsing-timeout = 300000
-        client-backend = "ing.wbaa.druid.client.DruidAdvancedHttpClient"
+        client-backend = "com.ing.wbaa.druid.client.DruidAdvancedHttpClient"
         client-config = {
            druid-advanced-http-client ={
            queue-size = 32768

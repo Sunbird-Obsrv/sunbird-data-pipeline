@@ -254,14 +254,6 @@
             },
             {
               "type": "string",
-              "name": "location_validated_with_geotag"
-            },
-            {
-              "type": "string",
-              "name": "distance_in_meters"
-            },
-            {
-              "type": "string",
               "name": "entity"
             },
             {
@@ -422,11 +414,11 @@
             },
             {
               "type": "string",
-              "name": "user_schoolId"
+              "name": "school_externalId"
             },
             {
               "type": "string",
-              "name": "user_schoolUDISE_code"
+              "name": "school_code"
             },
             {
               "type": "string",
@@ -439,6 +431,46 @@
             {
               "type": "string",
               "name": "user_boardName"
+            },
+            {
+              "type": "string",
+              "name": "district_externalId"
+            },
+            {
+              "type": "string",
+              "name": "state_externalId"
+            },
+            {
+              "type": "string",
+              "name": "block_externalId"
+            },
+            {
+              "type": "string",
+              "name": "cluster_externalId"
+            },
+            {
+              "type": "string",
+              "name": "organisation_id"
+            },
+            {
+              "type": "string",
+              "name": "user_type"
+            },
+            {
+              "type": "string",
+              "name": "state_code"
+            },
+            {
+              "type": "string",
+              "name": "block_code"
+            },
+            {
+              "type": "string",
+              "name": "district_code"
+            },
+            {
+              "type": "string",
+              "name": "cluster_code"
             }
           ]
         }
