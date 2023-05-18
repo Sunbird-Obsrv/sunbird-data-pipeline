@@ -1,0 +1,7 @@
+postgresql_user: postgres
+postgresql_backup_dir: /tmp/dp-postgres
+db_name:
+  db: ['analytics']
+
+cloud_storage_dppostgresqlbackup_bucketname: "{{ cloud_storage_management_bucketname }}"
+cloud_storage_dppostgresqlbackup_foldername: dp-postgresql-backup

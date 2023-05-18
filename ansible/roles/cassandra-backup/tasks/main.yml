@@ -7,7 +7,6 @@
 - set_fact:
     cassandra_backup_gzip_file_name: "cassandra-backup-{{ lookup('pipe', 'date +%Y%m%d') }}.tar.gz"
 
- 
 - set_fact:
     cassandra_backup_gzip_file_path: "{{ cassandra_backup_dir }}/{{ cassandra_backup_gzip_file_name }}.tar.gz"
 
@@ -25,14 +24,44 @@
 - name: print doc_root to console
   debug:
     var: doc_data    
-
-- name: upload to azure
+    
+- name: upload file to azure storage using azcopy
   include_role:
-    name: artifacts-upload-azure
+    name: azure-cloud-storage
+    tasks_from: upload-using-azcopy.yml
   vars:
-    artifact: "{{ cassandra_backup_gzip_file_name }}"
-    artifact_path: "{{ cassandra_backup_gzip_file_path }}"
-    artifacts_container: "{{ cassandra_backup_azure_container_name }}"
+    blob_container_name: "{{ cloud_storage_dpcassandrabackup_foldername }}"
+    container_public_access: "off"
+    blob_container_folder_path: ""
+    local_file_or_folder_path: "{{ cassandra_backup_gzip_file_path }}"
+    storage_account_name: "{{ cloud_management_storage_accountname }}"
+    storage_account_key: "{{ cloud_management_storage_secret }}"
+  when: cloud_service_provider == "azure"
    
+- name: upload backup to S3
+  include_role:
+    name: aws-cloud-storage
+    tasks_from: upload-folder.yml
+  vars:
+    local_file_or_folder_path: "{{ cassandra_backup_gzip_file_path }}"
+    s3_bucket_name: "{{ cloud_storage_dpcassandrabackup_bucketname }}"
+    s3_path: "{{ cloud_storage_dpcassandrabackup_foldername }}/{{ cassandra_backup_gzip_file_name}}"
+    aws_default_region: "{{ cloud_public_storage_region }}"
+    aws_access_key_id: "{{ cloud_management_storage_accountname }}"
+    aws_secret_access_key: "{{ cloud_management_storage_secret }}"
+  when: cloud_service_provider == "aws"
+  
+- name: upload file to gcloud storage
+  include_role:
+    name: gcp-cloud-storage
+    tasks_from: upload-batch.yml
+  vars:
+    gcp_storage_service_account_name: "{{ cloud_management_storage_accountname }}"
+    gcp_storage_key_file: "{{ cloud_management_storage_secret }}"
+    gcp_bucket_name: "{{ cloud_storage_dpcassandrabackup_bucketname }}"
+    gcp_path: "{{ cloud_storage_dpcassandrabackup_foldername }}/{{ cassandra_backup_gzip_file_name}}"
+    local_file_or_folder_path: "{{ cassandra_backup_gzip_file_path }}"
+  when: cloud_service_provider == "gcloud"
+  
 - name: clean up backup dir after upload
   file: path={{ cassandra_backup_dir }} state=absent

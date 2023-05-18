@@ -1,2 +1,4 @@
-redis_backup_azure_container_name: dp-redis-backup
 analytics_user_home: /home/analytics
+
+cloud_storage_dpredisbackup_bucketname: "{{ cloud_storage_management_bucketname }}"
+cloud_storage_dpredisbackup_foldername: dp-redis-backup

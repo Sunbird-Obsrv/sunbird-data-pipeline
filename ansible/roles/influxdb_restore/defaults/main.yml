@@ -1,1 +1,2 @@
-influxdb_backup_azure_container_name: influxdb-backup 
+cloud_storage_influxdbbackup_bucketname: "{{ cloud_storage_management_bucketname }}"
+cloud_storage_influxdbbackup_foldername: influxdb-backup

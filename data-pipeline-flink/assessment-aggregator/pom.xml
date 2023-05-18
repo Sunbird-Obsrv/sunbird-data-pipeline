@@ -57,6 +57,12 @@
             <classifier>tests</classifier>
         </dependency>
         <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>mockwebserver</artifactId>
+            <version>4.4.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>it.ozimov</groupId>
             <artifactId>embedded-redis</artifactId>
             <version>0.7.1</version>

@@ -47,7 +47,7 @@ if [ $? == 0 ]
   	echo "Backup completed Successfully..." >> "$DP_LOGS/$end_date-$1-replay.log"
   	echo "Running the $1 job replay..." >> "$DP_LOGS/$end_date-$1-replay.log"
   	echo "Job modelName - $job_id" >> "$DP_LOGS/$end_date-$1-replay.log"
-  	$SPARK_HOME/bin/spark-submit --master local[*] --jars $(echo ${libs_path}/lib/*.jar | tr ' ' ','),$MODELS_HOME/analytics-framework-2.0.jar,$MODELS_HOME/scruid_2.11-2.4.0.jar --class org.ekstep.analytics.job.ReplaySupervisor $MODELS_HOME/batch-models-2.0.jar --model "$job_id" --fromDate "$start_date" --toDate "$end_date" --config "$job_config" >> "$DP_LOGS/$end_date-$1-replay.log"
+  	$SPARK_HOME/bin/spark-submit --master local[*] --jars $(echo ${libs_path}/lib/*.jar | tr ' ' ','),$MODELS_HOME/analytics-framework-2.0.jar,$MODELS_HOME/scruid_2.12-2.5.0.jar --class org.ekstep.analytics.job.ReplaySupervisor $MODELS_HOME/batch-models-2.0.jar --model "$job_id" --fromDate "$start_date" --toDate "$end_date" --config "$job_config" >> "$DP_LOGS/$end_date-$1-replay.log"
 else
   	echo "Unable to take backup" >> "$DP_LOGS/$end_date-$1-replay.log"
 fi

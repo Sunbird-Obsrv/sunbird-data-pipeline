@@ -62,7 +62,7 @@ secor:
 postgresql_databases:
   - name: analytics
     owner: analytics
-    
+
 postgresql_users:
   - name: analytics
     password: "{{dp_vault_pgdb_password}}"
@@ -135,7 +135,7 @@ job_names:
   ContentCacheUpdater_1:
       job_file_name: 'content-cache-updater'
   ShareEventsFlattener_1:
-      job_file_name: 'share-events-flattener'    
+      job_file_name: 'share-events-flattener'
 
 druid_ingestion_specs:
   telemetry-events:
@@ -164,7 +164,7 @@ device_port: 6380
 user_port: 6381
 dialcode_port: 6382
 
-### kafka and zookeeper ip vars and being used in kafka topiccreation role. 
+### kafka and zookeeper ip vars and being used in kafka topiccreation role.
 ingestion_zookeeper_ip: "{{ groups['ingestion-cluster-zookeeper'][0] }}"
 processing_zookeeper_ip: "{{ groups['processing-cluster-zookeepers'][0] }}"
 ### docker image pull secrets name and this will be created in kubernetes
@@ -174,3 +174,12 @@ dialcode_endpoint: "dialcode/v3/read/"
 
 exhaust_job_assessment_primary_category: "Practice Question Set"
 etb_dialcode_list_druid_length: 70
+# s3 storage config
+s3_storage_key: "{{ sunbird_private_s3_storage_key }}"
+s3_storage_secret: "{{ sunbird_private_s3_storage_secret }}"
+s3_storage_endpoint: ""
+s3_request_signature_version: AWS4-HMAC-SHA256
+s3_path_style_access: false
+s3_https_only: false
+s3_default_bucket_location: ""
+s3_storage_container: ""

@@ -1,1 +1,4 @@
 user_home: "/home/{{ ansible_ssh_user }}/"
+
+cloud_storage_dpcassandrabackup_bucketname: "{{cloud_storage_management_bucketname}}"
+cloud_storage_dpcassandrabackup_foldername: 'cassandra-backup'
