@@ -76,6 +76,10 @@ postgres:
   db_port: 5432
   db_admin_user: analytics
   db_admin_password: "{{dp_vault_pgdb_admin_password}}"
+  dp_db_name: analytics
+  dp_ssl_mode: require
+  dp_ssl: false
+  dp_sslfactory: org.postgresql.ssl.NonValidatingFactory
 
 postgres_address_space: 0.0.0.0/0 # Postgres trust address space
 

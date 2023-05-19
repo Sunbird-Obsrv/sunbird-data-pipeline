@@ -194,6 +194,7 @@ base_config: |
       host = {{ postgres.db_url }}
       port = {{ postgres.db_port }}
       maxConnections = {{ postgres_max_connections }}
+      sslMode = {{ postgres.dp_ssl }}
       user = "{{ postgres.db_username }}"
       password = "{{ postgres.db_password }}"
     }
