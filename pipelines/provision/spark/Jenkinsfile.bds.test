@@ -20,7 +20,7 @@ node('build-slave') {
                 jobName = sh(returnStdout: true, script: "echo $JOB_NAME").split('/')[-1].trim()
                 currentWs = sh(returnStdout: true, script: 'pwd').trim()
                 ansiblePlaybook = "${currentWs}/ansible/oci-bds-spark.provision.yml"
-                ansibleExtraArgs = "--extra-vars \"compartment_id=${params.compartment_id} key_alias=${params.key_alias} user_id=${params.user_id} subnet_id=${params.subnet_id} display_name=${params.display_name} public_key=${params.public_key} cluster_state=${params.cluster_state}\" --tags copy-script,copy-creation-script --vault-password-file /var/lib/jenkins/secrets/vault-pass"
+                ansibleExtraArgs = "--extra-vars \"compartment_id=${params.compartment_id} ambari_user=${params.ambari_user} cluster_password=${params.cluster_password} key_alias=${params.key_alias} user_id=${params.user_id} subnet_id=${params.subnet_id} display_name=${params.display_name} workernode=${params.workernode} public_key=${params.public_key} cluster_state=${params.type}\" --tags copy-script,copy-creation-script --vault-password-file /var/lib/jenkins/secrets/vault-pass"
                 values.put('currentWs', currentWs)
                 values.put('env', envDir)
                 values.put('module', module)
@@ -31,16 +31,23 @@ node('build-slave') {
                 ansible_playbook_run(values)
             }
             stage('create and provision spark OCI BDS') {
-                storage_container=params.storage_container
-                //withCredentials([usernamePassword(credentialsId: 'azure-service-principal', passwordVariable: 'sppass', usernameVariable: 'spuser')]) {
+                   oci_namespace=params.oci_namespace
+                   bds-livy-node-ip=params.bds-livy-node-ip
                    sh '''
                    currentws=$(pwd)
                    ansibleplaybook="$currentws/ansible/oci-bds-spark.provision.yml"
                    cd /tmp
-                   ./delete-cluster.sh
-                   '''
-                //}   
-               
+                   #./create_cluster_bds.sh
+
+                   export inventory_dir=/var/lib/jenkins/workspace/Provision/dev/DataPipeline/__SparkBDSCluster3/ansible/inventory/env
+                   echo "" >> $inventory_dir/hosts
+                   echo "[bds-livy-node]" >> $inventory_dir/hosts
+                   echo "$bds-livy-node-ip ansible_ssh_user=opc" >> $inventory_dir/hosts
+                   echo "" >> $inventory_dir/hosts
+                   
+                   ANSIBLE_HOST_KEY_CHECKING=False
+                   ansible-playbook -i $currentws/ansible/inventory/env/hosts $ansibleplaybook --extra-vars "oci_namespace=$oci_namespace" --tags spark-provision --vault-password-file /var/lib/jenkins/secrets/vault-pass
+                ''' 
             }
                 
         }

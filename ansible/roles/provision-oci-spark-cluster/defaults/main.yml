@@ -1,0 +1,44 @@
+
+bucket: "telemetry-data-store"
+model_version: "2.0"
+
+spark_folder: /usr/odh/2.0.1/spark
+
+# delete
+guava_default_version: 14.0.1
+guava_default_jre_version_1: 26.0-jre
+guava_default_jre_version_2: 27.0-jre
+guice_default_version: 4.2.2
+
+# add
+guava_version: 19.0
+log4j_version: 2.16.0
+spark_redis_version: 2.5.0
+guava_jre_version: 24.1.1-jre
+jedis_version: 3.2.0
+zip4j_version: 2.6.2
+guice_version: 3.0
+
+jets3t_version: 0.9.7
+hadoop_aws_version: 2.7.3
+java_xmlbuilder_version: 1.1
+cassandra_connector_version: 3.2.0
+commons_pool_version: 2.0
+
+guava_url: https://repo1.maven.org/maven2/com/google/guava/guava/{{guava_version}}/guava-{{guava_version}}.jar
+guava_jre_url: https://repo1.maven.org/maven2/com/google/guava/guava/{{guava_jre_version}}/guava-{{guava_jre_version}}.jar
+log4j_core_url: https://repo1.maven.org/maven2/org/apache/logging/log4j/log4j-core/{{log4j_version}}/log4j-core-{{log4j_version}}.jar
+log4j_api_url: https://repo1.maven.org/maven2/org/apache/logging/log4j/log4j-api/{{log4j_version}}/log4j-api-{{log4j_version}}.jar
+spark_redis_url: https://repo1.maven.org/maven2/com/redislabs/spark-redis_2.12/{{spark_redis_version}}/spark-redis_2.12-{{spark_redis_version}}.jar
+jedis_url: https://repo1.maven.org/maven2/redis/clients/jedis/{{jedis_version}}/jedis-{{jedis_version}}.jar
+zip4j_url: https://repo1.maven.org/maven2/net/lingala/zip4j/zip4j/{{zip4j_version}}/zip4j-{{zip4j_version}}.jar
+guice_url: https://repo1.maven.org/maven2/com/google/inject/guice/{{guice_version}}/guice-{{guice_version}}.jar
+guice_servlet_url: https://repo1.maven.org/maven2/com/google/inject/extensions/guice-servlet/{{guice_version}}/guice-servlet-{{guice_version}}.jar
+
+# jets3t_url: https://repo1.maven.org/maven2/net/java/dev/jets3t/jets3t/{{jets3t_version}}/jets3t-{{jets3t_version}}.jar
+jets3t_url: https://repo1.maven.org/maven2/org/jets3t/jets3t/{{jets3t_version}}/jets3t-{{jets3t_version}}.jar
+hadoop_aws_url: https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/{{hadoop_aws_version}}/hadoop-aws-{{hadoop_aws_version}}.jar
+java_xmlbuilder_url: https://repo1.maven.org/maven2/com/jamesmurty/utils/java-xmlbuilder/{{java_xmlbuilder_version}}/java-xmlbuilder-{{java_xmlbuilder_version}}.jar
+common_pool_url: "https://repo1.maven.org/maven2/org/apache/commons/commons-pool2/{{commons_pool_version}}/commons-pool2-{{commons_pool_version}}.jar"
+spark_cassandra_connector_assembly_url: "https://repo1.maven.org/maven2/com/datastax/spark/spark-cassandra-connector-assembly_2.12/{{cassandra_connector_version}}/spark-cassandra-connector-assembly_2.12-{{cassandra_connector_version}}.jar"
+
