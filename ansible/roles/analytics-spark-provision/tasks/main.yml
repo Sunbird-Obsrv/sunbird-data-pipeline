@@ -143,7 +143,7 @@
 - name: Download Kafka-2.11
   become: yes
   become_user: "{{ analytics_user }}"
-  get_url: url=http://downloads.mesosphere.com/kafka/assets/kafka_2.11-0.10.1.0.tgz dest={{ analytics.home }}/kafka_2.11-0.10.1.0.tgz force=no owner={{ analytics_user }} group={{ analytics_group }}
+  get_url: url=https://archive.apache.org/dist/kafka/0.10.1.0/kafka_2.11-0.10.1.0.tgz dest={{ analytics.home }}/kafka_2.11-0.10.1.0.tgz force=no owner={{ analytics_user }} group={{ analytics_group }}
   tags:
     - kafka-provision
 
