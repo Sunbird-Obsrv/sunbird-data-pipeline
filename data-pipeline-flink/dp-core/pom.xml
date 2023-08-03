@@ -64,11 +64,16 @@
             <artifactId>cassandra-driver-core</artifactId>
             <version>3.7.0</version>
         </dependency>
-        <dependency>
+        <!-- <dependency>
             <groupId>postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <version>9.1-901.jdbc4</version>
-        </dependency>
+        </dependency> -->
+    <dependency>
+    <groupId>org.postgresql</groupId>
+    <artifactId>postgresql</artifactId>
+    <version>42.6.0</version>
+</dependency>    
         <dependency>
             <groupId>org.scalatest</groupId>
             <artifactId>scalatest_2.12</artifactId>
