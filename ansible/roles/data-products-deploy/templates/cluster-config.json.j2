@@ -83,6 +83,8 @@
         "spark.executor.memoryOverhead" : "4g",
         "spark.serializer" : "org.apache.spark.serializer.KryoSerializer",
         "spark.yarn.scheduler.heartbeat.interval-ms" : "7200000",
+        "spark.executor.heartbeatInterval" : "1800s",
+        "spark.network.timeout" : "5400s",
         "spark.cassandra.connection.timeoutMS" : "{{ spark_cassandra_connection_timeout_millis }}",
         "spark.cassandra.read.timeoutMS" : "{{ spark_cassandra_query_timeout_millis }}",
         "spark.cassandra.input.fetch.sizeInRows": "{{ spark_cassandra_query_max_rows_fetch_count }}",
