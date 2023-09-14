@@ -120,7 +120,7 @@
 - name: Install latest ruby
   become: yes
   become_user: "{{ analytics_user }}"
-  shell: "export PATH=$PATH:/home/analytics/.rvm/bin && rvm install ruby-2.2"
+  shell: "export PATH=$PATH:/home/analytics/.rvm/bin && rvm install ruby-2.6"
 
 - name: Add ruby repository
   become: yes
@@ -130,7 +130,7 @@
 - name: Install latest ruby-dev
   become: yes
   apt:
-    name: "ruby2.2-dev"
+    name: "ruby2.6-dev"
     state: installed
     update_cache: true
     cache_valid_time: 3600
@@ -138,7 +138,7 @@
 - name: Install ruby-kafka
   become: yes
   become_user: "{{ analytics_user }}"
-  shell: "bash -ilc 'export PATH=$PATH:/home/analytics/.rvm/bin && rvm --default use ruby-2.2 && gem install ruby-kafka'"
+  shell: "bash -ilc 'export PATH=$PATH:/home/analytics/.rvm/bin && rvm --default use ruby-2.6 && gem install ruby-kafka'"
 
 - name: Download Kafka-2.11
   become: yes
