@@ -1,7 +1,7 @@
 {{- if .Values.serviceMonitor.enabled }}
 ---
 apiVersion: monitoring.coreos.com/v1
-kind: CustomResourceDefinition
+kind: ServiceMonitor
 metadata:
   name: {{ .Release.Name }}-taskmanager
   namespace: {{ .Values.namespace }}
@@ -20,7 +20,7 @@ spec:
     - {{ .Values.namespace }}
 ---
 apiVersion: monitoring.coreos.com/v1
-kind: CustomResourceDefinition
+kind: ServiceMonitor
 metadata:
   name: {{ .Release.Name }}-jobmanager
   namespace: {{ .Values.namespace }}
