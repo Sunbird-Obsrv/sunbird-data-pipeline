@@ -220,7 +220,3 @@ spec:
         - name: flink-config-volume
           mountPath: /opt/flink/conf/log4j-console.properties
           subPath: log4j-console.properties
-
-{{- $name := .Release.Name }}
-{{- $prop := (index .Values.scale_properties $name)}}
-{{- if $prop.enabled}}        
