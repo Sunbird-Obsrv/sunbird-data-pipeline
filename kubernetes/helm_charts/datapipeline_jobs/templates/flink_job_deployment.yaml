@@ -225,7 +225,7 @@ spec:
 {{- $prop := (index .Values.scale_properties $name)}}
 {{- if $prop.enabled}}
 ---
-apiVersion: autoscaling/v2beta1
+apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: {{ .Release.Name }}-taskmanager-hpa
