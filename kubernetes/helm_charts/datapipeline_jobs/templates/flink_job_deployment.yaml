@@ -242,5 +242,6 @@ spec:
       external:
         metricName: {{ .Release.Name }}_kafka_consumergroup_lag_sum
         target:
+          type: Percent
           Value: "{{ $prop.scale_target_value }}"
 {{- end }}        
