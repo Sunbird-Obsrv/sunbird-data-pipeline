@@ -120,7 +120,7 @@
 - name: Install latest ruby
   become: yes
   become_user: "{{ analytics_user }}"
-  shell: "export PATH=$PATH:/home/analytics/.rvm/bin && rvm install ruby-2.2"
+  shell: "export PATH=$PATH:/home/analytics/.rvm/bin && rvm install ruby-2.6"
 
 - name: Add ruby repository
   become: yes
@@ -130,7 +130,7 @@
 - name: Install latest ruby-dev
   become: yes
   apt:
-    name: "ruby2.2-dev"
+    name: "ruby2.6-dev"
     state: installed
     update_cache: true
     cache_valid_time: 3600
@@ -138,12 +138,12 @@
 - name: Install ruby-kafka
   become: yes
   become_user: "{{ analytics_user }}"
-  shell: "bash -ilc 'export PATH=$PATH:/home/analytics/.rvm/bin && rvm --default use ruby-2.2 && gem install ruby-kafka'"
+  shell: "bash -ilc 'export PATH=$PATH:/home/analytics/.rvm/bin && rvm --default use ruby-2.6 && gem install ruby-kafka'"
 
 - name: Download Kafka-2.11
   become: yes
   become_user: "{{ analytics_user }}"
-  get_url: url=http://downloads.mesosphere.com/kafka/assets/kafka_2.11-0.10.1.0.tgz dest={{ analytics.home }}/kafka_2.11-0.10.1.0.tgz force=no owner={{ analytics_user }} group={{ analytics_group }}
+  get_url: url=https://archive.apache.org/dist/kafka/0.10.1.0/kafka_2.11-0.10.1.0.tgz dest={{ analytics.home }}/kafka_2.11-0.10.1.0.tgz force=no owner={{ analytics_user }} group={{ analytics_group }}
   tags:
     - kafka-provision
 
