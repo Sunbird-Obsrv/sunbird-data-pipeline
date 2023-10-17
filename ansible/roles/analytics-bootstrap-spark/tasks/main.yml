@@ -21,26 +21,6 @@
     regexp: "export PATH={{ analytics_user_home }}/bin.*"
   when: cloud_service_provider == "oci"
 
-- name: Configure OCI cli 
-  become: yes
-  become_user: "{{ analytics_user }}"
-  file:
-    path: "{{ analytics_user_home }}/.oci"
-    state: directory  
-  when: cloud_service_provider == "oci"
-
-- name: Create OCI cli config location
-  become: yes
-  become_user: "{{ analytics_user }}"
-  template: src=oci-key.j2 dest={{ analytics_user_home }}/.oci/oci-key.pem mode=600 owner={{ analytics_user }} group={{ analytics_group }}
-  when: cloud_service_provider == "oci"
-
-- name: Create OCI cli config file
-  become: yes
-  become_user: "{{ analytics_user }}"
-  template: src=oci-cli-config.j2 dest={{ analytics_user_home }}/.oci/config mode=600 owner={{ analytics_user }} group={{ analytics_group }}
-  when: cloud_service_provider == "oci"
-
 - name: Adding ENV Vars to spark servers environment.
   become: yes
   lineinfile:
@@ -61,6 +41,7 @@
     - {var: 'STORAGE_PROVIDER', value: 'AZURE'}
     - {var: 'ENV', value: '{{env}}'}
     - {var: 'KAFKA_BROKER_HOST', value: "{{groups['processing-cluster-kafka'][0]}}:9092"}
+    - {var: 'OCI_CLI_AUTH', value: "instance_principal"}
 
 - name: Install required python packages
   become: yes
