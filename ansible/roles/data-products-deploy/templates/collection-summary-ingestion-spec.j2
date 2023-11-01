@@ -240,7 +240,7 @@
         ],
 {% elif (dp_object_store_type == "oci") %}
          "type": "static-s3",
-         "uris": [ "s3://{{reports_container}}/sourcing/SourcingSummaryReport.json"],
+         "uris": [ "s3://{{reports_container}}/collection-summary-reports-v2/collection-summary-report-latest.json"],
 {% endif %}
         "fetchTimeout": 300000
       }
