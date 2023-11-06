@@ -6,9 +6,9 @@ log4j_appender_kafka_topic: "{{env}}.telemetry.backend"
 # Shall we change the value to telemetry-data-store in dev also?
 # What's the implication
 # Is it azure blob or s3 bucket??
-channel_data_exhaust_bucket: dev-data-store
+cloud_storage_telemetry_bucketname: dev-data-store
 secrets_path: '{{inventory_dir}}/secrets.yml'
-artifacts_container: "{{dp_vault_artifacts_container}}"
+cloud_storage_artifacts_bucketname: "{{dp_vault_artifacts_container}}"
 
 report_azure_account_name: "{{cloud_private_storage_accountname}}"
 report_azure_storage_secret: "{{cloud_private_storage_secret}}"
@@ -52,7 +52,7 @@ secor:
   azure:
     account_name: "{{cloud_private_storage_accountname}}"
     account_key: "{{cloud_private_storage_secret}}"
-    container_name: "{{channel_data_exhaust_bucket}}"
+    container_name: "{{cloud_storage_telemetry_bucketname}}"
   paths: ['/mount/secor', '/mount/secor/reports', '/mount/secor/logs', '/home/analytics/sbin', '/mount/data/analytics']
   channel: "{{secor_alerts_slack_channel}}"
 

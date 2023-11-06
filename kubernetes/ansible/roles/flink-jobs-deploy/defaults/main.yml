@@ -32,7 +32,7 @@ taskmanager_heap_memory: 1024
 postgres_max_connections: 2
 azure_account: "{{ cloud_private_storage_accountname }}"
 azure_secret: "{{ cloud_private_storage_secret }}"
-flink_container_name: dev-data-store
+cloud_storage_flink_bucketname: dev-data-store
 flink_dp_storage_container: ""
 checkpoint_store_type: gcloud
 checkpoint_interval: 60000
