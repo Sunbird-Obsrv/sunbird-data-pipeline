@@ -6,12 +6,12 @@ log4j_appender_kafka_topic: "{{env}}.telemetry.backend"
 # Shall we change the value to telemetry-data-store in dev also?
 # What's the implication
 # Is it azure blob or s3 bucket??
-channel_data_exhaust_bucket: dev-data-store
-secrets_path: '{{inventory_dir}}/secrets.yml'
-artifacts_container: "{{dp_vault_artifacts_container}}"
+cloud_storage_telemetry_bucketname: dev-data-store
+secrets_path: "{{inventory_dir}}/secrets.yml"
+cloud_storage_artifacts_bucketname: "{{dp_vault_artifacts_container}}"
 
-report_azure_account_name: "{{sunbird_private_storage_account_name}}"
-report_azure_storage_secret: "{{sunbird_private_storage_account_key}}"
+report_azure_account_name: "{{cloud_private_storage_accountname}}"
+report_azure_storage_secret: "{{cloud_private_storage_secret}}"
 
 redis_host: "{{ groups['redis'][0] }}"
 metadata_redis_host: "{{ groups['redis'][0] }}"
@@ -34,7 +34,7 @@ telemetry_schema_directory: /etc/{{env}}/telemetry
 telemetry_schema_path: /etc/{{env}}/telemetry/schemas
 schema_repo_url: https://github.com/project-sunbird/sunbird-data-pipeline.git
 # Create learningall group with LP ips
-cassandra_host:  "{{ groups['cassandra'][0] }}"
+cassandra_host: "{{ groups['cassandra'][0] }}"
 core_cassandra_host: "{{ groups['core-cassandra'][0] }}"
 lp_cassandra_host: "{{ groups['lp-cassandra'][0] }}"
 report_cassandra_host: "{{ groups['report-cassandra'][0] }}"
@@ -46,36 +46,45 @@ sbin_path: "{{ analytics_user_home }}/sbin"
 
 # Secor vars
 secor:
-  properties: ['secor.azure', 'secor.common', 'secor', 'secor.partition', 'log4j']
-  artifact_dir: /mount/secor
-  artifact_ver: "0.29"
-  azure:
-    account_name: "{{sunbird_private_storage_account_name}}"
-    account_key: "{{sunbird_private_storage_account_key}}"
-    container_name: "{{channel_data_exhaust_bucket}}"
-  paths: ['/mount/secor', '/mount/secor/reports', '/mount/secor/logs', '/home/analytics/sbin', '/mount/data/analytics']
-  channel: "{{secor_alerts_slack_channel}}"
+    properties:
+        ["secor.azure", "secor.common", "secor", "secor.partition", "log4j"]
+    artifact_dir: /mount/secor
+    artifact_ver: "0.29"
+    azure:
+        account_name: "{{cloud_private_storage_accountname}}"
+        account_key: "{{cloud_private_storage_secret}}"
+        container_name: "{{cloud_storage_telemetry_bucketname}}"
+
+    paths:
+        [
+            "/mount/secor",
+            "/mount/secor/reports",
+            "/mount/secor/logs",
+            "/home/analytics/sbin",
+            "/mount/data/analytics",
+        ]
+    channel: "{{secor_alerts_slack_channel}}"
 
 # postgres
 # list of databases to be created
 # Can move this dictionary to postgres role; but incase we want to generalize roles!!
 postgresql_databases:
-  - name: analytics
-    owner: analytics
+    - name: analytics
+      owner: analytics
 
 postgresql_users:
-  - name: analytics
-    password: "{{dp_vault_pgdb_password}}"
+    - name: analytics
+      password: "{{dp_vault_pgdb_password}}"
 
 postgres:
-  db_url: "{{ groups['postgres'][0] }}"
-  db_username: analytics
-  db_name: analytics
-  db_password: "{{dp_vault_pgdb_password}}"
-  db_table_name: "{{env}}_consumer_channel_mapping"
-  db_port: 5432
-  db_admin_user: analytics
-  db_admin_password: "{{dp_vault_pgdb_admin_password}}"
+    db_url: "{{ groups['postgres'][0] }}"
+    db_username: analytics
+    db_name: analytics
+    db_password: "{{dp_vault_pgdb_password}}"
+    db_table_name: "{{env}}_consumer_channel_mapping"
+    db_port: 5432
+    db_admin_user: analytics
+    db_admin_password: "{{dp_vault_pgdb_admin_password}}"
 
 postgres_address_space: 0.0.0.0/0 # Postgres trust address space
 
@@ -84,9 +93,9 @@ lp_composite_search_host: "{{ groups['composite-search-cluster'][0] }}"
 lp_search: "http://{{private_ingressgateway_ip}}/search"
 lp_url: http://{{ groups['learning'][0] }}:8080/learning-service
 service:
-  search:
-    url: http://{{private_ingressgateway_ip}}/search
-    path: /v3/search
+    search:
+        url: http://{{private_ingressgateway_ip}}/search
+        path: /v3/search
 
 cassandra_hierarchy_store_prefix: "{{env}}_"
 data_exhaust_token: "{{dp_vault_data_exhaust_token}}"
@@ -106,46 +115,46 @@ CONTAINER_NAME_SAMZA: samza-logs
 script_path: /usr/local/hadoop
 
 job_names:
-  DeDuplication_1:
-      job_file_name: 'de-duplication'
-  DeNormalization_1:
-      job_file_name: 'de-normalization'
-  DruidEventsValidator_1:
-      job_file_name: 'druid-events-validator'
-  EventsRouter_1:
-      job_file_name: 'events-router'
-  TelemetryExtractor_1:
-      job_file_name: 'telemetry-extractor'
-  TelemetryLocationUpdater_1:
-      job_file_name: 'telemetry-location-updater'
-  TelemetryRouter_1:
-      job_file_name: 'telemetry-router'
-  TelemetryRedacter_1:
-      job_file_name: 'telemetry-redacter'
-  TelemetryValidator_1:
-      job_file_name: 'telemetry-validator'
-  DeviceProfileUpdater_1:
-      job_file_name: 'device-profile-updater'
-  AssessmentAggregator_1:
-      job_file_name: 'assessment-aggregator'
-  DerivedDeDuplication_1:
-      job_file_name: 'derived-de-duplication'
-  UserCacheUpdater_1:
-      job_file_name: 'user-cache-updater'
-  ContentCacheUpdater_1:
-      job_file_name: 'content-cache-updater'
-  ShareEventsFlattener_1:
-      job_file_name: 'share-events-flattener'
+    DeDuplication_1:
+        job_file_name: "de-duplication"
+    DeNormalization_1:
+        job_file_name: "de-normalization"
+    DruidEventsValidator_1:
+        job_file_name: "druid-events-validator"
+    EventsRouter_1:
+        job_file_name: "events-router"
+    TelemetryExtractor_1:
+        job_file_name: "telemetry-extractor"
+    TelemetryLocationUpdater_1:
+        job_file_name: "telemetry-location-updater"
+    TelemetryRouter_1:
+        job_file_name: "telemetry-router"
+    TelemetryRedacter_1:
+        job_file_name: "telemetry-redacter"
+    TelemetryValidator_1:
+        job_file_name: "telemetry-validator"
+    DeviceProfileUpdater_1:
+        job_file_name: "device-profile-updater"
+    AssessmentAggregator_1:
+        job_file_name: "assessment-aggregator"
+    DerivedDeDuplication_1:
+        job_file_name: "derived-de-duplication"
+    UserCacheUpdater_1:
+        job_file_name: "user-cache-updater"
+    ContentCacheUpdater_1:
+        job_file_name: "content-cache-updater"
+    ShareEventsFlattener_1:
+        job_file_name: "share-events-flattener"
 
 druid_ingestion_specs:
-  telemetry-events:
-      ingestion_file_name: 'telemetry_index_kafka'
-  summary-events:
-      ingestion_file_name: 'summary_index_kafka'
-  telemtry-feedback-events:
-      ingestion_file_name: 'telemetry_feedback_index_kafka'
-  pipeline-metrics:
-      ingestion_file_name: 'pipeline_metrics_index_kafka'
+    telemetry-events:
+        ingestion_file_name: "telemetry_index_kafka"
+    summary-events:
+        ingestion_file_name: "summary_index_kafka"
+    telemtry-feedback-events:
+        ingestion_file_name: "telemetry_feedback_index_kafka"
+    pipeline-metrics:
+        ingestion_file_name: "pipeline_metrics_index_kafka"
 
 #Druid Proxy APi service
 sunbird_druid_broker_host: "http://{{ groups['raw-broker'][0] }}"
@@ -154,9 +163,9 @@ sunbird_learner_service_url: "http://{{private_ingressgateway_ip}}/learner"
 location_search_url: "{{ domain_name }}/api/data/"
 location_search_token: "Bearer {{ sunbird_api_auth_token }}"
 
-druid_report_url_endpoint : "{{ proto}}://{{domain_name}}/api/data/v1/report/jobs"
-druid_report_url : "{{ proto}}://{{domain_name}}/api/data/v1/"
-druid_report_token : "Bearer {{ sunbird_api_auth_token }}"
+druid_report_url_endpoint: "{{ proto}}://{{domain_name}}/api/data/v1/report/jobs"
+druid_report_url: "{{ proto}}://{{domain_name}}/api/data/v1/"
+druid_report_token: "Bearer {{ sunbird_api_auth_token }}"
 
 #redis multiprocess config
 content_port: 6379

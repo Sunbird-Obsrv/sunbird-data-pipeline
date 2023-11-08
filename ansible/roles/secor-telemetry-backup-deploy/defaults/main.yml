@@ -2,13 +2,14 @@ analytics_user: analytics
 analytics_group: analytics
 analytics_user_home: /home/{{analytics_user}}
 sbin_path: "{{ analytics_user_home }}/sbin"
-azure_container_name: "{{secor_azure_container_name}}"
-azure_account_key: "{{sunbird_private_storage_account_key}}"
+azure_container_name: "{{cloud_storage_telemetry_bucketname}}"
+azure_account_key: "{{cloud_private_storage_secret}}"
 
 telemetry_ingestion_topic: "{{ env }}.telemetry.ingest"
 
 secor:
-  properties: ['secor.azure', 'secor.common', 'secor', 'secor.partition', 'log4j']
+  properties:
+    ["secor.azure", "secor.common", "secor", "secor.partition", "log4j"]
   artifact_dir: /mount/secor
 
 secor_service_name:
@@ -81,7 +82,7 @@ secor_service_name:
     max_file_age: "14400"
     partition_prefix_enabled: "true"
     partition_prefix_key: "eid"
-    partition_prefix_mapping: "{\"ME_SESSION_SUMMARY\":\"summary\",\"ME_WORKFLOW_SUMMARY\":\"summary\",\"ME_DEIVCE_SUMMARY\":\"summary\",\"ME_ITEM_SUMMARY\":\"summary\",\"ME_WORKFLOW_USAGE_SUMMARY\":\"summary\",\"ME_ITEM_USAGE_SUMMARY\":\"summary\",\"ME_USAGE_SUMMARY\":\"summary\",\"ME_DIALCODE_USAGE_SUMMARY\":\"summary\",\"DEFAULT\":\"raw\"}"
+    partition_prefix_mapping: '{"ME_SESSION_SUMMARY":"summary","ME_WORKFLOW_SUMMARY":"summary","ME_DEIVCE_SUMMARY":"summary","ME_ITEM_SUMMARY":"summary","ME_WORKFLOW_USAGE_SUMMARY":"summary","ME_ITEM_USAGE_SUMMARY":"summary","ME_USAGE_SUMMARY":"summary","ME_DIALCODE_USAGE_SUMMARY":"summary","DEFAULT":"raw"}'
     output_file_pattern: "{partition}-{kafkaPartition}-{currentTimestamp}.json"
     service_description: "Denormalized Events Backup"
     service_monitor_schedule_hr: "23"
@@ -106,7 +107,7 @@ secor_service_name:
     service_monitor_schedule_hr: "23"
     service_monitor_schedule_min: "50"
     message_channel_identifier: ""
-    message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"  
+    message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
   channel-telemetry-backup:
     consumer_group: "{{ env }}.telemetry.channel.backup"
     base_path: "data-exhaust/raw"
@@ -144,7 +145,7 @@ secor_service_name:
     service_monitor_schedule_hr: "23"
     service_monitor_schedule_min: "50"
     message_channel_identifier: "derivedlocationdata.state"
-    message_parser: "com.pinterest.secor.parser.ChannelDateMessageParser"    
+    message_parser: "com.pinterest.secor.parser.ChannelDateMessageParser"
   extractor-failed-backup:
     consumer_group: "{{ env }}.extractor.failed.backup"
     base_path: "extractor-failed"
@@ -252,7 +253,7 @@ secor_service_name:
     max_file_age: "600"
     partition_prefix_enabled: "true"
     partition_prefix_key: "eid"
-    partition_prefix_mapping: "{\"ME_SESSION_SUMMARY\":\"session_summary\",\"ME_WORKFLOW_SUMMARY\":\"workflow_summary\",\"ME_DEIVCE_SUMMARY\":\"device_summary\",\"ME_ITEM_SUMMARY\":\"item_summary\",\"ME_WORKFLOW_USAGE_SUMMARY\":\"workflow_usage_summary\",\"ME_ITEM_USAGE_SUMMARY\":\"item_usage_summary\",\"ME_USAGE_SUMMARY\":\"usage_summary\",\"ME_DIALCODE_USAGE_SUMMARY\":\"dialcode_usage_summary\",\"DEFAULT\":\"me\"}"
+    partition_prefix_mapping: '{"ME_SESSION_SUMMARY":"session_summary","ME_WORKFLOW_SUMMARY":"workflow_summary","ME_DEIVCE_SUMMARY":"device_summary","ME_ITEM_SUMMARY":"item_summary","ME_WORKFLOW_USAGE_SUMMARY":"workflow_usage_summary","ME_ITEM_USAGE_SUMMARY":"item_usage_summary","ME_USAGE_SUMMARY":"usage_summary","ME_DIALCODE_USAGE_SUMMARY":"dialcode_usage_summary","DEFAULT":"me"}'
     output_file_pattern: "{partition}-{currentTimestamp}.json"
     service_description: "Derived Telemetry Backup"
     service_monitor_schedule_hr: "23"
@@ -312,7 +313,7 @@ secor_service_name:
     max_file_age: "3600"
     partition_prefix_enabled: "true"
     partition_prefix_key: "jobName"
-    partition_prefix_mapping: "{\"publish-pipeline\":\"publish_pipeline\",\"composite-search-indexer\":\"cs_index\",\"DEFAULT\":\"failed_events\"}"
+    partition_prefix_mapping: '{"publish-pipeline":"publish_pipeline","composite-search-indexer":"cs_index","DEFAULT":"failed_events"}'
     output_file_pattern: "{partition}-{currentTimestamp}.json"
     service_description: "Learning Failed Backup"
     service_monitor_schedule_hr: "23"

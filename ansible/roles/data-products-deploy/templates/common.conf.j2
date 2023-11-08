@@ -15,10 +15,10 @@ storage.secret.config="{{ dp_storage_secret_config }}"
 reports.storage.key.config="{{ dp_reports_storage_key_config }}"
 reports.storage.secret.config="{{ dp_reports_storage_secret_config }}"
 {% if dp_object_store_type == "azure" %}
-cloud_storage_type="azure"
+cloud_storage_telemetry_type="azure"
 {% elif (dp_object_store_type == "cephs3" or dp_object_store_type == "s3") %}
-cloud_storage_type="s3"
-cloud_storage_endpoint="{{ s3_storage_endpoint | regex_replace('^[a-z]+://(.*)$', '\\1') }}"
+cloud_storage_telemetry_type="s3"
+cloud_private_storage_endpoint="{{ s3_storage_endpoint | regex_replace('^[a-z]+://(.*)$', '\\1') }}"
 cloud_storage_endpoint_with_protocol="{{ s3_storage_endpoint }}"
 aws_storage_key="{{ s3_storage_key }}"
 aws_storage_secret="{{ s3_storage_secret }}"
