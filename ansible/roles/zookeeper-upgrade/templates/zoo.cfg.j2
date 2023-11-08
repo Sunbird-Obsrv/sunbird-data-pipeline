@@ -3,6 +3,8 @@ dataDir={{ zookeeper_data_dir }}
 dataLogDir={{ zookeeper_data_dir }}
 clientPort={{ client_port }}
 initLimit={{ init_limit }}
+# Default 8080 port will conflict with tomcat
+admin.serverPort=9876
 syncLimit={{ sync_limit }}
 maxClientCnxns={{ maxclinetconnection_limit }}
 {% if zookeeper_group | length > 1 %}
