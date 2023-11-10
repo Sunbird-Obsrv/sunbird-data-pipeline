@@ -46,9 +46,8 @@ cloud_storage:
   container: "telemetry-data-store" # Container is different in all env so override this.
   object_key: "druid-content-snapshot/snapshot.txt"
   provider: "azure"
-  account_name: "{{sunbird_public_storage_account_name}}"
-  account_key: "{{sunbird_public_storage_account_key}}"
-  account_endpoint: "{{sunbird_public_storage_account_endpoint}}"
+  account_name: "{{cloud_public_storage_accountname}}"
+  account_key: "{{cloud_public_storage_secret}}"
 
 cassandra:
   host: "{{lp_cassandra_host}}" ## LMS-Cassandra IP Address.
@@ -63,7 +62,7 @@ cassandra:
     new_table: "device_profile_temp"
 
 druid:
-  coordinator_host: "{{ groups['rollup-coordinator'][0] | default(groups['raw-coordinator'][0]) }}" 
+  coordinator_host: "{{ groups['rollup-coordinator'][0] | default(groups['raw-coordinator'][0]) }}"
   data_source: "content-model-snapshot"
   ingestion_spec_path: "{{ content_snapshot_jar_path }}/etl-jobs-1.0/druid_models/content_index_batch.json"
 
@@ -75,14 +74,21 @@ job_config:
   cassandra_redis_path: "{{ content_snapshot_path }}/config/cassandraRedis.conf"
 
 output_file_path: "{{ content_snapshot_path }}/compositeSearchBatchData"
-config_files: ["application","cassandraRedis","DeviceProfile","ESCloudUploader","ESContentIndexer","DialcodeRedisIndexer"]
-script_files: ["DeviceProfileScripts","DruidContentIndexer","RedisContentIndexer","RedisDialcodeIndexer","RedisUserDataIndexer","run-script"]
-
-
-
-
-
-
-
-
-
+config_files:
+  [
+    "application",
+    "cassandraRedis",
+    "DeviceProfile",
+    "ESCloudUploader",
+    "ESContentIndexer",
+    "DialcodeRedisIndexer",
+  ]
+script_files:
+  [
+    "DeviceProfileScripts",
+    "DruidContentIndexer",
+    "RedisContentIndexer",
+    "RedisDialcodeIndexer",
+    "RedisUserDataIndexer",
+    "run-script",
+  ]

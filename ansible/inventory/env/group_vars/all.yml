@@ -10,8 +10,8 @@ channel_data_exhaust_bucket: dev-data-store
 secrets_path: '{{inventory_dir}}/secrets.yml'
 artifacts_container: "{{dp_vault_artifacts_container}}"
 
-report_azure_account_name: "{{sunbird_private_storage_account_name}}"
-report_azure_storage_secret: "{{sunbird_private_storage_account_key}}"
+report_azure_account_name: "{{cloud_private_storage_accountname}}"
+report_azure_storage_secret: "{{cloud_private_storage_secret}}"
 
 redis_host: "{{ groups['redis'][0] }}"
 metadata_redis_host: "{{ groups['redis'][0] }}"
@@ -50,8 +50,8 @@ secor:
   artifact_dir: /mount/secor
   artifact_ver: "0.29"
   azure:
-    account_name: "{{sunbird_private_storage_account_name}}"
-    account_key: "{{sunbird_private_storage_account_key}}"
+    account_name: "{{cloud_private_storage_accountname}}"
+    account_key: "{{cloud_private_storage_secret}}"
     container_name: "{{channel_data_exhaust_bucket}}"
   paths: ['/mount/secor', '/mount/secor/reports', '/mount/secor/logs', '/home/analytics/sbin', '/mount/data/analytics']
   channel: "{{secor_alerts_slack_channel}}"
