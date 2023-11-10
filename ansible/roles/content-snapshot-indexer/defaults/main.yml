@@ -43,9 +43,9 @@ elastic_search:
   scroll_size: "1000"
 
 cloud_storage:
-  container: "telemetry-data-store" # Container is different in all env so override this.
+  container: "odev-dev-diksha-telemetry" # Container is different in all env so override this.
   object_key: "druid-content-snapshot/snapshot.txt"
-  provider: "azure"
+  provider: "oci"
   account_name: "{{sunbird_public_storage_account_name}}"
   account_key: "{{sunbird_public_storage_account_key}}"
   account_endpoint: "{{sunbird_public_storage_account_endpoint}}"
