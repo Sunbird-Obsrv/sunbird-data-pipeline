@@ -165,3 +165,8 @@
   shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "ALTER TABLE report ALTER COLUMN type TYPE varchar(10)"
   run_once: true
   tags: update
+
+- name: update encryption_key in {{ env }}_job_request
+  shell: PGPASSWORD="{{postgres.db_password}}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "ALTER TABLE {{ env }}_job_request ALTER encryption_key TYPE varchar(500)"
+  run_once: true
+  tags: update

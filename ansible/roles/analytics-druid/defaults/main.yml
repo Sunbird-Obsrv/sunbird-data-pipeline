@@ -39,7 +39,7 @@ druid_community_extensions:
 
 # End of druid_extensions
 
-druid_indexing_logs_type: "{{ cloud_storage_telemetry_type }}"
+druid_indexing_logs_type:  "{{ cloud_storage_telemetry_type }}"
 druid_indexing_log_dir: /var/druid/indexing-logs
 druid_indexing_storage_type: metadata
 druid_indexing_task_basedir: "/var/task"

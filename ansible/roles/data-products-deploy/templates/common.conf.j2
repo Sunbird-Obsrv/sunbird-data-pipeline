@@ -13,18 +13,6 @@ storage.secret.config="{{ dp_storage_secret_config }}"
 reports.storage.key.config="{{ dp_reports_storage_key_config }}"
 reports.storage.secret.config="{{ dp_reports_storage_secret_config }}"
 {% if dp_object_store_type == "azure" %}
-<<<<<<< HEAD
-cloud_storage_type="azure"
-{% elif (dp_object_store_type == "cephs3" or dp_object_store_type == "s3" or dp_object_store_type == "oci") %}
-{% if cloud_service_provider == "oci" %}
-cloud_storage_type="oci"
-{% else %}
-cloud_storage_type="s3"
-{% endif %}
-cloud_storage_endpoint="{{ s3_storage_endpoint | regex_replace('^[a-z]+://(.*)$', '\\1') }}"
-cloud_storage_endpoint_with_protocol="{{ s3_storage_endpoint_with_protocol }}"
-storage.endpoint.config="{{ s3_storage_endpoint_with_protocol }}"
-=======
 cloud_storage_telemetry_type="azure"
 {% elif (dp_object_store_type == "cephs3" or dp_object_store_type == "s3") %}
 cloud_storage_telemetry_type="s3"
