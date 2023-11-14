@@ -18,7 +18,6 @@ cloud_storage_telemetry_type="azure"
 cloud_storage_telemetry_type="s3"
 cloud_private_storage_endpoint="{{ s3_storage_endpoint | regex_replace('^[a-z]+://(.*)$', '\\1') }}"
 cloud_storage_endpoint_with_protocol="{{ s3_storage_endpoint }}"
->>>>>>> 72bae4d12 (common variable changes in datapipeline/flink-jobs)
 aws_storage_key="{{ s3_storage_key }}"
 aws_storage_secret="{{ s3_storage_secret }}"
 {% endif %}
