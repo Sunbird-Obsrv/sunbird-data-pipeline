@@ -1,11 +1,18 @@
 - name: Adding azure blob variable to spark env file
   lineinfile:
     path: "{{spark_folder}}/conf/spark-env.sh"
-    line: '{{item.var}}={{item.value}}'
+    line: "{{item.var}}={{item.value}}"
     regexp: "{{ item.var }}.*"
   with_items:
-    - {var: 'azure_storage_key', value: '{{ azure_private_storage_account_name }}'}
-    - {var: 'azure_storage_secret', value: '{{ azure_private_storage_account_key }}'}
+    - {
+        var: "azure_storage_key",
+        value: "{{ cloud_private_storage_accountname }}",
+      }
+    - {
+        var: "azure_storage_secret",
+        value: "{{ cloud_private_storage_secret }}",
+      }
+
   no_log: true
   when: cloud_service_provider == "azure"
 
@@ -15,18 +22,18 @@
     path: "{{ spark_folder }}/jars/{{item.var}}-{{item.value}}.jar"
     state: absent
   with_items:
-    - {var: 'guava', value: '{{ guava_default_jre_version }}'}
-    - {var: 'guice', value: '{{ guice_default_version }}'}
-    - {var: 'guice-servlet', value: '{{ guice_default_version }}'} 
-   
+    - { var: "guava", value: "{{ guava_default_jre_version }}" }
+    - { var: "guice", value: "{{ guice_default_version }}" }
+    - { var: "guice-servlet", value: "{{ guice_default_version }}" }
+
 - name: Download guava_jre_url and copy to Spark jars folder
   become: yes
   get_url: url={{ guava_jre_url }} dest={{ spark_folder }}/jars/guava-{{guava_jre_version}}.jar timeout=1000 force=no
-  
+
 - name: Download log4j api and copy to Spark jars folder
   become: yes
   get_url: url={{ log4j_api_url }} dest={{ spark_folder }}/jars/log4j-api-{{log4j_version}}.jar timeout=1000 force=no
-  
+
 - name: Download log4j core and copy to Spark jars folder
   become: yes
   get_url: url={{ log4j_core_url }} dest={{ spark_folder }}/jars/log4j-core-{{log4j_version}}.jar timeout=1000 force=no

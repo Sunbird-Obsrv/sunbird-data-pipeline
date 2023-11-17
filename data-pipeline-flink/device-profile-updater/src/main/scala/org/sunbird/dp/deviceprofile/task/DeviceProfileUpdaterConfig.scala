@@ -35,6 +35,7 @@ class DeviceProfileUpdaterConfig(override val config: Config) extends BaseJobCon
   val postgresHost: String = config.getString("postgres.host")
   val postgresPort: Int = config.getInt("postgres.port")
   val postgresMaxConnections: Int = config.getInt("postgres.maxConnections")
+  val postgresSslMode: Boolean = config.getBoolean("postgres.sslMode")
 
 
   val countryCode = "country_code"

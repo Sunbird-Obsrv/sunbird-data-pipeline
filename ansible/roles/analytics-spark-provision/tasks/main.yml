@@ -117,28 +117,31 @@
     recurse: yes
   become: yes
 
+# kenneth changed to install Ruby 2.6 as per R.4.6.0
 - name: Install latest ruby
   become: yes
   become_user: "{{ analytics_user }}"
-  shell: "export PATH=$PATH:/home/analytics/.rvm/bin && rvm install ruby-2.5"
+  shell: "export PATH=$PATH:/home/analytics/.rvm/bin && rvm install ruby-2.6"
 
 - name: Add ruby repository
   become: yes
   apt_repository:
     repo: ppa:brightbox/ruby-ng
 
+# kenneth changed to install ruby-dev 2.6 as per R.4.6.0 - there is no ruby2.2-dev in bionic
 - name: Install latest ruby-dev
   become: yes
   apt:
-    name: "ruby2.5-dev"
+    name: "ruby2.6-dev"
     state: installed
     update_cache: true
     cache_valid_time: 3600
 
+# changed to ruby 2.6 as per R.4.6.0
 - name: Install ruby-kafka
   become: yes
   become_user: "{{ analytics_user }}"
-  shell: "bash -ilc 'export PATH=$PATH:/home/analytics/.rvm/bin && rvm --default use ruby-2.5 && gem install ruby-kafka'"
+  shell: "bash -ilc 'export PATH=$PATH:/home/analytics/.rvm/bin && rvm --default use ruby-2.6 && gem install --user-install --no-document ruby-kafka'"
 
 - name: Download Kafka-2.11
   become: yes

@@ -21,6 +21,7 @@ spec:
         workingDir: /opt/flink
         command: ["/opt/flink/bin/standalone-job.sh"]
 {{- $job-config-key := .Release.Name }}
+
         args: ["start-foreground",
                "--job-classname={{ index .Values $job-config-key.job_classname }}", 
                "-Djobmanager.rpc.address={{ .Release.Name }}-jobmanager",
@@ -29,7 +30,20 @@ spec:
                "-Dblob.server.port=6124", 
                "-Dqueryable-state.server.ports=6125",
                "-Djobmanager.heap.size={{ index .Values $job-config-key.job_manager_heap_size }}",
-               "-Dfs.azure.account.key.{{ .Values.azure_storage_account }}.blob.core.windows.net: {{ .Values.azure_storage_secret }}",
+{{- if eq .Values.checkpoint_store_type "azure" }}
+               "-Dfs.azure.account.key.{{ .Values.cloud_storage_key }}.blob.core.windows.net: {{ .Values.cloud_storage_secret }}",
+{{- end }}
+{{- if eq .Values.checkpoint_store_type "aws" }} 
+               "-Ds3.access-key={{ .Values.cloud_storage_key }}",
+               "-Ds3.secret-key={{ .Values.cloud_storage_secret }}",
+               "-Ds3.endpoint={{ .Values.cloud_private_endpoint }}",
+               "-Ds3.path.style.access={{ .Values.s3_path_style_access }}",
+{{- end }}
+{{- if eq .Values.checkpoint_store_type "gcloud" }}
+               "-Dfs.gs.auth.client.id={{ .Values.cloud_storage_key }}",
+               "-Dfs.gs.auth.client.secret={{ .Values.cloud_storage_secret }}",
+               "-Dfs.gs.project.id={{ .Values.cloud_storage_project_id }}"
+{{- end }}
                "-Dconfig.file=/opt/flink/conf/{{ .Release.Name }}.conf"]
         ports:
         - containerPort: 6123

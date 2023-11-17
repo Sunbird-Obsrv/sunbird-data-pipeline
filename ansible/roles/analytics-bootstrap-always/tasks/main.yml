@@ -17,6 +17,10 @@
     createhome: yes
     group: "{{ analytics_group }}"
 
+- name: change permission
+  become: yes
+  command: chown -R "{{ analytics_user }}":"{{ analytics_user }}" /home/"{{ analytics_user }}"
+
 
 - name: Installing packages
   become: yes

@@ -1,7 +1,7 @@
 {
   "wfs": {
     "search": {
-      "type": "azure",
+      "type": "{{dp_object_store_type}}",
       "queries": [
         {
           "bucket": "{{ bucket }}",
@@ -20,11 +20,16 @@
     "model": "org.ekstep.analytics.model.WorkflowSummary",
     "modelParams": {
       "apiVersion": "v2",
-      "parallelization": 32
+      "parallelization": 32,
+      "storageKeyConfig":"storage.key.config",
+      "storageSecretConfig":"storage.secret.config",
+      "storageContainer":"{{reports_container}}",
+      "storageEndpoint":"{{dp_storage_endpoint_config}}",
+      "store":"{{ dp_object_store_type }}"
     },
     "output": [
       {
-        "to": "azure",
+        "to": "{{dp_object_store_type}}",
         "params": {
           "bucket": "{{ bucket }}",
           "key": "{{ job_manager_tmp_dir }}/wfs/$(date --date yesterday '+%Y-%m-%d')"
@@ -44,7 +49,7 @@
   },
   "video-streaming": {
     "search": {
-      "type": "azure"
+      "type": "{{dp_object_store_type}}"
     },
     "model": "org.ekstep.analytics.job.VideoStreamingJob",
     "modelParams": {
@@ -68,6 +73,11 @@
     },
     "model": "org.ekstep.analytics.job.report.StateAdminReportJob",
     "modelParams": {
+      "storageKeyConfig":"storage.key.config",
+      "storageSecretConfig":"storage.secret.config",
+      "storageContainer":"{{reports_container}}",
+      "storageEndpoint":"{{dp_storage_endpoint_config}}", 
+      "store":"{{ dp_object_store_type }}",   
       "sparkCassandraConnectionHost": "{{core_cassandra_host}}",
       "sparkElasticsearchConnectionHost": "{{sunbird_es_host}}"
     },
@@ -89,6 +99,11 @@
     },
     "model": "org.ekstep.analytics.job.report.StateAdminGeoReportJob",
     "modelParams": {
+      "storageKeyConfig":"storage.key.config",
+      "storageSecretConfig":"storage.secret.config",
+      "storageContainer":"{{reports_container}}",
+      "storageEndpoint":"{{dp_storage_endpoint_config}}",    
+      "store":"{{ dp_object_store_type }}",
       "sparkCassandraConnectionHost": "{{core_cassandra_host}}",
       "sparkElasticsearchConnectionHost": "{{sunbird_es_host}}"
     },
@@ -110,6 +125,11 @@
     },
     "model": "org.ekstep.analytics.updater.UpdateContentRating",
     "modelParams": {
+      "store": "{{dp_object_store_type}}",
+      "storageKeyConfig":"storage.key.config",
+      "storageSecretConfig":"storage.secret.config",
+      "storageContainer":"{{reports_container}}",
+      "storageEndpoint":"{{dp_storage_endpoint_config}}",    
       "startDate": "$(date --date yesterday '+%Y-%m-%d')",
       "endDate": "$(date '+%Y-%m-%d')"
     },
@@ -139,6 +159,11 @@
       "pushMetrics": true,
       "brokerList": "{{ brokerlist }}",
       "topic": "{{ analytics_metrics_topic }}",
+      "storageKeyConfig":"storage.key.config",
+      "storageSecretConfig":"storage.secret.config",
+      "storageContainer":"{{reports_container}}",
+      "storageEndpoint":"{{dp_storage_endpoint_config}}", 
+      "store":"{{ dp_object_store_type }}",       
       "model": [
         {
           "model": "WorkFlowSummaryModel",
@@ -201,6 +226,11 @@
     },
     "model": "org.ekstep.analytics.model.ExperimentDefinitionModel",
     "modelParams": {
+      "store": "{{dp_object_store_type}}",
+      "storageKeyConfig":"storage.key.config",
+      "storageSecretConfig":"storage.secret.config",
+      "storageContainer":"{{reports_container}}",
+      "storageEndpoint":"{{dp_storage_endpoint_config}}",    
       "sparkElasticsearchConnectionHost": "{{ lp_composite_search_host }}"
     },
     "output": [
@@ -297,7 +327,11 @@
   			"tenantId": "",
   			"slugName": ""
   		},
-  		"store": "azure",
+  		"store": "{{dp_object_store_type}}",
+      "storageKeyConfig":"storage.key.config",
+      "storageSecretConfig":"storage.secret.config",
+      "storageContainer":"{{reports_container}}",
+      "storageEndpoint":"{{dp_storage_endpoint_config}}",      
   		"format": "csv",
   		"key": "druid-reports/",
   		"filePath": "druid-reports/",
@@ -346,7 +380,11 @@
                 "limit": 10000
             }
         },
-        "store": "azure",
+        "store": "{{dp_object_store_type}}",
+        "storageKeyConfig":"storage.key.config",
+        "storageSecretConfig":"storage.secret.config",
+        "storageContainer":"{{reports_container}}",
+        "storageEndpoint":"{{dp_storage_endpoint_config}}",
         "format":"csv",
         "key": "druid-reports/",
         "filePath": "druid-reports/",
@@ -457,7 +495,11 @@
         }],
         "queryType": "groupBy"
       },
-      "store": "azure",
+      "store": "{{dp_object_store_type}}",
+      "storageKeyConfig":"storage.key.config",
+      "storageSecretConfig":"storage.secret.config",
+      "storageContainer":"{{reports_container}}",
+      "storageEndpoint":"{{dp_storage_endpoint_config}}",
       "format":"csv",
       "key": "druid-reports/",
       "filePath": "druid-reports/",
@@ -482,11 +524,16 @@
       },
       "model": "org.ekstep.analytics.model.MetricsAuditJob",
       "modelParams": {
+      "store": "{{dp_object_store_type}}",
+      "storageKeyConfig":"storage.key.config",
+      "storageSecretConfig":"storage.secret.config",
+      "storageContainer":"{{reports_container}}",
+      "storageEndpoint":"{{dp_storage_endpoint_config}}",      
         "auditConfig": [
           {
             "name": "denorm",
             "search": {
-              "type": "azure",
+              "type": "{{dp_object_store_type}}",
               "queries": [
                 {
                   "bucket": "{{ bucket }}",
@@ -532,7 +579,7 @@
           {
             "name": "failed",
             "search": {
-              "type": "azure",
+              "type": "{{dp_object_store_type}}",
               "queries": [
                 {
                   "bucket": "{{ bucket }}",
@@ -546,7 +593,7 @@
           {
             "name": "unique",
             "search": {
-              "type": "azure",
+              "type": "{{dp_object_store_type}}",
               "queries": [
                 {
                   "bucket": "{{ bucket }}",
@@ -560,7 +607,7 @@
           {
             "name": "raw",
             "search": {
-              "type": "azure",
+              "type": "{{dp_object_store_type}}",
               "queries": [
                 {
                   "bucket": "{{ bucket }}",
@@ -574,7 +621,7 @@
           {
             "name": "channel-raw",
             "search": {
-              "type": "azure",
+              "type": "{{dp_object_store_type}}",
               "queries": [
                 {
                   "folder": true,
@@ -589,7 +636,7 @@
           {
             "name": "channel-summary",
             "search": {
-              "type": "azure",
+              "type": "{{dp_object_store_type}}",
               "queries": [
                 {
                   "folder": true,
@@ -604,7 +651,7 @@
           {
             "name": "derived",
             "search": {
-              "type": "azure",
+              "type": "{{dp_object_store_type}}",
               "queries": [
                 {
                   "bucket": "{{ bucket }}",

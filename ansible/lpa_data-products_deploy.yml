@@ -5,7 +5,7 @@
   become: yes
   become_user: "{{ analytics_user }}"
   environment:
-    AZURE_STORAGE_ACCOUNT: "{{sunbird_private_storage_account_name}}"
-    AZURE_STORAGE_KEY: "{{sunbird_private_storage_account_key}}"
+    AZURE_STORAGE_ACCOUNT: "{{cloud_private_storage_accountname}}"
+    AZURE_STORAGE_KEY: "{{cloud_private_storage_secret}}"
   roles:
-   - data-products-deploy
+    - data-products-deploy

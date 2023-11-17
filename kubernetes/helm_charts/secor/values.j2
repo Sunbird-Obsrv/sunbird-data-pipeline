@@ -1,9 +1,25 @@
-azure_account: "{{ sunbird_private_storage_account_name }}"
-azure_secret: "{{ sunbird_private_storage_account_key }}"
+azure_account: "{{ cloud_private_storage_accountname }}"
+azure_secret: "{{ cloud_private_storage_secret }}"
 azure_container_name: "telemetry-data-store"
 
-namespace: {{ secor_namespace }}
+s3_access_key: "{{s3_storage_key}}"
+s3_secret_id: "{{s3_storage_secret}}"
+s3_region: "{{oci_region}}"
+s3_endpoint: "{{s3_storage_endpoint}}"
+s3_path_style_access: "{{s3_path_style_access}}"
+s3_bucket_name: "telemetry-data-store"
+
+{% if cloud_service_provider == 'oci' -%}
+storage_type: "S3"
+storageClass: "oci-bv"
+{%- else -%}
+storage_type: "Azure"
 storageClass: {{ secor_storage_class | default('default') }}
+{%- endif %}
+
+
+
+namespace: {{ secor_namespace }}
 imagepullsecrets: {{ imagepullsecrets }}
 
 secor_jobs:
