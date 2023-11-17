@@ -4,8 +4,8 @@
   become: yes
   become_user: "{{ analytics_user }}"
   lineinfile:
-    path: '{{ analytics_user_home }}/.bashrc'
-    line: 'export {{item.var}}={{item.value}}'
+    path: "{{ analytics_user_home }}/.bashrc"
+    line: "export {{item.var}}={{item.value}}"
     regexp: "export {{ item.var }}.*"
   with_items:
     - {var: 'azure_storage_key', value: '{{ cloud_private_storage_accountname }}'}
@@ -14,8 +14,8 @@
 - name: Adding ENV Vars to spark servers environment.
   become: yes
   lineinfile:
-    path: '/etc/environment'
-    line: '{{item.var}}={{item.value}}'
+    path: "/etc/environment"
+    line: "{{item.var}}={{item.value}}"
     regexp: "{{ item.var }}.*"
   with_items:
     - {var: 'azure_storage_key', value: '{{ cloud_private_storage_accountname }}'}

@@ -17,15 +17,14 @@ class PostgresConnectSpec extends BaseSpec with Matchers with MockitoSugar {
       database = "postgres",
       host = config.getString("postgres.host"),
       port = config.getInt("postgres.port"),
-      maxConnections = config.getInt("postgres.maxConnections")
+      maxConnections = config.getInt("postgres.maxConnections"),
+      sslMode = config.getBoolean("postgres.sslMode")
     )
     val postgresConnect = new PostgresConnect(postgresConfig)
     val connection = postgresConnect.getConnection
     connection should not be (null)
-
     postgresConnect.execute("CREATE TABLE device_table(id text PRIMARY KEY, channel text);")
     postgresConnect.execute("INSERT INTO device_table(id,channel)  VALUES('12345','custchannel');")
-
     val st = connection.createStatement
     val rs = postgresConnect.executeQuery("SELECT * FROM device_table where id='12345';")
     while ( {
@@ -46,7 +45,8 @@ class PostgresConnectSpec extends BaseSpec with Matchers with MockitoSugar {
       database = "postgres",
       host = config.getString("postgres.host"),
       port = config.getInt("postgres.port"),
-      maxConnections = config.getInt("postgres.maxConnections")
+      maxConnections = config.getInt("postgres.maxConnections"),
+      sslMode = config.getBoolean("postgres.sslMode")
     )
     val postgresConnect = new PostgresConnect(postgresConfig)
     val connection = postgresConnect.getConnection

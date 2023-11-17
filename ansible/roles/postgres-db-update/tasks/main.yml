@@ -7,48 +7,48 @@
 
 - name: Ensure database is created
   postgresql_db: name="{{ postgres.db_name }}" \
-                login_host="{{ postgres.db_url }}" \
-                port="{{ postgres.db_port }}" \
-                login_user="{{ postgres.db_admin_user }}" \
-                login_password="{{ postgres.db_admin_password }}" \
-                encoding='UTF-8' \
-                state=present
+    login_host="{{ postgres.db_url }}" \
+    port="{{ postgres.db_port }}" \
+    login_user="{{ postgres.db_admin_user }}" \
+    login_password="{{ postgres.db_admin_password }}" \
+    encoding='UTF-8' \
+    state=present
   tags: createdb
 
 - name: Ensure database for superset is created
   postgresql_db: name="superset" \
-                login_host="{{ postgres.db_url }}" \
-                port="{{ postgres.db_port }}" \
-                login_user="{{ postgres.db_admin_user }}" \
-                login_password="{{ postgres.db_admin_password }}" \
-                encoding='UTF-8' \
-                state=present
+    login_host="{{ postgres.db_url }}" \
+    port="{{ postgres.db_port }}" \
+    login_user="{{ postgres.db_admin_user }}" \
+    login_password="{{ postgres.db_admin_password }}" \
+    encoding='UTF-8' \
+    state=present
   tags: createdb
 
 - name: Ensure user has access to the database
   postgresql_user: name="{{ postgres.db_username }}" \
-                  password="{{ postgres.db_password }}" \
-                  no_password_changes=true \
-                  priv=ALL \
-                  state=present \
-                  login_host="{{ postgres.db_url }}" \
-                  port="{{ postgres.db_port }}" \
-                  login_user="{{ postgres.db_admin_user }}" \
-                  login_password="{{ postgres.db_admin_password }}" \
-                  db="{{ postgres.db_name }}"
+    password="{{ postgres.db_password }}" \
+    no_password_changes=true \
+    priv=ALL \
+    state=present \
+    login_host="{{ postgres.db_url }}" \
+    port="{{ postgres.db_port }}" \
+    login_user="{{ postgres.db_admin_user }}" \
+    login_password="{{ postgres.db_admin_password }}" \
+    db="{{ postgres.db_name }}"
   tags: createuser
 
 - name: Ensure user has access to the superset database
   postgresql_user: name="{{ postgres.db_username }}" \
-                  password="{{ postgres.db_password }}" \
-                  no_password_changes=true \
-                  priv=ALL \
-                  state=present \
-                  login_host="{{ postgres.db_url }}" \
-                  port="{{ postgres.db_port }}" \
-                  login_user="{{ postgres.db_admin_user }}" \
-                  login_password="{{ postgres.db_admin_password }}" \
-                  db="superset"
+    password="{{ postgres.db_password }}" \
+    no_password_changes=true \
+    priv=ALL \
+    state=present \
+    login_host="{{ postgres.db_url }}" \
+    port="{{ postgres.db_port }}" \
+    login_user="{{ postgres.db_admin_user }}" \
+    login_password="{{ postgres.db_admin_password }}" \
+    db="superset"
   tags: createuser
 
 - name: create {{ env }}_consumer-channel-mapping
@@ -74,7 +74,7 @@
 - name: update {{ env }}_report_config
   shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "ALTER TABLE {{ env }}_report_config ADD COLUMN IF NOT EXISTS batch_number INTEGER"
   run_once: true
-  tags: update  
+  tags: update
 
 - name: create report
   shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "CREATE TABLE IF NOT EXISTS report(reportid varchar(40) NOT NULL PRIMARY KEY, title text NOT NULL, description text NOT NULL, authorizedroles jsonb NOT NULL, status varchar(8) NOT NULL CHECK (status IN ('live', 'draft', 'retired')) DEFAULT 'draft', type varchar(8) NOT NULL CHECK (type in ('public', 'private')) DEFAULT 'private', reportaccessurl text NOT NULL UNIQUE, createdon timestamptz NOT NULL DEFAULT now(), updatedon timestamptz NOT NULL DEFAULT now(), createdby varchar(50) NOT NULL, reportconfig jsonb NOT NULL, templateurl text, slug varchar(10) NOT NULL, reportgenerateddate timestamptz NOT NULL DEFAULT now(), reportduration jsonb NOT NULL DEFAULT jsonb_build_object('startDate', now()::timestamptz, 'endDate', now()::timestamptz), tags jsonb NOT NULL, updatefrequency text NOT NULL)"
@@ -114,7 +114,7 @@
 - name: create {{ env }}_experiment_definition
   shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "CREATE TABLE IF NOT EXISTS {{ env }}_experiment_definition (exp_id VARCHAR(50), created_by VARCHAR(50), created_on TIMESTAMP, criteria VARCHAR(100), exp_data VARCHAR(300), exp_description VARCHAR(200), exp_name VARCHAR(50), stats VARCHAR(300), status VARCHAR(50), status_message VARCHAR(50), updated_by VARCHAR(50), updated_on TIMESTAMP, PRIMARY KEY(exp_id))"
   run_once: true
-  tags: create  
+  tags: create
 
 - name: create {{ env }}_dataset_metadata
   shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "CREATE TABLE IF NOT EXISTS {{ env }}_dataset_metadata(dataset_id VARCHAR(50), dataset_sub_id VARCHAR(150), dataset_config json, visibility VARCHAR(50), dataset_type VARCHAR(50), version VARCHAR(10), authorized_roles text[], available_from TIMESTAMP, sample_request text, sample_response text, validation_json json, druid_query json, limits json, supported_formats text[], exhaust_type VARCHAR(50), PRIMARY KEY (dataset_id, dataset_sub_id))"
@@ -139,7 +139,7 @@
 - name: update report
   shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "ALTER TABLE report ADD COLUMN IF NOT EXISTS report_type varchar(8) NOT NULL DEFAULT 'report'"
   run_once: true
-  tags: update 
+  tags: update
 
 - name: update report
   shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "ALTER TABLE report ADD COLUMN IF NOT EXISTS visibilityflags jsonb"

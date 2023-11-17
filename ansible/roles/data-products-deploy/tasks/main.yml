@@ -5,6 +5,19 @@
   tags:
     - always
 
+- name: Ensure oci oss bucket exists
+  command: "{{oci_install_loc}}/oci os bucket get --name {{ bucket }}"
+  register: check_bucket
+  when: dp_object_store_type == "oci"
+  tags:
+    - always
+      
+- name: Create oci oss bucket 
+  command: "{{oci_install_loc}}/oci os bucket create -c {{oci_bucket_compartment}} --name {{bucket}}"
+  when: dp_object_store_type == "oci" and check_bucket.rc !=0
+  tags:
+    - always
+
 - name: Copy Core Data Products
   copy: src={{ analytics_batch_module_artifact }} dest={{ analytics.home }}/models-{{ model_version }}
   tags:
@@ -14,6 +27,15 @@
   command: az storage blob upload --overwrite -c {{ bucket }} --name models-{{ model_version }}/{{ analytics_batch_module_artifact }} -f {{ analytics.home }}/models-{{ model_version }}/{{ analytics_batch_module_artifact }}
   async: 3600
   poll: 10
+  when: dp_object_store_type == "azure"
+  tags:
+    - dataproducts-spark-cluster 
+
+- name: Copy Core Data Products to oci oss
+  command: "{{oci_install_loc}}/oci os object put -bn {{ bucket }} --name models-{{ model_version }}/{{ analytics_batch_module_artifact }} --file {{ analytics.home }}/models-{{ model_version }}/{{ analytics_batch_module_artifact }} --force"
+  async: 3600
+  poll: 10
+  when: dp_object_store_type == "oci"
   tags:
     - dataproducts-spark-cluster 
 
@@ -27,8 +49,17 @@
   command: az storage blob upload --overwrite -c {{ bucket }} --name models-{{ model_version }}/data-products-1.0.jar -f {{ analytics.home }}/models-{{ model_version }}/data-products-1.0/data-products-1.0.jar
   async: 3600
   poll: 10
+  when: dp_object_store_type == "azure"
   tags:
-    - ed-dataproducts-spark-cluster      
+    - ed-dataproducts-spark-cluster   
+
+- name: Copy Ed Data Products to oci oss
+  command: "{{oci_install_loc}}/oci os object put -bn {{ bucket }} --name models-{{ model_version }}/data-products-1.0.jar --file {{ analytics.home }}/models-{{ model_version }}/data-products-1.0/data-products-1.0.jar --force"
+  async: 3600
+  poll: 10
+  when: dp_object_store_type == "oci"
+  tags:
+    - ed-dataproducts-spark-cluster     
 
 - name: Copy Framework Library
   copy: src={{ analytics_core_artifact }} dest={{ analytics.home }}/models-{{ model_version }}
@@ -39,6 +70,15 @@
   command: az storage blob upload --overwrite --debug -c {{ bucket }} --name models-{{ model_version }}/{{ analytics_core_artifact }} -f {{ analytics.home }}/models-{{ model_version }}/{{ analytics_core_artifact }}
   async: 3600
   poll: 10
+  when: dp_object_store_type == "azure"
+  tags:
+    - framework-spark-cluster
+
+- name: Copy Framework Library to oci oss
+  command: "{{oci_install_loc}}/oci os object put -bn {{ bucket }} --name models-{{ model_version }}/{{ analytics_core_artifact }} --file {{ analytics.home }}/models-{{ model_version }}/{{ analytics_core_artifact }} --force"
+  async: 3600
+  poll: 10
+  when: dp_object_store_type == "oci"
   tags:
     - framework-spark-cluster
 
@@ -51,6 +91,15 @@
   command: az storage blob upload --overwrite -c {{ bucket }} --name models-{{ model_version }}/{{ scruid_artifact }} -f {{ analytics.home }}/models-{{ model_version }}/{{ scruid_artifact }}
   async: 3600
   poll: 10
+  when: dp_object_store_type == "azure"
+  tags:
+    - framework-spark-cluster  
+
+- name: Copy Scruid Library to oci oss
+  command: "{{oci_install_loc}}/oci os object put -bn {{ bucket }} --name models-{{ model_version }}/{{ scruid_artifact }} --file {{ analytics.home }}/models-{{ model_version }}/{{ scruid_artifact }} --force"
+  async: 3600
+  poll: 10
+  when: dp_object_store_type == "oci"
   tags:
     - framework-spark-cluster  
 
@@ -87,6 +136,17 @@
     line: 'spark_output_temp_dir="/var/log/sparkapp/tmp/"'
   tags:
     - framework-spark-cluster
+  when: dp_object_store_type != "oci"
+
+- name: Update spark temp dir value for cluster
+  lineinfile:
+    path: '{{ analytics.home }}/models-{{ model_version }}/application.conf'
+    regexp: '^spark_output_temp_dir="/mount/data/analytics/tmp/"'
+    line: 'spark_output_temp_dir="/var/log/spark/"'
+  tags:
+    - framework-spark-cluster
+  when: dp_object_store_type == "oci"
+
 
 - name: Update logger kafka config for cluster
   lineinfile:
@@ -100,8 +160,17 @@
   command: az storage blob upload --overwrite -c {{ bucket }} -f {{ analytics.home }}/models-{{ model_version }}/application.conf --name models-{{ model_version }}/application.conf
   async: 3600
   poll: 10
+  when: dp_object_store_type == "azure"
   tags:
     - framework-spark-cluster    
+
+- name: Copy configuration file to oci oss
+  command: "{{oci_install_loc}}/oci os object put -bn {{ bucket }} --file {{ analytics.home }}/models-{{ model_version }}/application.conf --name models-{{ model_version }}/application.conf --force"
+  async: 3600
+  poll: 10
+  when: dp_object_store_type == "oci"
+  tags:
+    - framework-spark-cluster  
 
 - name: Copy log4j2 xml file
   template: src=log4j2.xml.j2 dest={{ analytics.home }}/models-{{ model_version }}/log4j2.xml mode=755 owner={{ analytics_user }} group={{ analytics_group }}
@@ -271,7 +340,7 @@
     - spark-jobs
 
 - name: Copy collection-summary ingestion spec
-  copy: src="collection-summary-ingestion-spec.json" dest={{ analytics.home }}/scripts/ mode=755 owner={{ analytics_user }} group={{ analytics_group }}
+  template: src="collection-summary-ingestion-spec.j2" dest={{ analytics.home }}/scripts/collection-summary-ingestion-spec.json mode=755 owner={{ analytics_user }} group={{ analytics_group }}
   tags:
     - ed-dataproducts
 
@@ -300,7 +369,7 @@
     - spark-jobs 
 
 - name: Copy sourcing-summary ingestion spec
-  copy: src="sourcing-ingestion-spec.json" dest={{ analytics.home }}/scripts/ mode=755 owner={{ analytics_user }} group={{ analytics_group }}
+  template: src="sourcing-ingestion-spec.j2" dest={{ analytics.home }}/scripts/sourcing-ingestion-spec.json mode=755 owner={{ analytics_user }} group={{ analytics_group }}
   tags:
     - ed-dataproducts
 
@@ -334,6 +403,24 @@
     - replay-job
     - run-job
     - config-update
+
+- name: Copy jets3t.properties file
+  template: src=jets3t.j2 dest={{ analytics_cluster.home }}/jets3t.properties
+  delegate_to: localhost  
+  tags:
+    - replay-job
+    - run-job
+    - config-update
+
+- name: Copy JetS3t.properties to oci oss
+  command: "{{oci_install_loc}}/oci os object put -bn {{ bucket }} --name models-{{ model_version }}/jets3t.properties --file {{ analytics_cluster.home }}/jets3t.properties --content-type auto --force"
+  async: 3600
+  poll: 10
+  when: dp_object_store_type == "oci"
+  tags:
+    - replay-job
+    - run-job
+    - config-update 
 
 - name: Replay Job
   shell: "nohup {{ analytics_cluster.home }}/submit-script.sh --job {{ job_id }} --mode {{ mode }} --partitions {{ partitions }} --parallelisation {{ parallelisation }} --startDate {{ start_date }} --endDate {{ end_date }} --sparkMaster {{ sparkMaster }} --selectedPartitions {{ selected_partitions }} &"
@@ -376,10 +463,10 @@
   shell: |
     if echo "{{jobs}}" | grep 'druid'
     then
-     python {{ analytics_cluster.home }}/update-job-requests.py {{ jobs }} {{ batch_size }} druid {{env}}_report_config
+     python {{ analytics_cluster.home }}/update-job-requests.py {{ jobs }} {{ batch_size }} druid {{spark_env}}_report_config
     elif echo "{{jobs}}" | grep 'exhaust'
      then
-     python {{ analytics_cluster.home }}/update-job-requests.py {{ jobs }} {{ batch_size }} exhaust {{env}}_job_request
+     python {{ analytics_cluster.home }}/update-job-requests.py {{ jobs }} {{ batch_size }} exhaust {{spark_env}}_job_request
     fi
   tags:
     - parallel-jobs-submit

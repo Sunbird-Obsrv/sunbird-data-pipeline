@@ -8,4 +8,3 @@
     AZURE_STORAGE_KEY: "{{cloud_private_storage_secret}}"
   roles:
     - data-products-deploy
-
