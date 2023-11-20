@@ -146,14 +146,14 @@
 - name: Download Kafka-2.11
   become: yes
   become_user: "{{ analytics_user }}"
-  get_url: url=http://downloads.mesosphere.com/kafka/assets/kafka_2.11-0.10.1.0.tgz dest={{ analytics.home }}/kafka_2.11-0.10.1.0.tgz force=no owner={{ analytics_user }} group={{ analytics_group }}
+  get_url: url=https://archive.apache.org/dist/kafka/2.8.0/kafka_2.12-2.8.0.tgz dest={{ analytics.home }}/kafka_2.12-2.8.0.tgz force=no owner={{ analytics_user }} group={{ analytics_group }}
   tags:
     - kafka-provision
 
 - name: Unarchive Kafka  
   become: yes
   become_user: "{{ analytics_user }}"
-  unarchive: src={{ analytics.soft_path }}/kafka_2.11-0.10.1.0.tgz dest={{ analytics.home }}/ copy=no owner={{ analytics_user }} group={{ analytics_group }} creates={{ analytics.home }}/kafka_2.11-0.10.1.0
+  unarchive: src={{ analytics.soft_path }}/kafka_2.12-2.8.0.tgz dest={{ analytics.home }}/ copy=no owner={{ analytics_user }} group={{ analytics_group }} creates={{ analytics.home }}/kafka_2.12-2.8.0
   tags:
     - kafka-provision
 
