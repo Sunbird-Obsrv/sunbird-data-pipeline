@@ -30,16 +30,16 @@ druid_request_logging_type: "file"
 
 #Druid Extensions
 
-druid_storage_type: "{{ cloud_storage_telemetry_type }}"
+druid_storage_type: "{{ druid_storage_type }}"
 
-druid_extensions_list: '"druid-azure-extensions", "graphite-emitter", "postgresql-metadata-storage", "druid-kafka-indexing-service", "druid-datasketches"'
+druid_extensions_list: '"druid-azure-extensions", "graphite-emitter", "postgresql-metadata-storage", "druid-kafka-indexing-service", "druid-datasketches", "druid-s3-extensions"'
 
 druid_community_extensions:
    - graphite-emitter
 
 # End of druid_extensions
 
-druid_indexing_logs_type: "{{ cloud_storage_telemetry_type }}"
+druid_indexing_logs_type: "{{ druid_storage_type }}"
 druid_indexing_log_dir: /var/druid/indexing-logs
 druid_indexing_storage_type: metadata
 druid_indexing_task_basedir: "/var/task"
