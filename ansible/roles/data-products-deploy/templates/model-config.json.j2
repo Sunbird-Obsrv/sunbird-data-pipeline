@@ -1,7 +1,7 @@
 {
   "wfs": {
     "search": {
-      "type": "{{dp_object_store_type}}",
+      "type": "{{cloud_service_provider}}",
       "queries": [
         {
           "bucket": "{{ bucket }}",
@@ -25,11 +25,11 @@
       "storageSecretConfig":"storage.secret.config",
       "storageContainer":"{{reports_container}}",
       "storageEndpoint":"{{dp_storage_endpoint_config}}",
-      "store":"{{ dp_object_store_type }}"
+      "store":"{{ cloud_service_provider }}"
     },
     "output": [
       {
-        "to": "{{dp_object_store_type}}",
+        "to": "{{cloud_service_provider}}",
         "params": {
           "bucket": "{{ bucket }}",
           "key": "{{ job_manager_tmp_dir }}/wfs/$(date --date yesterday '+%Y-%m-%d')"
@@ -49,7 +49,7 @@
   },
   "video-streaming": {
     "search": {
-      "type": "{{dp_object_store_type}}"
+      "type": "{{cloud_service_provider}}"
     },
     "model": "org.ekstep.analytics.job.VideoStreamingJob",
     "modelParams": {
@@ -77,7 +77,7 @@
       "storageSecretConfig":"storage.secret.config",
       "storageContainer":"{{reports_container}}",
       "storageEndpoint":"{{dp_storage_endpoint_config}}", 
-      "store":"{{ dp_object_store_type }}",   
+      "store":"{{ cloud_service_provider }}",   
       "sparkCassandraConnectionHost": "{{core_cassandra_host}}",
       "sparkElasticsearchConnectionHost": "{{sunbird_es_host}}"
     },
@@ -103,7 +103,7 @@
       "storageSecretConfig":"storage.secret.config",
       "storageContainer":"{{reports_container}}",
       "storageEndpoint":"{{dp_storage_endpoint_config}}",    
-      "store":"{{ dp_object_store_type }}",
+      "store":"{{ cloud_service_provider }}",
       "sparkCassandraConnectionHost": "{{core_cassandra_host}}",
       "sparkElasticsearchConnectionHost": "{{sunbird_es_host}}"
     },
@@ -125,7 +125,7 @@
     },
     "model": "org.ekstep.analytics.updater.UpdateContentRating",
     "modelParams": {
-      "store": "{{dp_object_store_type}}",
+      "store": "{{cloud_service_provider}}",
       "storageKeyConfig":"storage.key.config",
       "storageSecretConfig":"storage.secret.config",
       "storageContainer":"{{reports_container}}",
@@ -163,7 +163,7 @@
       "storageSecretConfig":"storage.secret.config",
       "storageContainer":"{{reports_container}}",
       "storageEndpoint":"{{dp_storage_endpoint_config}}", 
-      "store":"{{ dp_object_store_type }}",       
+      "store":"{{ cloud_service_provider }}",       
       "model": [
         {
           "model": "WorkFlowSummaryModel",
@@ -226,7 +226,7 @@
     },
     "model": "org.ekstep.analytics.model.ExperimentDefinitionModel",
     "modelParams": {
-      "store": "{{dp_object_store_type}}",
+      "store": "{{cloud_service_provider}}",
       "storageKeyConfig":"storage.key.config",
       "storageSecretConfig":"storage.secret.config",
       "storageContainer":"{{reports_container}}",
@@ -327,7 +327,7 @@
   			"tenantId": "",
   			"slugName": ""
   		},
-  		"store": "{{dp_object_store_type}}",
+  		"store": "{{cloud_service_provider}}",
       "storageKeyConfig":"storage.key.config",
       "storageSecretConfig":"storage.secret.config",
       "storageContainer":"{{reports_container}}",
@@ -380,7 +380,7 @@
                 "limit": 10000
             }
         },
-        "store": "{{dp_object_store_type}}",
+        "store": "{{cloud_service_provider}}",
         "storageKeyConfig":"storage.key.config",
         "storageSecretConfig":"storage.secret.config",
         "storageContainer":"{{reports_container}}",
@@ -495,7 +495,7 @@
         }],
         "queryType": "groupBy"
       },
-      "store": "{{dp_object_store_type}}",
+      "store": "{{cloud_service_provider}}",
       "storageKeyConfig":"storage.key.config",
       "storageSecretConfig":"storage.secret.config",
       "storageContainer":"{{reports_container}}",
@@ -524,7 +524,7 @@
       },
       "model": "org.ekstep.analytics.model.MetricsAuditJob",
       "modelParams": {
-      "store": "{{dp_object_store_type}}",
+      "store": "{{cloud_service_provider}}",
       "storageKeyConfig":"storage.key.config",
       "storageSecretConfig":"storage.secret.config",
       "storageContainer":"{{reports_container}}",
@@ -533,7 +533,7 @@
           {
             "name": "denorm",
             "search": {
-              "type": "{{dp_object_store_type}}",
+              "type": "{{cloud_service_provider}}",
               "queries": [
                 {
                   "bucket": "{{ bucket }}",
@@ -579,7 +579,7 @@
           {
             "name": "failed",
             "search": {
-              "type": "{{dp_object_store_type}}",
+              "type": "{{cloud_service_provider}}",
               "queries": [
                 {
                   "bucket": "{{ bucket }}",
@@ -593,7 +593,7 @@
           {
             "name": "unique",
             "search": {
-              "type": "{{dp_object_store_type}}",
+              "type": "{{cloud_service_provider}}",
               "queries": [
                 {
                   "bucket": "{{ bucket }}",
@@ -607,7 +607,7 @@
           {
             "name": "raw",
             "search": {
-              "type": "{{dp_object_store_type}}",
+              "type": "{{cloud_service_provider}}",
               "queries": [
                 {
                   "bucket": "{{ bucket }}",
@@ -621,7 +621,7 @@
           {
             "name": "channel-raw",
             "search": {
-              "type": "{{dp_object_store_type}}",
+              "type": "{{cloud_service_provider}}",
               "queries": [
                 {
                   "folder": true,
@@ -636,7 +636,7 @@
           {
             "name": "channel-summary",
             "search": {
-              "type": "{{dp_object_store_type}}",
+              "type": "{{cloud_service_provider}}",
               "queries": [
                 {
                   "folder": true,
@@ -651,7 +651,7 @@
           {
             "name": "derived",
             "search": {
-              "type": "{{dp_object_store_type}}",
+              "type": "{{cloud_service_provider}}",
               "queries": [
                 {
                   "bucket": "{{ bucket }}",
