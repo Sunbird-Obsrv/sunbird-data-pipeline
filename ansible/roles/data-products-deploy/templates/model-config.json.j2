@@ -24,7 +24,7 @@
       "storageKeyConfig":"storage.key.config",
       "storageSecretConfig":"storage.secret.config",
       "storageContainer":"{{reports_container}}",
-      "storageEndpoint":"{{dp_storage_endpoint_config}}",
+      "storageEndpoint":"{{cloud_private_storage_endpoint}}",
       "store":"{{ cloud_service_provider }}"
     },
     "output": [
@@ -76,7 +76,7 @@
       "storageKeyConfig":"storage.key.config",
       "storageSecretConfig":"storage.secret.config",
       "storageContainer":"{{reports_container}}",
-      "storageEndpoint":"{{dp_storage_endpoint_config}}", 
+      "storageEndpoint":"{{cloud_private_storage_endpoint}}", 
       "store":"{{ cloud_service_provider }}",   
       "sparkCassandraConnectionHost": "{{core_cassandra_host}}",
       "sparkElasticsearchConnectionHost": "{{sunbird_es_host}}"
@@ -102,7 +102,7 @@
       "storageKeyConfig":"storage.key.config",
       "storageSecretConfig":"storage.secret.config",
       "storageContainer":"{{reports_container}}",
-      "storageEndpoint":"{{dp_storage_endpoint_config}}",    
+      "storageEndpoint":"{{cloud_private_storage_endpoint}}",    
       "store":"{{ cloud_service_provider }}",
       "sparkCassandraConnectionHost": "{{core_cassandra_host}}",
       "sparkElasticsearchConnectionHost": "{{sunbird_es_host}}"
@@ -129,7 +129,7 @@
       "storageKeyConfig":"storage.key.config",
       "storageSecretConfig":"storage.secret.config",
       "storageContainer":"{{reports_container}}",
-      "storageEndpoint":"{{dp_storage_endpoint_config}}",    
+      "storageEndpoint":"{{cloud_private_storage_endpoint}}",    
       "startDate": "$(date --date yesterday '+%Y-%m-%d')",
       "endDate": "$(date '+%Y-%m-%d')"
     },
@@ -162,7 +162,7 @@
       "storageKeyConfig":"storage.key.config",
       "storageSecretConfig":"storage.secret.config",
       "storageContainer":"{{reports_container}}",
-      "storageEndpoint":"{{dp_storage_endpoint_config}}", 
+      "storageEndpoint":"{{cloud_private_storage_endpoint}}", 
       "store":"{{ cloud_service_provider }}",       
       "model": [
         {
@@ -230,7 +230,7 @@
       "storageKeyConfig":"storage.key.config",
       "storageSecretConfig":"storage.secret.config",
       "storageContainer":"{{reports_container}}",
-      "storageEndpoint":"{{dp_storage_endpoint_config}}",    
+      "storageEndpoint":"{{cloud_private_storage_endpoint}}",    
       "sparkElasticsearchConnectionHost": "{{ lp_composite_search_host }}"
     },
     "output": [
@@ -331,7 +331,7 @@
       "storageKeyConfig":"storage.key.config",
       "storageSecretConfig":"storage.secret.config",
       "storageContainer":"{{reports_container}}",
-      "storageEndpoint":"{{dp_storage_endpoint_config}}",      
+      "storageEndpoint":"{{cloud_private_storage_endpoint}}",      
   		"format": "csv",
   		"key": "druid-reports/",
   		"filePath": "druid-reports/",
@@ -384,7 +384,7 @@
         "storageKeyConfig":"storage.key.config",
         "storageSecretConfig":"storage.secret.config",
         "storageContainer":"{{reports_container}}",
-        "storageEndpoint":"{{dp_storage_endpoint_config}}",
+        "storageEndpoint":"{{cloud_private_storage_endpoint}}",
         "format":"csv",
         "key": "druid-reports/",
         "filePath": "druid-reports/",
@@ -499,7 +499,7 @@
       "storageKeyConfig":"storage.key.config",
       "storageSecretConfig":"storage.secret.config",
       "storageContainer":"{{reports_container}}",
-      "storageEndpoint":"{{dp_storage_endpoint_config}}",
+      "storageEndpoint":"{{cloud_private_storage_endpoint}}",
       "format":"csv",
       "key": "druid-reports/",
       "filePath": "druid-reports/",
@@ -528,7 +528,7 @@
       "storageKeyConfig":"storage.key.config",
       "storageSecretConfig":"storage.secret.config",
       "storageContainer":"{{reports_container}}",
-      "storageEndpoint":"{{dp_storage_endpoint_config}}",      
+      "storageEndpoint":"{{cloud_private_storage_endpoint}}",      
         "auditConfig": [
           {
             "name": "denorm",
