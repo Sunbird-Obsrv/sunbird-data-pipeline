@@ -247,6 +247,7 @@ data_exhaust_batch_limit_per_request: 20
 
 # Start Of UCI Related Variables
 uci_env: "{{ env }}"
+sunbird_instance: "{{ env }}"
 uci_postgres_host: "dev-pg11.postgres.database.azure.com"
 uci_encryption_key_base64: ""
 uci_bot_postgres_database: uci-botdb
