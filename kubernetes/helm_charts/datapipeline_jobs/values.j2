@@ -6,8 +6,8 @@ image_tag: {{ image_tag }}
 checkpoint_store_type: {{ checkpoint_store_type }}
 azure_account: {{ azure_account }}
 azure_secret: {{ azure_secret }}
-s3_access_key: {{ s3_storage_key }}
-s3_secret_key: {{ s3_storage_secret }}
+s3_access_key: {{ cloud_private_storage_accountname }}
+s3_secret_key: {{ cloud_private_storage_secret }}
 {% if cloud_service_provider == "oci" %}
 s3_endpoint: {{ oci_flink_s3_storage_endpoint }}
 {% else %}
