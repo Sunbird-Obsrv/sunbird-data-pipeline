@@ -7,5 +7,6 @@
   environment:
     AZURE_STORAGE_ACCOUNT: "{{cloud_private_storage_accountname}}"
     AZURE_STORAGE_KEY: "{{cloud_private_storage_secret}}"
+    OCI_CLI_AUTH: "instance_principal"
   roles:
     - data-products-deploy

@@ -230,7 +230,7 @@
     "ioConfig": {
       "type": "index",
       "firehose": {
-{% if dp_object_store_type == "azure" %}
+{% if cloud_service_provider == "azure" %}
         "type": "static-azure-blobstore",
         "blobs": [
           {
@@ -238,7 +238,7 @@
             "path": "/collection-summary-reports-v2/collection-summary-report-latest.json"
           }
         ],
-{% elif (dp_object_store_type == "oci") %}
+{% elif (cloud_service_provider == "oci") %}
          "type": "static-s3",
          "uris": [ "s3://{{reports_container}}/sourcing/SourcingSummaryReport.json"],
 {% endif %}

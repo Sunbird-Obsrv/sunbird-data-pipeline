@@ -16,6 +16,8 @@ data:
 {{- (tpl ($.Files.Get "config/secor.common.properties") $) | nindent 4 }}
   secor.azure.properties: |+
 {{- (tpl ($.Files.Get "config/secor.azure.properties") $) | nindent 4 }}
+  secor.s3.properties: |+
+{{- (tpl ($.Files.Get "config/secor.s3.properties") $) | nindent 4 }}
   secor.partition.properties: |+
 {{- (tpl ($.Files.Get "config/secor.partition.properties") $) | nindent 4 }}
   log4j.properties: |+

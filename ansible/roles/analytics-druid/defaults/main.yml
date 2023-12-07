@@ -30,16 +30,16 @@ druid_request_logging_type: "file"
 
 #Druid Extensions
 
-druid_storage_type: "{{ cloud_storage_telemetry_type }}"
+druid_storage_type: "{{ druid_storage_type }}"
 
-druid_extensions_list: '"druid-azure-extensions", "graphite-emitter", "postgresql-metadata-storage", "druid-kafka-indexing-service", "druid-datasketches"'
+druid_default_extensions_list: '"graphite-emitter", "postgresql-metadata-storage", "druid-kafka-indexing-service", "druid-datasketches"'
 
 druid_community_extensions:
    - graphite-emitter
 
 # End of druid_extensions
 
-druid_indexing_logs_type: "{{ cloud_storage_telemetry_type }}"
+druid_indexing_logs_type: "{{ druid_storage_type }}"
 druid_indexing_log_dir: /var/druid/indexing-logs
 druid_indexing_storage_type: metadata
 druid_indexing_task_basedir: "/var/task"
@@ -212,10 +212,10 @@ default_druid_configs:
       druid_log_azure_folder: "druidlogs"
       #Druid S3 Details
       druid_storage_type: "{{ cloud_storage_telemetry_type }}"
-      s3_access_key: "{{ s3_storage_key }}"
-      s3_secret_key: "{{ s3_storage_secret }}"
-      s3_bucket: "{{ s3_storage_container }}"
-      s3_endpoint: "{{ s3_storage_endpoint }}"
+      s3_access_key: "{{ cloud_private_storage_accountname }}"
+      s3_secret_key: "{{ cloud_private_storage_secret }}"
+      s3_bucket: "{{ cloud_storage_telemetry_bucketname }}"
+      s3_endpoint: "{{ cloud_private_storage_endpoint }}"
       s3_segment_dir: "druid/rollup/segments"
       s3_path_like_access: "{{ cloud_storage_pathstyle_access }}"
       s3_v4_sign_region: "{{ cloud_private_storage_region }}"
