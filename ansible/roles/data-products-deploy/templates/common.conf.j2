@@ -8,6 +8,10 @@ service.search.path="{{ service.search.path }}"
 spark.cassandra.connection.host="{{groups['dp-cassandra'][0]}}"
 cassandra.keyspace_prefix="{{ cassandra_keyspace_prefix }}"
 cassandra.hierarchy_store_prefix="{{ cassandra_hierarchy_store_prefix }}"
+
+cloud_storage_type="{{ cloud_service_provider }}"
+cloud_storage_endpoint_with_protocol="{{ cloud_private_storage_endpoint }}"
+
 storage.key.config="{{ dp_storage_key_config }}"
 storage.secret.config="{{ dp_storage_secret_config }}"
 reports.storage.key.config="{{ dp_reports_storage_key_config }}"
