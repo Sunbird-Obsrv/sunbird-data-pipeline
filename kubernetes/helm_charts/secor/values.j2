@@ -6,7 +6,7 @@ s3_access_key: "{{cloud_private_storage_accountname}}"
 s3_secret_id: "{{cloud_private_storage_secret}}"
 s3_region: "{{cloud_private_storage_region}}"
 s3_endpoint: "{{cloud_private_storage_endpoint}}"
-s3_path_style_access: "false"
+s3_path_style_access: "{{s3_path_style_access}}"
 s3_bucket_name: "telemetry-data-store"
 
 {% if cloud_service_provider == 'oci' -%}
