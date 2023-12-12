@@ -11,8 +11,8 @@
     - "{{ job_names_to_deploy.split(',')|list }}"
   tags: secor_deploy
 
-# - name: create alert rules
-#   shell: helm  upgrade --install {{ item }} {{ chart_path }}/charts/alertrules -f {{ chart_path }}/values.yaml
-#   with_items:
-#     - "{{ job_names_to_deploy.split(',')|list }}"
-#   tags: alertrule
+- name: create alert rules
+  shell: helm  upgrade --install {{ item }} {{ chart_path }}/charts/alertrules -f {{ chart_path }}/values.yaml
+  with_items:
+    - "{{ job_names_to_deploy.split(',')|list }}"
+  tags: alertrule
