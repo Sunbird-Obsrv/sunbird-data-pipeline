@@ -114,10 +114,10 @@ spec:
                "-Dfs.azure.account.key.{{ .Values.azure_account }}.blob.core.windows.net={{ .Values.azure_secret }}",
               {{- end }}
               {{- if eq .Values.checkpoint_store_type "s3" }}
-               "-Ds3.access-key={{ .Values.s3_access_key }}",
-               "-Ds3.secret-key={{ .Values.s3_secret_key }}",
-               "-Ds3.endpoint={{ .Values.s3_endpoint }}",
-               "-Ds3.path.style.access={{ .Values.s3_path_style_access }}",
+               "-Dpresto.s3.access-key={{ .Values.s3_access_key }}",
+               "-Dpresto.s3.secret-key={{ .Values.s3_secret_key }}",
+               "-Dpresto.s3.endpoint={{ .Values.s3_endpoint }}",
+               "-Dpresto.s3.path.style.access={{ .Values.s3_path_style_access }}",
               {{- end }}
               # {{- if eq .Values.checkpoint_store_type "gcloud" }}
               #  "-Dfs.gs.auth.client.id={{ .Values.s3_access_key }}",
@@ -200,10 +200,10 @@ spec:
                "-Dfs.azure.account.key.{{ .Values.azure_account }}.blob.core.windows.net={{ .Values.azure_secret }}",
               {{- end }}
               {{- if eq .Values.checkpoint_store_type "s3" }}
-               "-Ds3.access-key={{ .Values.s3_access_key }}",
-               "-Ds3.secret-key={{ .Values.s3_secret_key }}",
-               "-Ds3.endpoint={{ .Values.s3_endpoint }}",
-               "-Ds3.path.style.access={{ .Values.s3_path_style_access }}",
+               "-Dpresto.s3.access-key={{ .Values.s3_access_key }}",
+               "-Dpresto.s3.secret-key={{ .Values.s3_secret_key }}",
+               "-Dpresto.s3.endpoint={{ .Values.s3_endpoint }}",
+               "-Dpresto.s3.path.style.access={{ .Values.s3_path_style_access }}",
               {{- end }}
               # {{- if eq .Values.checkpoint_store_type "gcloud" }}
               #  "-Dfs.gs.auth.client.id={{ .Values.s3_access_key }}",
