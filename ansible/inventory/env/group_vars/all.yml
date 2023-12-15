@@ -190,7 +190,7 @@ s3_storage_key: "{{ sunbird_private_s3_storage_key }}"
 s3_storage_secret: "{{ sunbird_private_s3_storage_secret }}"
 s3_storage_endpoint: ""
 s3_request_signature_version: AWS4-HMAC-SHA256
-s3_path_style_access: false
+s3_path_style_access: true
 s3_https_only: false
 s3_default_bucket_location: ""
 s3_storage_container: ""
