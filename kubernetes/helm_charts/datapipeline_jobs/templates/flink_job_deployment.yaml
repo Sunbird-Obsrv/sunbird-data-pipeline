@@ -110,20 +110,20 @@ spec:
         command: ["/opt/flink/bin/standalone-job.sh"]
         args: ["start-foreground",
                "--job-classname={{ .Values.job_classname }}",
-{{- if eq .Values.checkpoint_store_type "azure" }}
-               "-Dfs.azure.account.key.{{ .Values.cloud_storage_key }}.blob.core.windows.net={{ .Values.cloud_storage_secret }}",
-{{- end }}
-{{- if eq .Values.checkpoint_store_type "s3" }}
-               "-Ds3.access-key={{ .Values.cloud_storage_key }}",
-               "-Ds3.secret-key={{ .Values.cloud_storage_secret }}",
-               "-Ds3.endpoint={{ .Values.cloud_storage_endpoint }}",
-               "-Ds3.path.style.access={{ .Values.s3_path_style_access }}",
-{{- end }}
-{{- if eq .Values.checkpoint_store_type "gcloud" }}
-               "-Dfs.gs.auth.client.id={{ .Values.cloud_storage_key }}",
-               "-Dfs.gs.auth.client.secret={{ .Values.cloud_storage_secret }}",
+              {{- if eq .Values.checkpoint_store_type "azure" }}
+               "-Dfs.azure.account.key.{{ .Values.azure_account }}.blob.core.windows.net={{ .Values.azure_secret }}",
+              {{- end }}
+              {{- if eq .Values.checkpoint_store_type "s3" }}
+               "-Dpresto.s3.access-key={{ .Values.s3_access_key }}",
+               "-Dpresto.s3.secret-key={{ .Values.s3_secret_key }}",
+               "-Dpresto.s3.endpoint={{ .Values.s3_endpoint }}",
+               "-Dpresto.s3.path.style.access={{ .Values.s3_path_style_access }}",
+              {{- end }}
+              {{- if eq .Values.checkpoint_store_type "gcloud" }}
+               "-Dfs.gs.auth.client.id={{ .Values.s3_access_key }}",
+               "-Dfs.gs.auth.client.secret={{ .Values.s3_access_key }}",
                "-Dfs.gs.project.id={{ .Values.cloud_storage_project_id }}",
-{{- end }}
+              {{- end }}
                "-Dweb.submit.enable=false",
                "-Dmetrics.reporter.prom.class=org.apache.flink.metrics.prometheus.PrometheusReporter",
                "-Dmetrics.reporter.prom.port={{ .Values.jobmanager.prom_port }}",
@@ -196,26 +196,26 @@ spec:
         workingDir: {{ .Values.taskmanager.flink_work_dir }}
         command: ["/opt/flink/bin/taskmanager.sh"]
         args: ["start-foreground",
-{{- if eq .Values.checkpoint_store_type "azure" }}
-          "-Dfs.azure.account.key.{{ .Values.cloud_storage_key }}.blob.core.windows.net={{ .Values.cloud_storage_secret }}",
-{{- end }}
-{{- if eq .Values.checkpoint_store_type "s3" }}
-          "-Ds3.access-key={{ .Values.cloud_storage_key }}",
-          "-Ds3.secret-key={{ .Values.cloud_storage_secret }}",
-          "-Ds3.endpoint={{ .Values.cloud_storage_endpoint }}",
-          "-Ds3.path.style.access={{ .Values.s3_path_style_access }}",
-{{- end }}
-{{- if eq .Values.checkpoint_store_type "gcloud" }}
-          "-Dfs.gs.auth.client.id={{ .Values.cloud_storage_key }}",
-          "-Dfs.gs.auth.client.secret={{ .Values.cloud_storage_secret }}",
-          "-Dfs.gs.project.id={{ .Values.cloud_storage_project_id }}",
-{{- end }}
-          "-Dweb.submit.enable=false",
-          "-Dmetrics.reporter.prom.class=org.apache.flink.metrics.prometheus.PrometheusReporter",
-          "-Dmetrics.reporter.prom.host={{ .Release.Name }}-taskmanager",
-          "-Dmetrics.reporter.prom.port=9251-9260",
-          "-Djobmanager.rpc.address={{ .Release.Name }}-jobmanager",
-          "-Dtaskmanager.rpc.port={{ .Values.taskmanager.rpc_port }}"]
+              {{- if eq .Values.checkpoint_store_type "azure" }}
+               "-Dfs.azure.account.key.{{ .Values.azure_account }}.blob.core.windows.net={{ .Values.azure_secret }}",
+              {{- end }}
+              {{- if eq .Values.checkpoint_store_type "s3" }}
+               "-Dpresto.s3.access-key={{ .Values.s3_access_key }}",
+               "-Dpresto.s3.secret-key={{ .Values.s3_secret_key }}",
+               "-Dpresto.s3.endpoint={{ .Values.s3_endpoint }}",
+               "-Dpresto.s3.path.style.access={{ .Values.s3_path_style_access }}",
+              {{- end }}
+              {{- if eq .Values.checkpoint_store_type "gcloud" }}
+               "-Dfs.gs.auth.client.id={{ .Values.s3_access_key }}",
+               "-Dfs.gs.auth.client.secret={{ .Values.s3_access_key }}",
+               "-Dfs.gs.project.id={{ .Values.cloud_storage_project_id }}",
+              {{- end }}
+               "-Dweb.submit.enable=false",
+               "-Dmetrics.reporter.prom.class=org.apache.flink.metrics.prometheus.PrometheusReporter",
+               "-Dmetrics.reporter.prom.host={{ .Release.Name }}-taskmanager",
+               "-Dmetrics.reporter.prom.port=9251-9260",
+               "-Djobmanager.rpc.address={{ .Release.Name }}-jobmanager",
+               "-Dtaskmanager.rpc.port={{ .Values.taskmanager.rpc_port }}"]
         ports:
         - containerPort: {{ .Values.taskmanager.rpc_port }}
           name: rpc

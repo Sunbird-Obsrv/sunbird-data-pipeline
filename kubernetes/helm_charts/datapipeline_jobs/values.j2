@@ -3,7 +3,7 @@ imagepullsecrets: {{ imagepullsecrets }}
 dockerhub: {{ dockerhub }}
 repository: {{flink_repository|default('sunbird-datapipeline')}}
 image_tag: {{ image_tag }}
-checkpoint_store_type: {{ checkpoint_store_type }}
+checkpoint_store_type: {{ druid_storage_type }}
 azure_account: {{ azure_account }}
 azure_secret: {{ azure_secret }}
 s3_access_key: {{ cloud_private_storage_accountname }}
@@ -154,7 +154,7 @@ base_config: |
       statebackend {
         blob {
           storage {
-            account = "{% if checkpoint_store_type == "azure" %}{{ azure_account }}.blob.core.windows.net{% elif checkpoint_store_type == "s3" %}{{ flink_dp_storage_container }}{% elif checkpoint_store_type == "gcloud" %}{{ flink_dp_storage_container }}{% endif %}"
+            account = "{% if checkpoint_store_type == "azure" %}{{ azure_account }}.blob.core.windows.net{% elif checkpoint_store_type == "s3" %}{{ cloud_private_storage_accountname }}{% elif checkpoint_store_type == "gcloud" %}{{ flink_dp_storage_container }}{% endif %}"
             container = "{{ cloud_storage_flink_bucketname }}"
             checkpointing.dir = "checkpoint"
           }
@@ -162,7 +162,7 @@ base_config: |
 {% if checkpoint_store_type == "azure" %}
         base.url = "wasbs://"${job.statebackend.blob.storage.container}"@"${job.statebackend.blob.storage.account}"/"${job.statebackend.blob.storage.checkpointing.dir}
 {% elif checkpoint_store_type == "s3" %}
-        base.url = "s3://"${job.statebackend.blob.storage.account}"/"${job.statebackend.blob.storage.container}"/"${job.statebackend.blob.storage.checkpointing.dir}
+        base.url = "s3://"${job.statebackend.blob.storage.container}"/"${job.statebackend.blob.storage.checkpointing.dir}
 {% elif checkpoint_store_type == "gcloud" %}
         base.url = "gs://"${job.statebackend.blob.storage.account}"/"${job.statebackend.blob.storage.container}"/"${job.statebackend.blob.storage.checkpointing.dir}
 {% endif %}

@@ -6,7 +6,7 @@ dockerhub: {{ dockerhub }}
 repository: {{ datapipeline_repository|default('data-pipeline') }}
 image_tag: {{ image_tag }}
 
-checkpoint_store_type: {{ cloud_service_provider }} 
+checkpoint_store_type: {{ druid_storage_type }} 
 cloud_storage_key: {{ cloud_private_storage_accountname }}
 cloud_storage_secret: {{ cloud_private_storage_secret }}
 cloud_storage_endpoint: {{ cloud_private_storage_endpoint }}
