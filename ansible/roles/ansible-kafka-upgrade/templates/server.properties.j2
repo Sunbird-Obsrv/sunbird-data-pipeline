@@ -6,6 +6,9 @@
   {%- if url_host == ansible_fqdn or url_host in ansible_all_ipv4_addresses -%}
 broker.id={{loop.index0 + 1}}
 
+# Kafka connection string
+advertised.listeners=PLAINTEXT://{% for host in groups['zookeeper'] %}{{ hostvars[host].inventory_hostname }}:{{kafka_port}}{% if not loop.last %},{% endif %}{% endfor %}
+
 ############################# Socket Server Settings #############################
 
 # The port the socket server listens on
