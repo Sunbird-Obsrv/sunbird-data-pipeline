@@ -136,7 +136,7 @@ default_druid_configs:
       s3_bucket: "{{ cloud_storage_telemetry_bucketname }}"
       s3_endpoint: "{{ cloud_private_storage_endpoint }}"
       s3_segment_dir: "druid/raw/segments"
-      s3_path_like_access: "{{ cloud_storage_pathstyle_access }}"
+      s3_path_like_access: "{{ s3_path_style_access }}"
       s3_v4_sign_region: "{{ cloud_private_storage_region }}"
       #Logging the indexing logs to s3
       s3_logging_bucket: "{{ cloud_storage_telemetry_bucketname }}"
