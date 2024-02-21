@@ -188,9 +188,10 @@ etb_dialcode_list_druid_length: 70
 # s3 storage config
 s3_storage_key: "{{ sunbird_private_s3_storage_key }}"
 s3_storage_secret: "{{ sunbird_private_s3_storage_secret }}"
-s3_storage_endpoint: ""
+s3_storage_endpoint: "{{ cloud_private_storage_endpoint }}"
 s3_request_signature_version: AWS4-HMAC-SHA256
 s3_path_style_access: true
-s3_https_only: false
-s3_default_bucket_location: ""
+s3_https_only: true
+s3_default_bucket_location: "{{ cloud_private_storage_region }}"
 s3_storage_container: ""
+
