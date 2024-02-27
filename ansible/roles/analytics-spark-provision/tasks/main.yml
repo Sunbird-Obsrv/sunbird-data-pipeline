@@ -38,7 +38,7 @@
 - name: Download jets3t 0.9.7 and copy to Spark jars folder
   become: yes
   become_user: "{{ analytics_user }}"
-  get_url: url={{ jets3t_url }} dest={{ analytics.home }}/spark-{{ spark_version }}-bin-hadoop2.7/jars/jets3t-0.9.4.jar timeout=1000 force=no owner={{ analytics_user }} group={{ analytics_group }}
+  get_url: url={{ jets3t_url }} dest={{ analytics.home }}/spark-{{ spark_version }}-bin-hadoop2.7/jars/jets3t-0.9.7.jar timeout=1000 force=no owner={{ analytics_user }} group={{ analytics_group }}
 
 - name: Download hadoop-aws 2.7.3 and copy to Spark jars folder
   become: yes
