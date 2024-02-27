@@ -35,7 +35,7 @@
   become_user: "{{ analytics_user }}"
   file: path={{ analytics.home }}/spark-{{ spark_version }}-bin-hadoop2.7/jars/jets3t-0.9.3.jar state=absent
 
-- name: Download jets3t 0.9.4 and copy to Spark jars folder
+- name: Download jets3t 0.9.7 and copy to Spark jars folder
   become: yes
   become_user: "{{ analytics_user }}"
   get_url: url={{ jets3t_url }} dest={{ analytics.home }}/spark-{{ spark_version }}-bin-hadoop2.7/jars/jets3t-0.9.4.jar timeout=1000 force=no owner={{ analytics_user }} group={{ analytics_group }}
