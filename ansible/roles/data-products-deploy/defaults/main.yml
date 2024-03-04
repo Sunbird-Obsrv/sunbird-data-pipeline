@@ -8,8 +8,8 @@ secor_bucket: "telemetry-data-store"
 # dp_object_store_type: "azure"
 cloud_service_provider: "azure"
 dp_raw_telemetry_backup_location: "unique/raw/"
-dp_storage_key_config: "azure_storage_key"
-dp_storage_secret_config: "azure_storage_secret"
+dp_storage_key_config: "cloud_storage_key"
+dp_storage_secret_config: "cloud_storage_secret"
 dp_reports_storage_key_config: "reports_azure_storage_key"
 dp_reports_storage_secret_config: "reports_azure_storage_secret"
 
@@ -46,7 +46,7 @@ analytics_jobs_count: 3
 cassandra_keyspace_prefix: '{{ env }}_'
 report_cassandra_cluster_host: "{{ report_cassandra_host | default(core_cassandra_host) }}"
 cassandra_hierarchy_store_keyspace: "{{ env_name}}_hierarchy_store"
-spark_version: 3.1.3
+spark_version: 3.2.1
 
 heap_memory: "-Xmx5120m"
 

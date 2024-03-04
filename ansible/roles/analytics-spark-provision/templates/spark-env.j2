@@ -72,10 +72,12 @@ export SPARK_EXECUTOR_MEMORY={{ spark.executor.memory }}
 export SPARK_PUBLIC_DNS="{{ spark.public_dns }}"
 export reports_storage_key={{cloud_private_storage_accountname}}
 export reports_storage_secret={{cloud_private_storage_secret}}
-export azure_storage_key={{cloud_private_storage_accountname}}
-export azure_storage_secret={{cloud_private_storage_secret}}
+# export azure_storage_key={{cloud_private_storage_accountname}}
+# export azure_storage_secret={{cloud_private_storage_secret}}
 export druid_storage_account_key={{cloud_private_storage_accountname}}
 export druid_storage_account_secret={{cloud_private_storage_secret}}
-export aws_storage_key={{ cloud_private_storage_accountname }}
-export aws_storage_secret={{ cloud_private_storage_secret }}
+# export aws_storage_key={{ cloud_private_storage_accountname }}
+# export aws_storage_secret={{ cloud_private_storage_secret }}
+export cloud_storage_key={{ cloud_private_storage_accountname }}
+export cloud_storage_secret={{ cloud_private_storage_secret }}
 
