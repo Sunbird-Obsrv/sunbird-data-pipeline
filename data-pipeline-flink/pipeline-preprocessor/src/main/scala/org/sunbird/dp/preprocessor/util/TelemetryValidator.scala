@@ -48,7 +48,7 @@ class TelemetryValidator(config: PipelinePreprocessorConfig) extends java.io.Ser
 
   def onValidationFailure(event: Event, metrics: Metrics, context: ProcessFunction[Event, Event]#Context, validationReport: ProcessingReport): Unit = {
     val failedErrorMsg = schemaValidator.getInvalidFieldName(validationReport.toString)
-    logger.info(s"Telemetry schema failed Event: $event")
+    println(s"Telemetry schema failed Event: $event")
     logger.info(s"Telemetry schema validation is failed for: ${event.mid()} and error message is: ${validationReport.toString}")
     event.markValidationFailure(failedErrorMsg, config.VALIDATION_FLAG_NAME)
     metrics.incCounter(config.validationFailureMetricsCount)
