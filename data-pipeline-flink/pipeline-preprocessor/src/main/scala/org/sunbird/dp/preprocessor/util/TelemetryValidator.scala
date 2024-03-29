@@ -21,6 +21,7 @@ class TelemetryValidator(config: PipelinePreprocessorConfig) extends java.io.Ser
       if (validationReport.isSuccess) {
         onValidationSuccess(event, metrics, context)
       } else {
+        println(s"Before validationFailure event: $event")
         onValidationFailure(event, metrics, context, validationReport)
       }
       validationReport.isSuccess
