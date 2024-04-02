@@ -51,5 +51,18 @@
     local_file_or_folder_path: "{{ postgresql_backup_gzip_file_path }}"
   when: cloud_service_provider == "gcloud"
 
+- name: upload backup to OCI
+  include_role:
+    name: oci-cloud-storage
+    apply:
+      environment:
+        OCI_CLI_AUTH: "instance_principal"  
+    tasks_from: upload-folder.yml
+  vars:
+    local_file_or_folder_path: "/tmp/postgresql-backup{{ postgresql_backup_gzip_file_name }}"
+    oss_bucket_name: "{{ cloud_storage_postgresqlbackup_bucketname }}"
+    oss_path: "{{ cloud_storage_postgresqlbackup_foldername }}/{{ postgresql_backup_gzip_file_name }}"
+  when: cloud_service_provider == "oci
+
 - name: clean up backup dir after upload
   file: path="{{ postgresql_backup_dir }}" state=absent
