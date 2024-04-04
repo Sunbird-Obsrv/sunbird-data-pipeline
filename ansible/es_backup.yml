@@ -10,6 +10,8 @@
     - role: es-gcs-snapshot
       when: cloud_service_provider == "gcloud"
     - role: es5-snapshot-purge
+    - role: es-oci-snapshot
+      when: cloud_service_provider == "oci"
   tags:
     - es_backup
   run_once: true
