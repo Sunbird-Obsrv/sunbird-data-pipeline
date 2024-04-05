@@ -1,13 +1,13 @@
 azure_account: "{{ sunbird_private_storage_account_name }}"
 azure_secret: "{{ sunbird_private_storage_account_key }}"
-azure_container_name: "telemetry-data-store"
+azure_container_name: "{{cloud_storage_telemetry_bucketname}}"
 
 s3_access_key: "{{s3_storage_key}}"
 s3_secret_id: "{{s3_storage_secret}}"
 s3_region: "{{oci_region}}"
 s3_endpoint: "{{s3_storage_endpoint}}"
 s3_path_style_access: "{{s3_path_style_access}}"
-s3_bucket_name: "telemetry-data-store"
+s3_bucket_name: "{{cloud_storage_telemetry_bucketname}}"
 
 {% if cloud_service_provider == 'oci' -%}
 storage_type: "S3"
