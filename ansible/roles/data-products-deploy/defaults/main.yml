@@ -92,22 +92,6 @@ run_monitor_job:
     hour: 03
     minute: 00
 
-run_admin_user_reports_job:
-  admin-user-reports-3AMIST:
-    hour: 21
-    minute: 30
-  admin-user-reports-2PMIST:
-    hour: 8
-    minute: 30  
-
-run_admin_geo_reports_job:
-  admin-geo-reports-4AMIST:
-    hour: 22
-    minute: 30
-  admin-geo-reports-3PMIST:
-    hour: 9
-    minute: 30     
-
 run_assessment_aggregator_report_job:
   assessment-aggregator-report:
     hour: 18
@@ -132,21 +116,6 @@ run_etb_metrics_weekly_job:
 # These are the dummy times till sept30 for exhaust reports
 #To-Do: Update time after 3.2.7 deployment
 
-run_progress_exhaust:
-  progress-exhaust:
-    hour: 08
-    minute: 00
-
-run_response_exhaust:
-  response-exhaust:
-    hour: 09
-    minute: 00
-
-run_userinfo_exhaust:
-  userinfo-exhaust:
-    hour: 10
-    minute: 00
-
 run_collection_summary:
   collection-summary:
     hour: 09
@@ -156,11 +125,6 @@ run_sourcing_summary:
   sourcing-summary:
     hour: 10
     minute: 30
-
-run_cassandra_migration:
-  cassandra-migration:
-    hour: 19
-    minute: 15
 
 run_uci_private_exhaust_job:
   uci-private-exhaust:
