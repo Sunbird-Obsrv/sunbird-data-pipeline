@@ -81,8 +81,6 @@ start_jobmanager:
     minute: 30
 have_weekly_jobs: false
 
-course_batch_status_updater_job_schedule: 60
-
 run_wfs_job:
   wfs:
     hour: 00
@@ -115,11 +113,6 @@ run_etb_metrics_weekly_job:
 
 # These are the dummy times till sept30 for exhaust reports
 #To-Do: Update time after 3.2.7 deployment
-
-run_collection_summary:
-  collection-summary:
-    hour: 09
-    minute: 30
 
 run_sourcing_summary:
   sourcing-summary:
