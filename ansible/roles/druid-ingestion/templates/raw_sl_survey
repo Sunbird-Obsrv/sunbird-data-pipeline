@@ -38,6 +38,10 @@
             },
             {
               "type": "string",
+              "name": "evidences"
+            },
+            {
+              "type": "string",
               "name": "surveyId"
             },
             {
