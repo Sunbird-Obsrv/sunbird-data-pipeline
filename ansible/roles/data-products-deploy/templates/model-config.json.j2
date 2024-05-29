@@ -67,58 +67,6 @@
     "appName": "Video Streaming Job",
     "deviceMapping": false
   },
-  "admin-user-reports": {
-    "search": {
-      "type": "none"
-    },
-    "model": "org.ekstep.analytics.job.report.StateAdminReportJob",
-    "modelParams": {
-      "storageKeyConfig":"storage.key.config",
-      "storageSecretConfig":"storage.secret.config",
-      "storageContainer":"{{reports_container}}",
-      "storageEndpoint":"{{cloud_private_storage_endpoint}}", 
-      "store":"{{ cloud_service_provider }}",   
-      "sparkCassandraConnectionHost": "{{core_cassandra_host}}",
-      "sparkElasticsearchConnectionHost": "{{sunbird_es_host}}"
-    },
-    "output": [
-      {
-        "to": "console",
-        "params": {
-          "printEvent": false
-        }
-      }
-    ],
-    "parallelization": 8,
-    "appName": "Admin User Reports",
-    "deviceMapping": false
-  },
-  "admin-geo-reports": {
-    "search": {
-      "type": "none"
-    },
-    "model": "org.ekstep.analytics.job.report.StateAdminGeoReportJob",
-    "modelParams": {
-      "storageKeyConfig":"storage.key.config",
-      "storageSecretConfig":"storage.secret.config",
-      "storageContainer":"{{reports_container}}",
-      "storageEndpoint":"{{cloud_private_storage_endpoint}}",    
-      "store":"{{ cloud_service_provider }}",
-      "sparkCassandraConnectionHost": "{{core_cassandra_host}}",
-      "sparkElasticsearchConnectionHost": "{{sunbird_es_host}}"
-    },
-    "output": [
-      {
-        "to": "console",
-        "params": {
-          "printEvent": false
-        }
-      }
-    ],
-    "parallelization": 8,
-    "appName": "Admin Geo Reports",
-    "deviceMapping": false
-  },
   "content-rating-updater": {
     "search": {
       "type": "none"
@@ -182,16 +130,6 @@
         },
         {
           "model": "MetricsAuditJob",
-          "category": "consumption",
-          "input_dependency": "None"
-        },
-        {
-          "model": "StateAdminReportJob",
-          "category": "consumption",
-          "input_dependency": "None"
-        },
-        {
-          "model": "StateAdminGeoReportJob",
           "category": "consumption",
           "input_dependency": "None"
         },
