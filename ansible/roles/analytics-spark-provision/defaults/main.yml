@@ -3,7 +3,7 @@ analytics:
    soft_path: /mount/data/analytics
    base_path: /home/analytics 
 scala_version: 2.12.10
-spark_version: 3.2.1
+spark_version: 3.1.3
 model_version: "2.0" 
 spark:
   home: "{{ analytics.home }}/spark-{{ spark_version }}-bin-hadoop2.7"
