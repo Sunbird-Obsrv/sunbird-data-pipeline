@@ -45,10 +45,10 @@ elastic_search:
 cloud_storage:
   container: "telemetry-data-store" # Container is different in all env so override this.
   object_key: "druid-content-snapshot/snapshot.txt"
-  provider: "azure"
+  provider: "{{ cloud_service_provider }}"
   account_name: "{{cloud_public_storage_accountname}}"
   account_key: "{{cloud_public_storage_secret}}"
-  account_endpoint: ""
+  account_endpoint: "{{ cloud_public_storage_endpoint }}"
 
 cassandra:
   host: "{{lp_cassandra_host}}" ## LMS-Cassandra IP Address.
