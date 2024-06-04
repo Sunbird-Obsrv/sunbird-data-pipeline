@@ -48,6 +48,7 @@ cloud_storage:
   provider: "azure"
   account_name: "{{cloud_public_storage_accountname}}"
   account_key: "{{cloud_public_storage_secret}}"
+  account_endpoint: ""
 
 cassandra:
   host: "{{lp_cassandra_host}}" ## LMS-Cassandra IP Address.
