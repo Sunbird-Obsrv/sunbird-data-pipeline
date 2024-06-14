@@ -775,14 +775,19 @@
     },
     "ioConfig":{
       "type":"index",
-      "firehose" : {
-        "type" : "static-azure-blobstore",
+      "firehose": {
+{% if cloud_storage.provider == "azure" %}
+        "type": "static-azure-blobstore",
         "blobs": [
           {
-            "container": "telemetry-data-store",
-            "path": "/druid-content-snapshot/snapshot.txt"
+            "container": "{{cloud_storage.container}}",
+            "path": "/{{cloud_storage.object_key}}"
           }
         ],
+{% else %}
+      "type": "static-s3",
+      "uris": [ "s3://{{cloud_storage.container}}/{{cloud_storage.object_key}}"],
+{% endif %}
         "fetchTimeout": 300000
       }
     },
