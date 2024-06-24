@@ -790,12 +790,12 @@
       "blobs": [
           {
             "container": "{{cloud_storage.container}}",
-            "path": "/{{cloud_storage.object_key}}"
+            "path": "/druid-content-snapshot/snapshot.txt"
           }
         ],
 {% else %}
       "type": "static-s3",
-      "uris": [ "s3://{{cloud_storage.container}}/{{cloud_storage.object_key}}"],
+      "uris": [ "s3://{{cloud_storage.container}}/druid-content-snapshot/snapshot.txt"],
 {% endif %}
         "fetchTimeout": 300000
       }

@@ -852,13 +852,14 @@
           "blobs": [
             {
               "container": "{{cloud_storage.container}}",
-              "path": "/{{cloud_storage.object_key}}"
+              "path": "/druid-content-snapshot/vdn-snapshot.txt"
             }
           ],
 {% else %}
           "type": "static-s3",
-          "uris": [ "s3://{{cloud_storage.container}}/{{cloud_storage.object_key}}"],
+          "uris": [ "s3://{{cloud_storage.container}}/druid-content-snapshot/vdn-snapshot.txt"],
 {% endif %}
+          "fetchTimeout": 3000000
       },
       "tuningConfig":{
         "type":"index",
