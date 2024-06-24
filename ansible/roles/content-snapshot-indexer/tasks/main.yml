@@ -131,7 +131,6 @@
   with_items: "{{ druid_ingestion_files }}"
   tags:
     - deploy
-    - copy-ingestion-files
 
 - name: Run Script
   become: yes
