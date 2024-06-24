@@ -1,0 +1,811 @@
+{
+  "type":"index",
+  "spec":{
+    "dataSchema":{
+      "dataSource":"content-model-snapshot",
+      "parser":{
+        "type":"string",
+        "parseSpec":{
+          "format":"json",
+          "flattenSpec": {
+            "useFieldDiscovery": false,
+            "fields": [
+              {
+                "type": "path",
+                "name": "author",
+                "expr": "$.data.author"
+              },
+              {
+                "type": "path",
+                "name": "badgeAssertions_assertionId",
+                "expr": "$.data.badgeAssertions[*].assertionId"
+              },
+              {
+                "type": "path",
+                "name": "badgeAssertions_badgeClassId",
+                "expr": "$.data.badgeAssertions[*].badgeClassId"
+              },
+              {
+                "type": "path",
+                "name": "badgeAssertions_badgeClassImage",
+                "expr": "$.data.badgeAssertions[*].badgeClassImage"
+              },
+              {
+                "type": "path",
+                "name": "badgeAssertions_badgeClassName",
+                "expr": "$.data.badgeAssertions[*].badgeClassName"
+              },
+              {
+                "type": "path",
+                "name": "badgeAssertions_badgeId",
+                "expr": "$.data.badgeAssertions[*].badgeId"
+              },
+              {
+                "type": "path",
+                "name": "badgeAssertions_createdTS",
+                "expr": "$.data.badgeAssertions[*].createdTS"
+              },
+              {
+                "type": "path",
+                "name": "badgeAssertions_issuerId",
+                "expr": "$.data.badgeAssertions[*].issuerId"
+              },
+              {
+                "type": "path",
+                "name": "badgeAssertions_status",
+                "expr": "$.data.badgeAssertions[*].status"
+              },
+              {
+                "type": "path",
+                "name": "board",
+                "expr": "$.data.board"
+              },
+              {
+                "type": "path",
+                "name": "channel",
+                "expr": "$.data.channel"
+              },
+              {
+                "type": "path",
+                "name": "compatibilityLevel",
+                "expr": "$.data.compatibilityLevel"
+              },
+              {
+                "type": "path",
+                "name": "contentType",
+                "expr": "$.data.contentType"
+              },
+              {
+                "type": "path",
+                "name": "primaryCategory",
+                "expr": "$.data.primaryCategory"
+              },
+              {
+                "type": "path",
+                "name": "createdBy",
+                "expr": "$.data.createdBy"
+              },
+              {
+                "type": "path",
+                "name": "createdFor",
+                "expr": "$.data.createdFor"
+              },
+              {
+                "type": "path",
+                "name": "createdOn",
+                "expr": "$.data.createdOn"
+              },
+              {
+                "type": "path",
+                "name": "creator",
+                "expr": "$.data.creator"
+              },
+              {
+                "type": "path",
+                "name": "dialcodes",
+                "expr": "$.data.dialcodes"
+              },
+              {
+                "type": "path",
+                "name": "framework",
+                "expr": "$.data.framework"
+              },
+              {
+                "type": "path",
+                "name": "gradeLevel",
+                "expr": "$.data.gradeLevel"
+              },
+              {
+                "type": "path",
+                "name": "identifier",
+                "expr": "$.data.identifier"
+              },
+              {
+                "type": "path",
+                "name": "keywords",
+                "expr": "$.data.keywords"
+              },
+              {
+                "type": "path",
+                "name": "language",
+                "expr": "$.data.language"
+              },
+              {
+                "type": "path",
+                "name": "lastPublishedBy",
+                "expr": "$.data.lastPublishedBy"
+              },
+              {
+                "type": "path",
+                "name": "lastPublishedOn",
+                "expr": "$.data.lastPublishedOn"
+              },
+              {
+                "type": "path",
+                "name": "lastSubmittedOn",
+                "expr": "$.data.lastSubmittedOn"
+              },
+              {
+                "type": "path",
+                "name": "lastUpdatedBy",
+                "expr": "$.data.lastUpdatedBy"
+              },
+              {
+                "type": "path",
+                "name": "lastUpdatedOn",
+                "expr": "$.data.lastUpdatedOn"
+              },
+              {
+                "type": "path",
+                "name": "license",
+                "expr": "$.data.license"
+              },
+              {
+                "type": "path",
+                "name": "me_audiosCount",
+                "expr": "$.data.me_audiosCount"
+              },
+              {
+                "type": "path",
+                "name": "me_averageInteractionsPerMin",
+                "expr": "$.data.me_averageInteractionsPerMin"
+              },
+              {
+                "type": "path",
+                "name": "me_averageRating",
+                "expr": "$.data.me_averageRating"
+              },
+              {
+                "type": "path",
+                "name": "me_totalTimeSpentInApp",
+                "expr": "$.data.me_totalTimeSpentInSec.app"
+              },
+              {
+                "type": "path",
+                "name": "me_totalTimeSpentInPortal",
+                "expr": "$.data.me_totalTimeSpentInSec.portal"
+              },
+              {
+                "type": "path",
+                "name": "me_totalTimeSpentInDesktop",
+                "expr": "$.data.me_totalTimeSpentInSec.desktop"
+              },
+              {
+                "type": "path",
+                "name": "me_totalPlaySessionCountInApp",
+                "expr": "$.data.me_totalPlaySessionCount.app"
+              },
+              {
+                "type": "path",
+                "name": "me_totalPlaySessionCountInPortal",
+                "expr": "$.data.me_totalPlaySessionCount.portal"
+              },
+              {
+                "type": "path",
+                "name": "me_totalPlaySessionCountInDesktop",
+                "expr": "$.data.me_totalPlaySessionCount.desktop"
+              },
+              {
+                "type": "path",
+                "name": "me_averageSessionsPerDevice",
+                "expr": "$.data.me_averageSessionsPerDevice"
+              },
+              {
+                "type": "path",
+                "name": "me_averageTimespentPerSession",
+                "expr": "$.data.me_averageTimespentPerSession"
+              },
+              {
+                "type": "path",
+                "name": "me_avgCreationTsPerSession",
+                "expr": "$.data.me_avgCreationTsPerSession"
+              },
+              {
+                "type": "path",
+                "name": "me_creationSessions",
+                "expr": "$.data.me_creationSessions"
+              },
+              {
+                "type": "path",
+                "name": "me_creationTimespent",
+                "expr": "$.data.me_creationTimespent"
+              },
+              {
+                "type": "path",
+                "name": "me_hierarchyLevel",
+                "expr": "$.data.me_hierarchyLevel"
+              },
+              {
+                "type": "path",
+                "name": "me_imagesCount",
+                "expr": "$.data.me_imagesCount"
+              },
+              {
+                "type": "path",
+                "name": "me_timespentDraft",
+                "expr": "$.data.me_timespentDraft"
+              },
+              {
+                "type": "path",
+                "name": "me_timespentReview",
+                "expr": "$.data.me_timespentReview"
+              },
+              {
+                "type": "path",
+                "name": "me_totalComments",
+                "expr": "$.data.me_totalComments"
+              },
+              {
+                "type": "path",
+                "name": "me_totalDevices",
+                "expr": "$.data.me_totalDevices"
+              },
+              {
+                "type": "path",
+                "name": "me_totalDialcodeAttached",
+                "expr": "$.data.me_totalDialcodeAttached"
+              },
+              {
+                "type": "path",
+                "name": "me_totalDialcodeLinkedToContent",
+                "expr": "$.data.me_totalDialcodeLinkedToContent"
+              },
+              {
+                "type": "path",
+                "name": "me_totalDownloads",
+                "expr": "$.data.me_totalDownloads"
+              },
+              {
+                "type": "path",
+                "name": "me_totalInteractions",
+                "expr": "$.data.me_totalInteractions"
+              },
+              {
+                "type": "path",
+                "name": "me_totalRatings",
+                "expr": "$.data.me_totalRatingsCount"
+              },
+              {
+                "type": "path",
+                "name": "me_totalSessionsCount",
+                "expr": "$.data.me_totalSessionsCount"
+              },
+              {
+                "type": "path",
+                "name": "me_totalSideloads",
+                "expr": "$.data.me_totalSideloads"
+              },
+              {
+                "type": "path",
+                "name": "me_totalTimespent",
+                "expr": "$.data.me_totalTimespent"
+              },
+              {
+                "type": "path",
+                "name": "me_videosCount",
+                "expr": "$.data.me_videosCount"
+              },
+              {
+                "type": "path",
+                "name": "mediaType",
+                "expr": "$.data.mediaType"
+              },
+              {
+                "type": "path",
+                "name": "medium",
+                "expr": "$.data.medium"
+              },
+              {
+                "type": "path",
+                "name": "mimeType",
+                "expr": "$.data.mimeType"
+              },
+              {
+                "type": "path",
+                "name": "name",
+                "expr": "$.data.name"
+              },
+              {
+                "type": "path",
+                "name": "objectType",
+                "expr": "$.data.objectType"
+              },
+              {
+                "type": "path",
+                "name": "organisation",
+                "expr": "$.data.organisation"
+              },
+              {
+                "type": "path",
+                "name": "origin",
+                "expr": "$.data.origin"
+              },
+              {
+                "type": "path",
+                "name": "owner",
+                "expr": "$.data.owner"
+              },
+              {
+                "type": "path",
+                "name": "pkgVersion",
+                "expr": "$.data.pkgVersion"
+              },
+              {
+                "type": "path",
+                "name": "resourceType",
+                "expr": "$.data.resourceType"
+              },
+              {
+                "type": "path",
+                "name": "status",
+                "expr": "$.data.status"
+              },
+              {
+                "type": "path",
+                "name": "subject",
+                "expr": "$.data.subject"
+              },
+              {
+                "type": "path",
+                "name": "topic",
+                "expr": "$.data.topic"
+              },
+              {
+                "type": "path",
+                "name": "statusCode",
+                "expr": "$.data.statusCode"
+              },
+              {
+                "type": "path",
+                "name": "version",
+                "expr": "$.data.version"
+              },
+              {
+                "type": "path",
+                "name": "programId",
+                "expr": "$.data.programId"
+              },
+              {
+                "type": "path",
+                "name": "type",
+                "expr": "$.data.type"
+              },
+              {
+                "type": "path",
+                "name": "category",
+                "expr": "$.data.category"
+              },
+              {
+                "type": "path",
+                "name": "learningOutcome",
+                "expr": "$.data.learningOutcome[*]"
+              },
+              {
+                "type": "path",
+                "name": "qumlVersion",
+                "expr": "$.data.qumlVersion"
+              },
+              {
+                "type": "path",
+                "name": "bloomsLevel",
+                "expr": "$.data.bloomsLevel[*]"
+              },
+              {
+                "type": "path",
+                "name": "rejectComment",
+                "expr": "$.data.rejectComment"
+              }
+            ]
+          },
+          "dimensionsSpec":{
+            "dimensions": [
+              {
+                "type": "string",
+                "name": "author"
+              },
+              {
+                "type": "string",
+                "name": "badgeAssertions_assertionId"
+              },
+              {
+                "type": "string",
+                "name": "badgeAssertions_badgeClassId"
+              },
+              {
+                "type": "string",
+                "name": "badgeAssertions_badgeClassImage"
+              },
+              {
+                "type": "string",
+                "name": "badgeAssertions_badgeClassName"
+              },
+              {
+                "type": "string",
+                "name": "badgeAssertions_badgeId"
+              },
+              {
+                "type": "string",
+                "name": "badgeAssertions_createdTS"
+              },
+              {
+                "type": "string",
+                "name": "badgeAssertions_issuerId"
+              },
+              {
+                "type": "string",
+                "name": "badgeAssertions_status"
+              },
+              {
+                "type": "string",
+                "name": "board"
+              },
+              {
+                "type": "string",
+                "name": "channel"
+              },
+              {
+                "type": "long",
+                "name": "compatibilityLevel"
+              },
+              {
+                "type": "string",
+                "name": "contentType"
+              },
+              {
+                "type": "string",
+                "name": "primaryCategory"
+              },
+              {
+                "type": "string",
+                "name": "createdBy"
+              },
+              {
+                "type": "string",
+                "name": "createdFor"
+              },
+              {
+                "type": "string",
+                "name": "createdOn"
+              },
+              {
+                "type": "string",
+                "name": "creator"
+              },
+              {
+                "type": "string",
+                "name": "dialcodes"
+              },
+              {
+                "type": "string",
+                "name": "framework"
+              },
+              {
+                "type": "string",
+                "name": "gradeLevel"
+              },
+              {
+                "type": "string",
+                "name": "identifier"
+              },
+              {
+                "type": "string",
+                "name": "keywords"
+              },
+              {
+                "type": "string",
+                "name": "language"
+              },
+              {
+                "type": "string",
+                "name": "lastPublishedBy"
+              },
+              {
+                "type": "string",
+                "name": "lastPublishedOn"
+              },
+              {
+                "type": "string",
+                "name": "lastSubmittedOn"
+              },
+              {
+                "type": "string",
+                "name": "lastUpdatedBy"
+              },
+              {
+                "type": "string",
+                "name": "lastUpdatedOn"
+              },
+              {
+                "type": "string",
+                "name": "license"
+              },
+              {
+                "type": "string",
+                "name": "mediaType"
+              },
+              {
+                "type": "string",
+                "name": "medium"
+              },
+              {
+                "type": "string",
+                "name": "mimeType"
+              },
+              {
+                "type": "string",
+                "name": "name"
+              },
+              {
+                "type": "string",
+                "name": "objectType"
+              },
+              {
+                "type": "string",
+                "name": "organisation"
+              },
+              {
+                "type": "string",
+                "name": "origin"
+              },
+              {
+                "type": "string",
+                "name": "owner"
+              },
+              {
+                "type": "long",
+                "name": "pkgVersion"
+              },
+              {
+                "type": "string",
+                "name": "resourceType"
+              },
+              {
+                "type": "string",
+                "name": "status"
+              },
+              {
+                "type": "string",
+                "name": "subject"
+              },
+              {
+                "type": "string",
+                "name": "topic"
+              },
+              {
+                "type": "long",
+                "name": "version"
+              },
+              {
+                "type": "string",
+                "name": "programId"
+              },
+              {
+                "type": "string",
+                "name": "type"
+              },
+              {
+                "type": "string",
+                "name": "category"
+              },
+              {
+                "name": "learningOutcome"
+              },
+              {
+                "type": "long",
+                "name": "qumlVersion"
+              },
+              {
+                "name": "bloomsLevel"
+              },
+              {
+                "type": "string",
+                "name": "rejectComment"
+              }
+            ],
+            "dimensionsExclusions": []
+          },
+          "timestampSpec":{
+            "column":"timestamp",
+            "format":"auto"
+          }
+        }
+      },
+      "metricsSpec":[{
+        "type": "longSum",
+        "name": "me_audiosCount",
+        "fieldName": "me_audiosCount"
+      },
+        {
+          "type": "doubleSum",
+          "name": "me_averageInteractionsPerMin",
+          "fieldName": "me_averageInteractionsPerMin"
+        },
+        {
+          "type": "doubleSum",
+          "name": "me_averageRating",
+          "fieldName": "me_averageRating"
+        },
+        {
+          "type": "longSum",
+          "name": "me_totalTimeSpentInPortal",
+          "fieldName": "me_totalTimeSpentInPortal"
+        },
+        {
+          "type": "longSum",
+          "name": "me_totalTimeSpentInApp",
+          "fieldName": "me_totalTimeSpentInApp"
+        },
+        {
+          "type": "longSum",
+          "name": "me_totalTimeSpentInDesktop",
+          "fieldName": "me_totalTimeSpentInDesktop"
+        },
+        {
+          "type": "longSum",
+          "name": "me_totalPlaySessionCountInApp",
+          "fieldName": "me_totalPlaySessionCountInApp"
+        },
+        {
+          "type": "longSum",
+          "name": "me_totalPlaySessionCountInDesktop",
+          "fieldName": "me_totalPlaySessionCountInDesktop"
+        },
+        {
+          "type": "longSum",
+          "name": "me_totalPlaySessionCountInPortal",
+          "fieldName": "me_totalPlaySessionCountInPortal"
+        },
+        {
+          "type": "doubleSum",
+          "name": "me_averageSessionsPerDevice",
+          "fieldName": "me_averageSessionsPerDevice"
+        },
+        {
+          "type": "doubleSum",
+          "name": "me_averageTimespentPerSession",
+          "fieldName": "me_averageTimespentPerSession"
+        },
+        {
+          "type": "doubleSum",
+          "name": "me_avgCreationTsPerSession",
+          "fieldName": "me_avgCreationTsPerSession"
+        },
+        {
+          "type": "longSum",
+          "name": "me_creationSessions",
+          "fieldName": "me_creationSessions"
+        },
+        {
+          "type": "doubleSum",
+          "name": "me_creationTimespent",
+          "fieldName": "me_creationTimespent"
+        },
+        {
+          "type": "longSum",
+          "name": "me_hierarchyLevel",
+          "fieldName": "me_hierarchyLevel"
+        },
+        {
+          "type": "longSum",
+          "name": "me_imagesCount",
+          "fieldName": "me_imagesCount"
+        },
+        {
+          "type": "doubleSum",
+          "name": "me_timespentDraft",
+          "fieldName": "me_timespentDraft"
+        },
+        {
+          "type": "doubleSum",
+          "name": "me_timespentReview",
+          "fieldName": "me_timespentReview"
+        },
+        {
+          "type": "longSum",
+          "name": "me_totalComments",
+          "fieldName": "me_totalComments"
+        },
+        {
+          "type": "longSum",
+          "name": "me_totalDevices",
+          "fieldName": "me_totalDevices"
+        },
+        {
+          "type": "longSum",
+          "name": "me_totalDialcodeAttached",
+          "fieldName": "me_totalDialcodeAttached"
+        },
+        {
+          "type": "longSum",
+          "name": "me_totalDialcodeLinkedToContent",
+          "fieldName": "me_totalDialcodeLinkedToContent"
+        },
+        {
+          "type": "longSum",
+          "name": "me_totalDownloads",
+          "fieldName": "me_totalDownloads"
+        },
+        {
+          "type": "longSum",
+          "name": "me_totalInteractions",
+          "fieldName": "me_totalInteractions"
+        },
+        {
+          "type": "longSum",
+          "name": "me_totalRatings",
+          "fieldName": "me_totalRatings"
+        },
+        {
+          "type": "longSum",
+          "name": "me_totalSessionsCount",
+          "fieldName": "me_totalSessionsCount"
+        },
+        {
+          "type": "longSum",
+          "name": "me_totalSideloads",
+          "fieldName": "me_totalSideloads"
+        },
+        {
+          "type": "doubleSum",
+          "name": "me_totalTimespent",
+          "fieldName": "me_totalTimespent"
+        },
+        {
+          "type": "longSum",
+          "name": "me_videosCount",
+          "fieldName": "me_videosCount"
+        }],
+      "granularitySpec":{
+        "type":"uniform",
+        "segmentGranularity":"day",
+        "queryGranularity":"none",
+        "rollup": true
+      }
+    },
+    "ioConfig":{
+      "type":"index",
+      "firehose" : {
+{% if cloud_storage.provider == "azure" %}
+      "type": "static-azure-blobstore",
+      "blobs": [
+          {
+            "container": "{{cloud_storage.container}}",
+            "path": "/{{cloud_storage.object_key}}"
+          }
+        ],
+{% else %}
+      "type": "static-s3",
+      "uris": [ "s3://{{cloud_storage.container}}/{{cloud_storage.object_key}}"],
+{% endif %}
+        "fetchTimeout": 300000
+      }
+    },
+    "tuningConfig":{
+      "type":"index",
+      "targetPartitionSize":5000000,
+      "maxRowsInMemory":25000,
+      "forceExtendableShardSpecs":false,
+      "logParseExceptions": true
+    }
+  }
+}

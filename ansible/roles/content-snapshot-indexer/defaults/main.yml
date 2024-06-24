@@ -93,3 +93,8 @@ script_files:
     "RedisUserDataIndexer",
     "run-script",
   ]
+druid_ingestion_files:
+  [
+    "content_index_batch",
+    "vdn_content_index_batch",
+  ]
