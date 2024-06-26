@@ -120,6 +120,18 @@
   tags:
     - execute-script
 
+- name: Ensure copying all injection specs files from the templates/druid_injestion dir
+  become: yes
+  template:
+    src: "druid_injestion_specs/{{ item }}.j2"
+    dest: "{{ content_snapshot_jar_path }}/etl-jobs-1.0/druid_models/{{ item }}.json"
+    owner: "{{ analytics_user }}" 
+    group: "{{ analytics_group }}"
+    mode: 0777
+  with_items: "{{ druid_ingestion_files }}"
+  tags:
+    - deploy
+
 - name: Run Script
   become: yes
   become_user: root
