@@ -38,4 +38,5 @@ rollup_ml_project_taskcount: 1
 rollup_ml_observation_status_taskcount: 1
 rollup_ml_project_status_taskcount: 1
 rollup_ml_survey_status_taskcount: 1
+ml_user_program_task_count: 1
 
