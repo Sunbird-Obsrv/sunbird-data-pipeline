@@ -251,3 +251,83 @@ monit_redis:
   custom_stop: "/bin/systemctl stop redis"
   timeout: "30"
   retry: 3
+
+monit_faust_observation:
+  app_name: faust_observation
+  custom_start: /bin/systemctl start faust_observation.service
+  custom_stop: /bin/systemctl stop faust_observation.service
+  user: analytics
+  pid_file: /home/analytics/sbin/faust_observation.pid
+  retry: 3
+
+monit_faust_observation_evidence:
+  app_name: faust_observation_evidence
+  custom_start: /bin/systemctl start faust_observation_evidence.service
+  custom_stop: /bin/systemctl stop faust_observation_evidence.service
+  user: analytics
+  pid_file: /home/analytics/sbin/faust_observation_evidence.pid
+  retry: 3
+
+monit_faust_survey:
+  app_name: faust_survey
+  custom_start: /bin/systemctl start faust_survey.service
+  custom_stop: /bin/systemctl stop faust_survey.service
+  user: analytics
+  pid_file: /home/analytics/sbin/faust_survey.pid
+  retry: 3  
+
+monit_faust_survey_evidence:
+  app_name: faust_survey_evidence
+  custom_start: /bin/systemctl start faust_survey_evidence.service
+  custom_stop: /bin/systemctl stop faust_survey_evidence.service
+  user: analytics
+  pid_file: /home/analytics/sbin/faust_survey_evidence.pid
+  retry: 3
+
+monit_faust_survey_raw: 
+  app_name: faust_survey_raw
+  custom_start: /bin/systemctl start faust_survey_raw.service
+  custom_stop: /bin/systemctl stop faust_survey_raw.service
+  user: analytics
+  pid_file: /home/analytics/sbin/faust_survey_raw.pid
+  retry: 3
+
+monit_faust_submission_rating_raw: 
+  app_name: faust_submission_rating_raw
+  custom_start: /bin/systemctl start faust_submission_rating_raw.service
+  custom_stop: /bin/systemctl stop faust_submission_rating_raw.service
+  user: analytics
+  pid_file: /home/analytics/sbin/faust_submission_rating_raw.pid
+  retry: 3
+
+monit_faust_incomplete_observation_raw: 
+  app_name: faust_incomplete_observation_raw
+  custom_start: /bin/systemctl start faust_incomplete_observation_raw.service
+  custom_stop: /bin/systemctl stop faust_incomplete_observation_raw.service
+  user: analytics
+  pid_file: /home/analytics/sbin/faust_incomplete_observation_raw.pid
+  retry: 3
+
+monit_faust_notification_raw:
+  app_name: faust_notification_raw
+  custom_start: /bin/systemctl start faust_notification_raw.service
+  custom_stop: /bin/systemctl stop faust_notification_raw.service
+  user: analytics
+  pid_file: /home/analytics/sbin/faust_notification_raw.pid
+  retry: 3
+
+monit_faust_incomplete_survey_raw:
+  app_name: faust_incomplete_survey_raw
+  custom_start: /bin/systemctl start faust_incomplete_survey_raw.service
+  custom_stop: /bin/systemctl stop faust_incomplete_survey_raw.service
+  user: analytics
+  pid_file: /home/analytics/sbin/faust_incomplete_survey_raw.pid
+  retry: 3
+
+monit_faust_improvement_project_submission:
+  app_name: faust_improvement_project_submission
+  custom_start: /bin/systemctl start faust_improvement_project_submission.service
+  custom_stop: /bin/systemctl stop faust_improvement_project_submission.service
+  user: analytics
+  pid_file: /home/analytics/sbin/faust_improvement_project_submission.pid
+  retry: 3
